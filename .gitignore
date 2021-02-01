@@ -1,6 +1,25 @@
 # OS generated file
 .DS_Store
 
+# BioMASS ---
+# figs
+figure/
+
+# fit_param
+out/
+
+# sensitivity array
+sensitivity_coefficients/
+
+# simulation data
+simulation_data/
+
+# optimization results
+optimization_results/
+
+# training
+errout/
+
 # Python ---
 
 # Byte-compiled / optimized / DLL files
@@ -81,6 +100,7 @@ docs/_build/
 target/
 
 # Jupyter Notebook
+*.ipynb
 .ipynb_checkpoints
 
 # IPython
