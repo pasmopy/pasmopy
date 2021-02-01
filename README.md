@@ -1,5 +1,7 @@
 # Dyaus
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from dynamical modeling.
 
 ![logo](resource/images/logo.png)
@@ -47,4 +49,4 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
 
 ## License
 
-[Apache license 2.0](LICENSE)
+[Apache-2.0 License](LICENSE)
