@@ -6,6 +6,14 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
 
 ![logo](resource/images/logo.png)
 
+## Requirements
+
+| Language      | Dependent packages                                 |
+| ------------- | -------------------------------------------------- |
+| Python >= 3.7 | [biomass](https://github.com/okadalabipr/biomass)  |
+| Julia >= 1.5  | [BioMASS.jl](https://github.com/himoto/BioMASS.jl) |
+| R             | [TODO] Write dependent packages here.              |
+
 ## Workflow
 
 - Build an executable model of the ErbB signaling network
@@ -41,6 +49,12 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
 - Classify cancer subtypes based on the ErbB signaling dynamics
 
   [TODO] Write analysis procedure here.
+
+## Installation
+
+```
+$ git clone https://github.com/okadalabipr/dyaus.git
+```
 
 ## Author
 
