@@ -2,9 +2,17 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from dynamical modeling.
+Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
 
 ![logo](resource/images/logo.png)
+
+## Features
+
+- Model construction
+- Data integration
+- Parameter estimation
+- Personalized predictions of patient outcomes
+- Cancer subtype classification
 
 ## Requirements
 
@@ -35,7 +43,7 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
   $ sh optimize_parallel.sh
   ```
 
-- Run simulation of patient-specific models
+- Run patient-specific models
 
   ```python
   from dyaus import PatientSpecificModel
