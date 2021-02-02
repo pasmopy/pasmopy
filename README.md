@@ -1,5 +1,6 @@
 # Dyaus
 
+[![Actions Status](https://github.com/okadalabipr/dyaus/workflows/Tests/badge.svg)](https://github.com/okadalabipr/dyaus/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
