@@ -2,10 +2,11 @@
 
 [![Actions Status](https://github.com/okadalabipr/dyaus/workflows/Tests/badge.svg)](https://github.com/okadalabipr/dyaus/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
 
-![logo](resource/images/logo.png)
+![logo](resource/images/overview.png)
 
 ## Features
 
@@ -23,7 +24,7 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
 | Julia >= 1.5  | [BioMASS.jl](https://github.com/himoto/BioMASS.jl) |
 | R             | [TODO] Write dependent packages here.              |
 
-## Workflow
+## Workflow for classifying breast cancer subtypes
 
 - Build an executable model of the ErbB signaling network
 
@@ -50,7 +51,7 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
   from dyaus import PatientSpecificModel
 
   with open ("TCGA_breast.txt", mode="r") as f:
-      TCGA_ID = f.readlines()
+      TCGA_ID = f.read().splitlines()
 
   PatientSpecificModel(TCGA_ID).run("models/breast")
   ```
