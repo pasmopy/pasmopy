@@ -53,7 +53,9 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
   with open ("TCGA_breast.txt", mode="r") as f:
       TCGA_ID = f.read().splitlines()
 
-  PatientSpecificModel(TCGA_ID).run("models/breast")
+  tcga_patients = PatientSpecificModel("models/breast", TCGA_ID)
+
+  tcga_patients.run()
   ```
 
 - Classify cancer subtypes based on the ErbB signaling dynamics
