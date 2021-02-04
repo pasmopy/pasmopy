@@ -29,11 +29,11 @@ def main():
         description="Dynamics-driven automatic subtyping",
         long_description=long_description,
         long_description_content_type="text/markdown",
-        license="Apache License 2.0",
+        license="Apache 2.0",
         author="Hiroaki Imoto",
         author_email="himoto@protein.osaka-u.ac.jp",
         url="https://github.com/okadalabipr/dyaus",
-        packages=find_packages(exclude=["tests"]),
+        packages=find_packages(),
         install_requires=requirements.splitlines(),
         extras_require={
             "dev": [
