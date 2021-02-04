@@ -48,12 +48,12 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
 - Run patient-specific models
 
   ```python
-  from dyaus import PatientSpecificModel
+  from dyaus import PatientModelSimulations
 
   with open ("TCGA_breast.txt", mode="r") as f:
       TCGA_ID = f.read().splitlines()
 
-  tcga_patients = PatientSpecificModel("models/breast", TCGA_ID)
+  tcga_patients = PatientModelSimulations("models/breast", TCGA_ID)
 
   tcga_patients.run()
   ```
