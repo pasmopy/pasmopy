@@ -13,6 +13,6 @@ def test_run_with_biomass_examples():
         "tgfb_smad",
     ]
     biomass_examples = BioMassExamples(
-        "biomass.models", model_list, simulation_options={"viz_type": "original"}
+        "biomass.models", model_list, biomass_options={"viz_type": "original"}
     )
     assert biomass_examples.run() is None

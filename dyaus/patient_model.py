@@ -28,7 +28,7 @@ class InSilico(object):
     path_to_models: str
     patients: List[str]
 
-    def in_parallel(
+    def parallel_execute(
         self,
         func: Callable[[int], None],
         n_proc: int = multiprocessing.cpu_count() - 1,
@@ -69,12 +69,12 @@ class PatientModelSimulations(InSilico):
     patients : list of strings
         List of patients' names or indices.
 
-    options : dict, optional
+    biomass_options : dict, optional
         Arguments of biomass.run_simulation.
 
     """
 
-    simulation_options: Optional[dict] = field(default=None)
+    biomass_options: Optional[dict] = field(default=None)
 
     def _run_single_patient(self, index: int) -> None:
         """
@@ -86,7 +86,7 @@ class PatientModelSimulations(InSilico):
             Index of each patient.
 
         """
-        options = self.simulation_options
+        options = self.biomass_options
         if options is None:
             options = {}
         options.setdefault("viz_type", "average")
@@ -117,7 +117,7 @@ class PatientModelSimulations(InSilico):
             The number of worker processes to use.
 
         """
-        self.in_parallel(self._run_single_patient, n_proc)
+        self.parallel_execute(self._run_single_patient, n_proc)
 
 
 @dataclass
@@ -133,12 +133,12 @@ class PatientModelAnalyses(InSilico):
     patients : list of strings
         List of patients' names or indices.
 
-    options : dict, optional
+    biomass_options : dict, optional
         Arguments of biomass.run_simulation.
 
     """
 
-    analysis_options: Optional[dict] = field(default=None)
+    biomass_options: Optional[dict] = field(default=None)
 
     def _run_single_patient(self, index: int) -> None:
         """
@@ -150,7 +150,7 @@ class PatientModelAnalyses(InSilico):
             Index of each patient.
 
         """
-        options = self.analysis_options
+        options = self.biomass_options
         if options is None:
             options = {}
         options.setdefault("target", "initial_condition")
@@ -181,4 +181,4 @@ class PatientModelAnalyses(InSilico):
             The number of worker processes to use.
 
         """
-        self.in_parallel(self._run_single_patient, n_proc)
+        self.parallel_execute(self._run_single_patient, n_proc)
