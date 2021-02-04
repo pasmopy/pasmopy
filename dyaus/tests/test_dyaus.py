@@ -1,7 +1,7 @@
-from ..patient_specific_model import PatientSpecificModel
+from ..patient_model import PatientModelSimulations
 
 
-class BioMassExamples(PatientSpecificModel):
+class BioMassExamples(PatientModelSimulations):
     pass
 
 
@@ -13,6 +13,6 @@ def test_run_with_biomass_examples():
         "tgfb_smad",
     ]
     biomass_examples = BioMassExamples(
-        "biomass.models", model_list, options={"viz_type": "original"}
+        "biomass.models", model_list, simulation_options={"viz_type": "original"}
     )
     assert biomass_examples.run() is None
