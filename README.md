@@ -6,7 +6,7 @@
 
 Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
 
-![logo](resource/images/overview.png)
+![overview](resource/images/overview.png)
 
 ## Features
 
@@ -31,7 +31,7 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
   ```python
   from biomass import TextToModel
 
-  TextToModel("erbb_network.txt").to_biomass()
+  TextToModel("models/erbb_network.txt").to_biomass()
   ```
 
 - Integrate TCGA and CCLE data
@@ -42,6 +42,7 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
 
   ```bash
   $ cd training
+  $ mkdir errout
   $ sh optimize_parallel.sh
   ```
 
@@ -50,12 +51,12 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
   ```python
   from dyaus import PatientModelSimulations
 
-  with open ("TCGA_breast.txt", mode="r") as f:
+  with open ("models/breast/sample_names_exec.txt", mode="r") as f:
       TCGA_ID = f.read().splitlines()
 
-  tcga_patients = PatientModelSimulations("models/breast", TCGA_ID)
+  simulations = PatientModelSimulations("models.breast", TCGA_ID)
 
-  tcga_patients.run()
+  simulations.run()
   ```
 
 - Classify cancer subtypes based on the ErbB signaling dynamics
