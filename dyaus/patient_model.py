@@ -18,7 +18,7 @@ class InSilico(object):
     Attributes
     ----------
     path_to_models : str
-        Path to the directory containing patient-specific models.
+        Path (dot-separated) to the directory containing patient-specific models.
 
     patients : list of strings
         List of patients' names or indices.
@@ -27,6 +27,20 @@ class InSilico(object):
 
     path_to_models: str
     patients: List[str]
+
+    def import_model_package(self, index: int) -> None:
+        """
+        Import biomass-formatted model package.
+
+        Parameters
+        ----------
+        index : int
+            Index of each patient.
+        """
+        try:
+            exec(f"from {self.path_to_models} import {self.patients[index].strip()}", globals())
+        except ImportError as e:
+            print(f"cannot import {self.patients[index].strip()} from {self.path_to_models}", e)
 
     def parallel_execute(
         self,
@@ -63,12 +77,6 @@ class PatientModelSimulations(InSilico):
 
     Attributes
     ----------
-    path_to_models : str
-        Path to the directory containing patient-specific models.
-
-    patients : list of strings
-        List of patients' names or indices.
-
     biomass_options : dict, optional
         Arguments of biomass.run_simulation.
 
@@ -95,13 +103,7 @@ class PatientModelSimulations(InSilico):
         options.setdefault("save_format", "pdf")
         options.setdefault("param_range", None)
 
-        try:
-            exec(
-                f"from {self.path_to_models.lstrip(f'.{os.sep}').replace(os.sep, '.')} "
-                f"import {self.patients[index].strip()}",
-            )
-        except ImportError as e:
-            print(f"Cannot import {self.patients[index].strip()} from {self.path_to_models}", e)
+        self.import_model_package(index)
 
         model = eval(f"{self.patients[index].strip()}.create()")
         biomass.run_simulation(model, **options)
@@ -127,14 +129,8 @@ class PatientModelAnalyses(InSilico):
 
     Attributes
     ----------
-    path_to_models : str
-        Path to the directory containing patient-specific models.
-
-    patients : list of strings
-        List of patients' names or indices.
-
     biomass_options : dict, optional
-        Arguments of biomass.run_simulation.
+        Arguments of biomass.run_analysis.
 
     """
 
@@ -159,13 +155,7 @@ class PatientModelAnalyses(InSilico):
         options.setdefault("excluded_params", [])
         options.setdefault("options", None)
 
-        try:
-            exec(
-                f"from {self.path_to_models.lstrip(f'.{os.sep}').replace(os.sep, '.')} "
-                f"import {self.patients[index].strip()}",
-            )
-        except ImportError as e:
-            print(f"Cannot import {self.patients[index].strip()} from {self.path_to_models}", e)
+        self.import_model_package(index)
 
         model = eval(f"{self.patients[index].strip()}.create()")
         biomass.run_analysis(model, **options)
