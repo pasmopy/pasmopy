@@ -33,7 +33,7 @@ def main():
         author="Hiroaki Imoto",
         author_email="himoto@protein.osaka-u.ac.jp",
         url="https://github.com/okadalabipr/dyaus",
-        packages=find_packages(),
+        packages=find_packages(exclude=["tests"]),
         install_requires=requirements.splitlines(),
         extras_require={
             "dev": [
