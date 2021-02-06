@@ -1,12 +1,12 @@
-# Dyaus
+# Dyaus – Dynamics-driven automatic subtyping
 
 [![Actions Status](https://github.com/okadalabipr/dyaus/workflows/Tests/badge.svg)](https://github.com/okadalabipr/dyaus/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
+Dyaus is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
 
-![overview](resource/images/overview.png)
+![overview](resources/images/overview.png)
 
 ## Features
 
@@ -51,7 +51,7 @@ Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework 
   ```python
   from dyaus import PatientModelSimulations
 
-  with open ("models/breast/sample_names_exec.txt", mode="r") as f:
+  with open ("models/breast/sample_names.txt", mode="r") as f:
       TCGA_ID = f.read().splitlines()
 
   simulations = PatientModelSimulations("models.breast", TCGA_ID)
