@@ -107,7 +107,6 @@ class PatientModelSimulations(InSilico):
 
         model = eval(f"{self.patients[index].strip()}.create()")
         biomass.run_simulation(model, **options)
-        print(f"[{self.patients[index].strip()}] finished.")
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """
@@ -159,7 +158,6 @@ class PatientModelAnalyses(InSilico):
 
         model = eval(f"{self.patients[index].strip()}.create()")
         biomass.run_analysis(model, **options)
-        print(f"[{self.patients[index].strip()}] finished.")
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """
