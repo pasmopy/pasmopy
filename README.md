@@ -6,25 +6,29 @@
 
 Dyaus is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
 
-![overview](resources/images/overview.png)
+![overview](https://raw.githubusercontent.com/okadalabipr/dyaus/master/resources/images/overview.png)
 
 ## Features
 
-- Model construction
 - Data integration
+- Model construction
 - Parameter estimation
 - Personalized predictions of patient outcomes
 - Cancer subtype classification
 
 ## Requirements
 
-| Language      | Dependent packages                                 |
-| ------------- | -------------------------------------------------- |
-| Python >= 3.7 | [biomass](https://github.com/okadalabipr/biomass)  |
-| Julia >= 1.5  | [BioMASS.jl](https://github.com/himoto/BioMASS.jl) |
-| R             | [TODO] Write dependent packages here.              |
+| Language      | Dependent packages                                                                      |
+| ------------- | --------------------------------------------------------------------------------------- |
+| Python >= 3.7 | [biomass](https://github.com/okadalabipr/biomass), [tqdm](https://github.com/tqdm/tqdm) |
+| Julia >= 1.5  | [BioMASS.jl](https://github.com/himoto/BioMASS.jl)                                      |
+| R             | [TODO] Write dependent packages here.                                                   |
 
 ## Workflow for classifying breast cancer subtypes
+
+- Integrate TCGA and CCLE data
+
+  [TODO] Write analysis procedure here.
 
 - Build an executable model of the ErbB signaling network
 
@@ -33,10 +37,6 @@ Dyaus is a scalable framework for classifying cancer subtypes based on intracell
 
   TextToModel("models/erbb_network.txt").to_biomass()
   ```
-
-- Integrate TCGA and CCLE data
-
-  [TODO] Write analysis procedure here.
 
 - Estimate model parameters from experimental data
 
@@ -71,7 +71,7 @@ $ git clone https://github.com/okadalabipr/dyaus.git
 
 ## Author
 
-- [Hiroaki Imoto](https://github.com/himoto)
+- Hiroaki Imoto
 - Sawa Yamashiro
 
 ## License
