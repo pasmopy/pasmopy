@@ -1,16 +1,15 @@
-import os
 import sys
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
-
-def get_version() -> str:
-    """Read version from file"""
-    version_filepath = os.path.join(os.path.dirname(__file__), "dyaus", "version.py")
-    with open(version_filepath) as f:
-        for line in f:
-            if line.startswith("__version__"):
-                return line.strip().split()[-1][1:-1]
+try:
+    from dyaus import __author__, __email__, __maintainer__, __version__
+except ImportError:
+    __author__ = ", ".join(["Hiroaki Imoto", "Sawa Yamashiro"])
+    __maintainer__ = "Hiroaki Imoto"
+    __email__ = "himoto@protein.osaka-u.ac.jp"
+    __version__ = "0.1.0"
 
 
 def main():
@@ -18,23 +17,22 @@ def main():
     if sys.version_info[:2] < (3, 7):
         sys.exit("Dyaus requires at least Python version 3.7")
 
-    # set long_description and requirements
-    here = os.path.abspath(os.path.dirname(__file__))
-    long_description = open(os.path.join(here, "README.md")).read()
-    requirements = open(os.path.join(here, "requirements.txt")).read()
-
     setup(
         name="dyaus",
-        version=get_version(),
+        version=__version__,
         description="Dynamics-driven automatic subtyping",
-        long_description=long_description,
+        long_description=Path("README.md").read_text("utf-8"),
         long_description_content_type="text/markdown",
         license="Apache 2.0",
-        author="Hiroaki Imoto",
-        author_email="himoto@protein.osaka-u.ac.jp",
+        author=__author__,
+        author_email=__email__,
+        maintainer=__maintainer__,
+        maintainer_email=__email__,
         url="https://github.com/okadalabipr/dyaus",
         packages=find_packages(exclude=["tests"]),
-        install_requires=requirements.splitlines(),
+        install_requires=[
+            l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()
+        ],
         extras_require={
             "dev": [
                 "black==20.8b1",
@@ -48,7 +46,11 @@ def main():
         keywords=[
             "systems",
             "biology",
+            "cancer",
             "modeling",
+            "simulation",
+            "ccle",
+            "tcga",
         ],
         classifiers=[
             "Intended Audience :: Science/Research",
@@ -57,7 +59,6 @@ def main():
             "Natural Language :: English",
             "Operating System :: OS Independent",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3 :: Only",
             "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
