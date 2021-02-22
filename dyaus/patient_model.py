@@ -1,10 +1,9 @@
 import multiprocessing
-import os
 import platform
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional
+from typing import Callable, List, NoReturn, Optional
 
-import biomass
+from biomass import ModelObject, run_analysis, run_simulation
 from tqdm import tqdm
 
 __all__ = ["PatientModelSimulations", "PatientModelAnalyses"]
@@ -22,11 +21,20 @@ class InSilico(object):
 
     patients : list of strings
         List of patients' names or indices.
-
     """
 
     path_to_models: str
     patients: List[str]
+
+    def __post_init__(self) -> Optional[NoReturn]:
+        """
+        Check for duplicates in self.patients.
+        """
+        duplicate = [patient for patient in set(self.patients) if self.patients.count(patient) > 1]
+        if not duplicate:
+            return None
+        else:
+            raise NameError(f"Duplicate patient: {', '.join(duplicate)}")
 
     def import_model_package(self, index: int) -> None:
         """
@@ -37,15 +45,16 @@ class InSilico(object):
         index : int
             Index of each patient.
         """
+
         try:
             exec(f"from {self.path_to_models} import {self.patients[index].strip()}", globals())
-        except ImportError as e:
-            print(f"cannot import {self.patients[index].strip()} from {self.path_to_models}", e)
+        except ImportError:
+            print(f"cannot import {self.patients[index].strip()} from {self.path_to_models}")
 
     def parallel_execute(
         self,
         func: Callable[[int], None],
-        n_proc: int = multiprocessing.cpu_count() - 1,
+        n_proc: int,
     ) -> None:
         """
         Execute multiple models in parallel.
@@ -54,8 +63,8 @@ class InSilico(object):
         ----------
         n_proc : int
             The number of worker processes to use.
-
         """
+
         if platform.system() == "Darwin":
             # fork() has always been unsafe on Mac
             # spawn* functions should be instead
@@ -79,7 +88,6 @@ class PatientModelSimulations(InSilico):
     ----------
     biomass_options : dict, optional
         Arguments of biomass.run_simulation.
-
     """
 
     biomass_options: Optional[dict] = field(default=None)
@@ -92,8 +100,8 @@ class PatientModelSimulations(InSilico):
         ----------
         index : int
             Index of each patient.
-
         """
+
         options = self.biomass_options
         if options is None:
             options = {}
@@ -105,8 +113,8 @@ class PatientModelSimulations(InSilico):
 
         self.import_model_package(index)
 
-        model = eval(f"{self.patients[index].strip()}.create()")
-        biomass.run_simulation(model, **options)
+        model: ModelObject = eval(f"ModelObject({self.patients[index].strip()}.create())")
+        run_simulation(model, **options)
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """
@@ -114,10 +122,10 @@ class PatientModelSimulations(InSilico):
 
         Parameters
         ----------
-        n_proc : int
+        n_proc : int (default: multiprocessing.cpu_count() - 1)
             The number of worker processes to use.
-
         """
+
         self.parallel_execute(self._run_single_patient, n_proc)
 
 
@@ -130,7 +138,6 @@ class PatientModelAnalyses(InSilico):
     ----------
     biomass_options : dict, optional
         Arguments of biomass.run_analysis.
-
     """
 
     biomass_options: Optional[dict] = field(default=None)
@@ -143,21 +150,20 @@ class PatientModelAnalyses(InSilico):
         ----------
         index : int
             Index of each patient.
-
         """
+
         options = self.biomass_options
         if options is None:
             options = {}
         options.setdefault("target", "initial_condition")
         options.setdefault("metric", "integral")
         options.setdefault("style", "barplot")
-        options.setdefault("excluded_params", [])
         options.setdefault("options", None)
 
         self.import_model_package(index)
 
-        model = eval(f"{self.patients[index].strip()}.create()")
-        biomass.run_analysis(model, **options)
+        model: ModelObject = eval(f"ModelObject({self.patients[index].strip()}.create())")
+        run_analysis(model, **options)
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """
@@ -165,8 +171,8 @@ class PatientModelAnalyses(InSilico):
 
         Parameters
         ----------
-        n_proc : int
+        n_proc : int (default: multiprocessing.cpu_count() - 1)
             The number of worker processes to use.
-
         """
+
         self.parallel_execute(self._run_single_patient, n_proc)
