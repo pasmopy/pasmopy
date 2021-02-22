@@ -47,7 +47,10 @@ class InSilico(object):
         """
 
         try:
-            exec(f"from {self.path_to_models} import {self.patients[index].strip()}", globals())
+            exec(
+                f"from {self.path_to_models} import {self.patients[index].strip()}",
+                globals(),
+            )
         except ImportError:
             print(f"cannot import {self.patients[index].strip()} from {self.path_to_models}")
 
@@ -61,6 +64,9 @@ class InSilico(object):
 
         Parameters
         ----------
+        func : Callable
+            Function executing a single patient-specific model.
+
         n_proc : int
             The number of worker processes to use.
         """
