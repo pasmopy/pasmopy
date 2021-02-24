@@ -208,80 +208,86 @@ E23P_ShcP_Grb2_Gab1P_RasGAP_RasGTP is dissociated into E23P_ShcP_Grb2_Gab1P_RasG
 E24P_ShcP_Grb2_Gab1P_RasGAP_RasGTP is dissociated into E24P_ShcP_Grb2_Gab1P_RasGAP and RasGDP |193|
 E34P_ShcP_Grb2_Gab1P_RasGAP_RasGTP is dissociated into E34P_ShcP_Grb2_Gab1P_RasGAP and RasGDP |193|
 E44P_ShcP_Grb2_Gab1P_RasGAP_RasGTP is dissociated into E44P_ShcP_Grb2_Gab1P_RasGAP and RasGDP |193|
+PIP3_Gab1P_RasGAP_RasGTP is dissociated into PIP3_Gab1P_RasGAP and RasGDP |193|
 E11P_Grb2_Gab1P binds PI3K --> E11P_Grb2_Gab1P_PI3K
-E12P_Grb2_Gab1P binds PI3K --> E12P_Grb2_Gab1P_PI3K |211|
-E23P_Grb2_Gab1P binds PI3K --> E23P_Grb2_Gab1P_PI3K |211|
-E24P_Grb2_Gab1P binds PI3K --> E24P_Grb2_Gab1P_PI3K |211|
-E34P_Grb2_Gab1P binds PI3K --> E34P_Grb2_Gab1P_PI3K |211|
-E44P_Grb2_Gab1P binds PI3K --> E44P_Grb2_Gab1P_PI3K |211|
-E11P_ShcP_Grb2_Gab1P binds PI3K --> E11P_ShcP_Grb2_Gab1P_PI3K |211|
-E12P_ShcP_Grb2_Gab1P binds PI3K --> E12P_ShcP_Grb2_Gab1P_PI3K |211|
-E23P_ShcP_Grb2_Gab1P binds PI3K --> E23P_ShcP_Grb2_Gab1P_PI3K |211|
-E24P_ShcP_Grb2_Gab1P binds PI3K --> E24P_ShcP_Grb2_Gab1P_PI3K |211|
-E34P_ShcP_Grb2_Gab1P binds PI3K --> E34P_ShcP_Grb2_Gab1P_PI3K |211|
-E44P_ShcP_Grb2_Gab1P binds PI3K --> E44P_ShcP_Grb2_Gab1P_PI3K |211|
-PIP3_Gab1P binds PI3K --> PIP3_Gab1P_PI3K |211|
+E12P_Grb2_Gab1P binds PI3K --> E12P_Grb2_Gab1P_PI3K |212|
+E23P_Grb2_Gab1P binds PI3K --> E23P_Grb2_Gab1P_PI3K |212|
+E24P_Grb2_Gab1P binds PI3K --> E24P_Grb2_Gab1P_PI3K |212|
+E34P_Grb2_Gab1P binds PI3K --> E34P_Grb2_Gab1P_PI3K |212|
+E44P_Grb2_Gab1P binds PI3K --> E44P_Grb2_Gab1P_PI3K |212|
+E11P_ShcP_Grb2_Gab1P binds PI3K --> E11P_ShcP_Grb2_Gab1P_PI3K |212|
+E12P_ShcP_Grb2_Gab1P binds PI3K --> E12P_ShcP_Grb2_Gab1P_PI3K |212|
+E23P_ShcP_Grb2_Gab1P binds PI3K --> E23P_ShcP_Grb2_Gab1P_PI3K |212|
+E24P_ShcP_Grb2_Gab1P binds PI3K --> E24P_ShcP_Grb2_Gab1P_PI3K |212|
+E34P_ShcP_Grb2_Gab1P binds PI3K --> E34P_ShcP_Grb2_Gab1P_PI3K |212|
+E44P_ShcP_Grb2_Gab1P binds PI3K --> E44P_ShcP_Grb2_Gab1P_PI3K |212|
+PIP3_Gab1P binds PI3K --> PIP3_Gab1P_PI3K |212|
 E23P_PI3K binds PIP2 --> E23P_PI3K_PIP2 || PIP2 = 1
-E24P_PI3K binds PIP2 --> E24P_PI3K_PIP2 |224|
-E34P_PI3K binds PIP2 --> E34P_PI3K_PIP2 |224|
-E44P_PI3K binds PIP2 --> E44P_PI3K_PIP2 |224|
-E11P_Grb2_Gab1P_PI3K binds PIP2 --> E11P_Grb2_Gab1P_PI3K_PIP2 |224|
-E12P_Grb2_Gab1P_PI3K binds PIP2 --> E12P_Grb2_Gab1P_PI3K_PIP2 |224|
-E23P_Grb2_Gab1P_PI3K binds PIP2 --> E23P_Grb2_Gab1P_PI3K_PIP2 |224|
-E24P_Grb2_Gab1P_PI3K binds PIP2 --> E24P_Grb2_Gab1P_PI3K_PIP2 |224|
-E34P_Grb2_Gab1P_PI3K binds PIP2 --> E34P_Grb2_Gab1P_PI3K_PIP2 |224|
-E44P_Grb2_Gab1P_PI3K binds PIP2 --> E44P_Grb2_Gab1P_PI3K_PIP2 |224|
-E11P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E11P_ShcP_Grb2_Gab1P_PI3K_PIP2 |224|
-E12P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E12P_ShcP_Grb2_Gab1P_PI3K_PIP2 |224|
-E23P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E23P_ShcP_Grb2_Gab1P_PI3K_PIP2 |224|
-E24P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E24P_ShcP_Grb2_Gab1P_PI3K_PIP2 |224|
-E34P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E34P_ShcP_Grb2_Gab1P_PI3K_PIP2 |224|
-E44P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E44P_ShcP_Grb2_Gab1P_PI3K_PIP2 |224|
-PIP3_Gab1P_PI3K binds PIP2 --> PIP3_Gab1P_PI3K_PIP2 |224|
+E24P_PI3K binds PIP2 --> E24P_PI3K_PIP2 |225|
+E34P_PI3K binds PIP2 --> E34P_PI3K_PIP2 |225|
+E44P_PI3K binds PIP2 --> E44P_PI3K_PIP2 |225|
+E11P_Grb2_Gab1P_PI3K binds PIP2 --> E11P_Grb2_Gab1P_PI3K_PIP2 |225|
+E12P_Grb2_Gab1P_PI3K binds PIP2 --> E12P_Grb2_Gab1P_PI3K_PIP2 |225|
+E23P_Grb2_Gab1P_PI3K binds PIP2 --> E23P_Grb2_Gab1P_PI3K_PIP2 |225|
+E24P_Grb2_Gab1P_PI3K binds PIP2 --> E24P_Grb2_Gab1P_PI3K_PIP2 |225|
+E34P_Grb2_Gab1P_PI3K binds PIP2 --> E34P_Grb2_Gab1P_PI3K_PIP2 |225|
+E44P_Grb2_Gab1P_PI3K binds PIP2 --> E44P_Grb2_Gab1P_PI3K_PIP2 |225|
+E11P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E11P_ShcP_Grb2_Gab1P_PI3K_PIP2 |225|
+E12P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E12P_ShcP_Grb2_Gab1P_PI3K_PIP2 |225|
+E23P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E23P_ShcP_Grb2_Gab1P_PI3K_PIP2 |225|
+E24P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E24P_ShcP_Grb2_Gab1P_PI3K_PIP2 |225|
+E34P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E34P_ShcP_Grb2_Gab1P_PI3K_PIP2 |225|
+E44P_ShcP_Grb2_Gab1P_PI3K binds PIP2 --> E44P_ShcP_Grb2_Gab1P_PI3K_PIP2 |225|
+PIP3_Gab1P_PI3K binds PIP2 --> PIP3_Gab1P_PI3K_PIP2 |225|
 E23P_PI3K_PIP2 is dissociated into E23P_PI3K and PIP3 | kr = 0
-E24P_PI3K_PIP2 is dissociated into E24P_PI3K and PIP3 |241|
-E34P_PI3K_PIP2 is dissociated into E34P_PI3K and PIP3 |241|
-E44P_PI3K_PIP2 is dissociated into E44P_PI3K and PIP3 |241|
-E11P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E11P_Grb2_Gab1P_PI3K and PIP3 |241|
-E12P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E12P_Grb2_Gab1P_PI3K and PIP3 |241|
-E23P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E23P_Grb2_Gab1P_PI3K and PIP3 |241|
-E24P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E24P_Grb2_Gab1P_PI3K and PIP3 |241|
-E34P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E34P_Grb2_Gab1P_PI3K and PIP3 |241|
-E44P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E44P_Grb2_Gab1P_PI3K and PIP3 |241|
-E11P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E11P_ShcP_Grb2_Gab1P_PI3K and PIP3 |241|
-E12P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E12P_ShcP_Grb2_Gab1P_PI3K and PIP3 |241|
-E23P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E23P_ShcP_Grb2_Gab1P_PI3K and PIP3 |241|
-E24P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E24P_ShcP_Grb2_Gab1P_PI3K and PIP3 |241|
-E34P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E34P_ShcP_Grb2_Gab1P_PI3K and PIP3 |241|
-E44P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E44P_ShcP_Grb2_Gab1P_PI3K and PIP3 |241|
-PIP3_Gab1P_PI3K_PIP2 is dissociated into PIP3_Gab1P_PI3K and PIP3 |241|
+E24P_PI3K_PIP2 is dissociated into E24P_PI3K and PIP3 |242|
+E34P_PI3K_PIP2 is dissociated into E34P_PI3K and PIP3 |242|
+E44P_PI3K_PIP2 is dissociated into E44P_PI3K and PIP3 |242|
+E11P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E11P_Grb2_Gab1P_PI3K and PIP3 |242|
+E12P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E12P_Grb2_Gab1P_PI3K and PIP3 |242|
+E23P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E23P_Grb2_Gab1P_PI3K and PIP3 |242|
+E24P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E24P_Grb2_Gab1P_PI3K and PIP3 |242|
+E34P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E34P_Grb2_Gab1P_PI3K and PIP3 |242|
+E44P_Grb2_Gab1P_PI3K_PIP2 is dissociated into E44P_Grb2_Gab1P_PI3K and PIP3 |242|
+E11P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E11P_ShcP_Grb2_Gab1P_PI3K and PIP3 |242|
+E12P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E12P_ShcP_Grb2_Gab1P_PI3K and PIP3 |242|
+E23P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E23P_ShcP_Grb2_Gab1P_PI3K and PIP3 |242|
+E24P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E24P_ShcP_Grb2_Gab1P_PI3K and PIP3 |242|
+E34P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E34P_ShcP_Grb2_Gab1P_PI3K and PIP3 |242|
+E44P_ShcP_Grb2_Gab1P_PI3K_PIP2 is dissociated into E44P_ShcP_Grb2_Gab1P_PI3K and PIP3 |242|
+PIP3_Gab1P_PI3K_PIP2 is dissociated into PIP3_Gab1P_PI3K and PIP3 |242|
 PIP3 binds Gab1 --> PIP3_Gab1
 PTEN dephosphorylates PIP3 --> PIP2 || PTEN = 1
 PIP3 phosphorylates Akt --> AktP || Akt = 1
-AktP is dephosphorylated --> Akt
-AktP dephosphorylates RafP --> Raf
+PP2A dephosphorylates AktP --> Akt || PP2A = 1
+AktP phosphorylates Raf --> RafP_inactive
+AktP phosphorylates RafP --> RafPP_inactive
+PP2A dephosphorylates RafP_inactive --> Raf
+PP2A dephosphorylates RafPP_inactive --> RafP
 AktP is degraded
 E11P is degraded
-E11P_Grb2 is degraded |264|
-E11P_Shc is degraded |264|
-E11P_RasGAP is degraded |264|
-E11P_Shc_Grb2 is degraded |264|
-E11P_ShcP_Grb2 is degraded |264|
-E11P_ShcP_Grb2_PTP1B is degraded |264|
-E11P_Shc_Grb2_PTP1B is degraded |264|
-E11P_Grb2_SOS is degraded |264|
-E11P_Grb2_Gab1 is degraded |264|
-E11P_ShcP_Grb2_SOS is degraded |264|
-E11P_Grb2_Gab1P is degraded |264|
-E11P_ShcP_Grb2_Gab1P is degraded |264|
-E11P_Grb2_Gab1P_PTP1B is degraded |264|
-E11P_ShcP_Grb2_Gab1P_PTP1B is degraded |264|
-E11P_Grb2_Gab1_PTP1B is degraded |264|
-E11P_ShcP_Grb2_Gab1_PTP1B is degraded |264|
-E11P_Grb2_Gab1P_RasGAP is degraded |264|
-E11P_ShcP_Grb2_Gab1P_RasGAP is degraded |264|
-E11P_Grb2_Gab1P_PI3K is degraded |264|
-E11P_ShcP_Grb2_Gab1P_PI3K is degraded |264|
+E11P_Grb2 is degraded |268|
+E11P_Shc is degraded |268|
+E11P_RasGAP is degraded |268|
+E11P_Shc_Grb2 is degraded |268|
+E11P_ShcP_Grb2 is degraded |268|
+E11P_ShcP_Grb2_PTP1B is degraded |268|
+E11P_Grb2_SOS is degraded |268|
+E11P_ShcP_Grb2_SOS is degraded |268|
+E11P_Grb2_Gab1 is degraded |268|
+E11P_Grb2_SOS_RasGDP is degraded |268|
+E11P_ShcP_Grb2_SOS_RasGDP is degraded |268|
+E11P_Grb2_Gab1P is degraded |268|
+E11P_ShcP_Grb2_Gab1P is degraded |268|
+E11P_Grb2_Gab1P_PTP1B is degraded |268|
+E11P_ShcP_Grb2_Gab1P_PTP1B is degraded |268|
+E11P_Grb2_Gab1P_RasGAP is degraded |268|
+E11P_ShcP_Grb2_Gab1P_RasGAP is degraded |268|
+E11P_RasGAP_RasGTP is degraded |268|
+E11P_Grb2_Gab1P_RasGAP_RasGTP is degraded |268|
+E11P_ShcP_Grb2_Gab1P_RasGAP_RasGTP is degraded |268|
+E11P_Grb2_Gab1P_PI3K is degraded |268|
+E11P_ShcP_Grb2_Gab1P_PI3K is degraded |268|
 ERKPP transcribes PreduspmRNA | n = 1
 PreduspmRNA is translocated from nucleus into cytoplasm (0.22, 0.94) --> duspmRNA | kr = 0
 duspmRNA is translated into DUSP
@@ -294,29 +300,14 @@ DUSP_ERKPP is dissociated into ERKP and DUSP
 ERKP binds DUSP --> DUSP_ERKP
 DUSP_ERKP is dissociated into ERK and DUSP
 ERK binds DUSP --> DUSP_ERK
-ERKPP binds DUSPP --> DUSPP_ERKPP |292|
-DUSPP_ERKPP is dissociated into ERKP and DUSPP |293|
-ERKP binds DUSPP --> DUSPP_ERKP |294|
-DUSPP_ERKP is dissociated into ERK and DUSPP |295|
-ERK binds DUSPP --> DUSPP_ERK |296|
-ERKPP phosphorylates RSK --> RSKP || RSK = 1
-RSKP is dephosphorylated --> RSK
-RSKP phosphorylates CREB --> CREBP || CREB = 1
-CREBP is dephosphorylated --> CREB
-ERK phosphorylates Elk1 --> Elk1P || Elk1 = 1
-Elk1P is dephosphorylated --> Elk1
-CREBP and Elk1P transcribe PrecfosmRNA | n = 1
-PrecfosmRNA is translocated from nucleus into cytoplasm (0.22, 0.94) --> cfosmRNA | kr = 0
-cfosmRNA is degraded
-cfosmRNA is translated into cFos
-ERKPP phosphorylates cFos --> cFosP
-RSKP phosphorylates cFos --> cFosP
-cFosP is dephosphorylated --> cFos
-cFos is degraded
-cFosP is degraded
+ERKPP binds DUSPP --> DUSPP_ERKPP |298|
+DUSPP_ERKPP is dissociated into ERKP and DUSPP |299|
+ERKP binds DUSPP --> DUSPP_ERKP |300|
+DUSPP_ERKP is dissociated into ERK and DUSPP |301|
+ERK binds DUSPP --> DUSPP_ERK |302|
 AktP phosphorylates GSK3b --> GSK3bP || GSK3b = 1
 GSK3bP is dephosphorylated --> GSK3b
-ERKPP transcribes PrecmycmRNA | n = 1
+ERKPP transcribes PrecmycmRNA, repressed by cMycP | n = 1
 PrecmycmRNA is translocated from nucleus into cytoplasm (0.22, 0.94) --> cmycmRNA | kr = 0
 cmycmRNA is degraded
 cmycmRNA is translated into cMyc
@@ -328,12 +319,12 @@ cMyc is degraded
 cMycPP is degraded
 
 # observables
+# p: parameters
+# u: species
 @obs Phosphorylated_Akt = u[AktP]
 @obs Phosphorylated_ERK = u[ERKP] + u[ERKPP]
-@obs Phosphorylated_cFos = u[cFosP]
 @obs Phosphorylated_cMyc = u[cMycP] + u[cMycPP]
 
-# simulations
 @sim tspan: [0, 120]
 @sim condition EGF: init[EGF] = 10.0; init[HRG] = 0.0
 @sim condition HRG: init[EGF] = 0.0; init[HRG] = 10.0
