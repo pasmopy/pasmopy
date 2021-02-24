@@ -31,10 +31,10 @@ class InSilico(object):
         Check for duplicates in self.patients.
         """
         duplicate = [patient for patient in set(self.patients) if self.patients.count(patient) > 1]
-        if not duplicate:
-            return None
-        else:
+        if duplicate:
             raise NameError(f"Duplicate patient: {', '.join(duplicate)}")
+        else:
+            return None
 
     def import_model_package(self, index: int) -> None:
         """
