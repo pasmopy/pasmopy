@@ -6,7 +6,11 @@
 
 **Dyaus** is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
 
+![overview](resources/images/overview.png)
+
+<!--
 ![overview](https://raw.githubusercontent.com/okadalabipr/dyaus/master/resources/images/overview.png)
+-->
 
 ## Features
 
