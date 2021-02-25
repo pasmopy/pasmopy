@@ -1,57 +1,62 @@
-# Dyaus
+# Dyaus – Dynamics-driven automatic subtyping
 
+[![Actions Status](https://github.com/okadalabipr/dyaus/workflows/Tests/badge.svg)](https://github.com/okadalabipr/dyaus/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Dyaus (**Dy**namics-driven **au**tomatic **s**ubtyping) is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
+**Dyaus** is a scalable framework for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling.
 
-![logo](resource/images/logo.png)
+![overview](https://raw.githubusercontent.com/okadalabipr/dyaus/master/resources/images/overview.png)
 
 ## Features
 
-- Model construction
 - Data integration
+- Model construction
 - Parameter estimation
 - Personalized predictions of patient outcomes
 - Cancer subtype classification
 
 ## Requirements
 
-| Language      | Dependent packages                                 |
-| ------------- | -------------------------------------------------- |
-| Python >= 3.7 | [biomass](https://github.com/okadalabipr/biomass)  |
-| Julia >= 1.5  | [BioMASS.jl](https://github.com/himoto/BioMASS.jl) |
-| R             | [TODO] Write dependent packages here.              |
+| Language      | Dependent packages                                                                      |
+| ------------- | --------------------------------------------------------------------------------------- |
+| Python >= 3.7 | [biomass](https://github.com/okadalabipr/biomass), [tqdm](https://github.com/tqdm/tqdm) |
+| Julia >= 1.5  | [BioMASS.jl](https://github.com/himoto/BioMASS.jl)                                      |
+| R             | [TODO] Write dependent packages here.                                                   |
 
-## Workflow
+## Workflow for classifying breast cancer subtypes
+
+- Integrate TCGA and CCLE data
+
+  [TODO] Write analysis procedure here.
 
 - Build an executable model of the ErbB signaling network
 
   ```python
   from biomass import TextToModel
 
-  TextToModel("erbb_network.txt").to_biomass()
+  TextToModel("models/erbb_network.txt").to_biomass()
   ```
-
-- Integrate TCGA and CCLE data
-
-  [TODO] Write analysis procedure here.
 
 - Estimate model parameters from experimental data
 
   ```bash
   $ cd training
+  $ mkdir errout
   $ sh optimize_parallel.sh
   ```
 
 - Run patient-specific models
 
   ```python
-  from dyaus import PatientSpecificModel
+  from dyaus import PatientModelSimulations
 
-  with open ("TCGA_breast.txt", mode="r") as f:
-      TCGA_ID = f.readlines()
+  with open ("models/breast/sample_names.txt", mode="r") as f:
+      TCGA_ID = f.read().splitlines()
 
-  PatientSpecificModel(TCGA_ID).run("models/breast")
+  simulations = PatientModelSimulations("models.breast", TCGA_ID)
+
+  simulations.run()
   ```
 
 - Classify cancer subtypes based on the ErbB signaling dynamics
@@ -66,7 +71,7 @@ $ git clone https://github.com/okadalabipr/dyaus.git
 
 ## Author
 
-- [Hiroaki Imoto](https://github.com/himoto)
+- Hiroaki Imoto
 - Sawa Yamashiro
 
 ## License
