@@ -1,3 +1,5 @@
+"""Dyaus: Dynamics-driven automatic subtyping"""
+
 __author__ = ", ".join(["Hiroaki Imoto", "Sawa Yamashiro"])
 __maintainer__ = "Hiroaki Imoto"
 __email__ = "himoto@protein.osaka-u.ac.jp"
