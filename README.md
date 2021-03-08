@@ -22,11 +22,11 @@
 
 ## Requirements
 
-| Language      | Dependent packages                                                                      |
-| ------------- | --------------------------------------------------------------------------------------- |
-| Python >= 3.7 | [biomass](https://github.com/okadalabipr/biomass), [tqdm](https://github.com/tqdm/tqdm) |
-| Julia >= 1.5  | [BioMASS.jl](https://github.com/himoto/BioMASS.jl)                                      |
-| R             | [TODO] Write dependent packages here.                                                   |
+| Language      | Dependent packages                                 |
+| ------------- | -------------------------------------------------- |
+| Python >= 3.7 | See [requirements.txt](requirements.txt)           |
+| Julia >= 1.5  | [BioMASS.jl](https://github.com/himoto/BioMASS.jl) |
+| R             | [TODO] Write dependent packages here.              |
 
 ## Workflow for classifying breast cancer subtypes
 
@@ -37,14 +37,14 @@
 - Build an executable model of the ErbB signaling network
 
   ```python
-  from biomass import TextToModel
+  from biomass import Text2Model
 
-  TextToModel("models/erbb_network.txt").to_biomass()
+  Text2Model("models/erbb_network.txt").to_biomass()
   ```
 
-- Estimate model parameters from experimental data
+- Train model parameters against time-course datasets obtained from breast cancer cell lines
 
-  ```bash
+  ```shell
   $ cd training
   $ mkdir errout
   $ sh optimize_parallel.sh
@@ -76,7 +76,11 @@ $ git clone https://github.com/okadalabipr/dyaus.git
 ## Author
 
 - Hiroaki Imoto
+  > - Building a mechanistic model of the ErbB signaling network
+  > - Parameter estimation using quantitative experimental measurements
 - Sawa Yamashiro
+  > - Integration of transcriptomic data from TCGA and CCLE
+  > - Cancer subtype classification based on inferred dynamic features
 
 ## License
 
