@@ -1,12 +1,11 @@
 import multiprocessing
 import platform
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional
+from importlib import import_module
+from typing import Any, Callable, List, Optional
 
 from biomass import ModelObject, run_analysis, run_simulation
 from tqdm import tqdm
-
-__all__ = ["PatientModelSimulations", "PatientModelAnalyses"]
 
 
 @dataclass
@@ -33,10 +32,8 @@ class InSilico(object):
         duplicate = [patient for patient in set(self.patients) if self.patients.count(patient) > 1]
         if duplicate:
             raise NameError(f"Duplicate patient: {', '.join(duplicate)}")
-        else:
-            return None
 
-    def import_model_package(self, patient: str) -> None:
+    def import_model_package(self, patient: str) -> Any:
         """
         Import biomass-formatted model package.
 
@@ -44,15 +41,17 @@ class InSilico(object):
         ----------
         patient : str
             Name (ID) of each patient.
-        """
 
+        Returns
+        -------
+        biomass_model : module
+            Patient-specific BioMASS model.
+        """
         try:
-            exec(
-                f"from {self.path_to_models} import {patient.strip()}",
-                globals(),
-            )
+            biomass_model = import_module(".".join([self.path_to_models, patient]))
+            return biomass_model
         except ImportError:
-            print(f"cannot import {patient.strip()} from {self.path_to_models}")
+            print(f"cannot import {patient.strip()} from {self.path_to_models}.")
 
     def parallel_execute(
         self,
@@ -117,10 +116,8 @@ class PatientModelSimulations(InSilico):
         options.setdefault("save_format", "pdf")
         options.setdefault("param_range", None)
 
-        self.import_model_package(patient)
-
-        model: ModelObject = eval(f"ModelObject({patient.strip()}.create())")
-        run_simulation(model, **options)
+        biomass_model = self.import_model_package(patient.strip())
+        run_simulation(ModelObject(biomass_model.create()), **options)
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """
@@ -166,10 +163,8 @@ class PatientModelAnalyses(InSilico):
         options.setdefault("style", "barplot")
         options.setdefault("options", None)
 
-        self.import_model_package(patient)
-
-        model: ModelObject = eval(f"ModelObject({patient.strip()}.create())")
-        run_analysis(model, **options)
+        biomass_model = self.import_model_package(patient.strip())
+        run_analysis(ModelObject(biomass_model.create()), **options)
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """
