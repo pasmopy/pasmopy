@@ -7,7 +7,7 @@ import pandas as pd
 @dataclass
 class Individualization(object):
     """
-    Individualize a mechanistic model by incorporating gene expression data.
+    Individualize a mechanistic model by incorporating gene expression levels.
 
     Attributes
     ----------
@@ -57,6 +57,20 @@ class Individualization(object):
         },
     )
 
+    ...
+
+    def update(self, indiv):
+        x = param_values()
+        y0 = initial_values()
+
+        for i, j in enumerate(self.idx_params):
+            x[j] = indiv[i]
+        for i, j in enumerate(self.idx_initials):
+            y0[j] = indiv[i + len(self.idx_params)]
+
+        y0 = incorporating_gene_expression_levels.as_initial_condition(
+            __path__[0].split(os.sep)[-1], x, y0
+        )
     """
 
     parameters: List[str]
@@ -75,13 +89,13 @@ class Individualization(object):
     def _get_tpm(self, gene: str, id: str) -> float:
         return self.tpm_rle_postComBat.at[gene, id]
 
-    def _incorporate_gene_expression_data(
+    def _calculate_weighted_sum(
         self,
         id: str,
         x: List[float],
     ) -> Dict[str, float]:
         """
-        Incorporate gene expression data in the model.
+        Incorporate gene expression levels in the model.
 
         Parameters
         ----------
@@ -93,18 +107,23 @@ class Individualization(object):
 
         Returns
         -------
-        expression_levels : Dict[str, float]
-            Estimated levels after incorporating transcriptomic data.
+        weighted_sum : Dict[str, float]
+            Estimated protein levels after incorporating transcriptomic data.
         """
-        expression_levels = dict.fromkeys(self.structure, 0.0)
+        weighted_sum = dict.fromkeys(self.structure, 0.0)
         for (protein, genes) in self.structure.items():
             for gene in genes:
-                expression_levels[protein] += x[
+                weighted_sum[protein] += x[
                     self.parameters.index(self.prefix + gene)
                 ] * self._get_tpm(gene, id)
-        return expression_levels
+        return weighted_sum
 
-    def as_initial_condition(self, id: str, x: List[float], y0: List[float]) -> List[float]:
+    def as_initial_condition(
+        self,
+        id: str,
+        x: List[float],
+        y0: List[float],
+    ) -> List[float]:
         """
         Gene expression levels are incorporated as initial conditions.
 
@@ -124,9 +143,9 @@ class Individualization(object):
         y0 (individualized) : List[float]
             Cell-line- or patient-specific initial conditions.
         """
-        expression_levels = self._incorporate_gene_expression_data(id, x)
+        weighted_sum = self._calculate_weighted_sum(id, x)
         for protein in self.structure.keys():
-            y0[self.species.index(protein)] *= expression_levels[protein]
+            y0[self.species.index(protein)] *= weighted_sum[protein]
         return y0
 
     def as_maximal_transcription_rate(
@@ -134,11 +153,11 @@ class Individualization(object):
         id: str,
         x: List[float],
         param_name: str,
-        protein_name: str,
+        protein: str,
     ) -> float:
         """
         Gene expression levels are incorporated as maximal transcription rates.
         """
-        expression_levels = self._incorporate_gene_expression_data(id, x)
-        x[self.parameters.index(param_name)] *= expression_levels[protein_name]
+        weighted_sum = self._calculate_weighted_sum(id, x)
+        x[self.parameters.index(param_name)] *= weighted_sum[protein]
         return x[self.parameters.index(param_name)]
