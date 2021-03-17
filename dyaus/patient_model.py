@@ -11,7 +11,7 @@ from tqdm import tqdm
 @dataclass
 class InSilico(object):
     """
-    In silico patient models.
+    Patient-specific in silico models.
 
     Attributes
     ----------
