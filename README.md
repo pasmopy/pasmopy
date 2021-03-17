@@ -12,21 +12,23 @@
 ![overview](https://raw.githubusercontent.com/dyaus-dev/dyaus/master/resources/images/overview.png)
 -->
 
-Dyaus is available on PyPI and can be installed via `pip install dyaus`.
+The dyaus core library is available on PyPI and can be installed via `pip install dyaus`.
 
-## Features
+### Features
 
-- Data integration
-- Model construction
-- Parameter estimation
+Dyaus is compatible with [biomass](https://github.com/okadalabipr/biomass) and offers the following features:
+
+- Transcriptomic data integration
+- Development of mechanistic models
+- Parameter estimation of ODE models
 - Personalized predictions of patient outcomes
 - Cancer subtype classification
 
-## Author
+### Author
 
 - Hiroaki Imoto
 - Sawa Yamashiro
 
-## License
+### License
 
 [Apache-2.0 License](https://opensource.org/licenses/Apache-2.0)
