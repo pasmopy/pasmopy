@@ -25,52 +25,6 @@ class Individualization(object):
 
     prefix : str (default: "w_")
         Prefix of weighting factors on gene expression levels.
-
-    Examples
-    --------
-    # set_search_param.py
-    incorporating_gene_expression_levels = Individualization(
-        parameters=C.NAMES,
-        species=V.NAMES,
-        tpm_values="transcriptomic_data/TPM_RLE_postComBat.csv",
-        structure={
-            "ErbB1": ["EGFR"],
-            "ErbB2": ["ERBB2"],
-            "ErbB3": ["ERBB3"],
-            "ErbB4": ["ERBB4"],
-            "Grb2": ["GRB2"],
-            "Shc": ["SHC1", "SHC2", "SHC3", "SHC4"],
-            "RasGAP": ["RASA1", "RASA2", "RASA3"],
-            "PI3K": ["PIK3CA", "PIK3CB", "PIK3CD", "PIK3CG"],
-            "PTEN": ["PTEN"],
-            "SOS": ["SOS1", "SOS2"],
-            "Gab1": ["GAB1"],
-            "RasGDP": ["HRAS", "KRAS", "NRAS"],
-            "Raf": ["ARAF", "BRAF", "RAF1"],
-            "MEK": ["MAP2K1", "MAP2K2"],
-            "ERK": ["MAPK1", "MAPK3"],
-            "Akt": ["AKT1", "AKT2"],
-            "PTP1B": ["PTPN1"],
-            "GSK3b": ["GSK3B"],
-            "DUSP": ["DUSP5", "DUSP6", "DUSP7"],
-            "cMyc": ["MYC"],
-        },
-    )
-
-    ...
-
-    def update(self, indiv):
-        x = param_values()
-        y0 = initial_values()
-
-        for i, j in enumerate(self.idx_params):
-            x[j] = indiv[i]
-        for i, j in enumerate(self.idx_initials):
-            y0[j] = indiv[i + len(self.idx_params)]
-
-        y0 = incorporating_gene_expression_levels.as_initial_condition(
-            __path__[0].split(os.sep)[-1], x, y0
-        )
     """
 
     parameters: List[str]
