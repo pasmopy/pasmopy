@@ -9,7 +9,7 @@ except ImportError:
     __author__ = ", ".join(["Hiroaki Imoto", "Sawa Yamashiro"])
     __maintainer__ = "Hiroaki Imoto"
     __email__ = "himoto@protein.osaka-u.ac.jp"
-    __version__ = "0.1.0"
+    __version__ = "0.0.1"
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
         author_email=__email__,
         maintainer=__maintainer__,
         maintainer_email=__email__,
-        url="https://github.com/okadalabipr/dyaus",
+        url="https://github.com/dyaus-dev/dyaus",
         packages=find_packages(exclude=["tests"]),
         install_requires=[
             l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()
@@ -47,8 +47,11 @@ def main():
             "systems",
             "biology",
             "cancer",
+            "subtype",
+            "classification",
             "modeling",
             "simulation",
+            "transcriptome",
             "ccle",
             "tcga",
         ],
