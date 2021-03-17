@@ -5,6 +5,15 @@ from typing import List, NamedTuple, Optional
 import pandas as pd
 
 
+@dataclass
+class TCGA(object):
+    """
+    The Cancer Genome Atlas (TCGA).
+    """
+
+    pass
+
+
 class DrugResponse(NamedTuple):
     ccle_cell_line_name: str
     primary_cell_line_name: str
@@ -55,7 +64,7 @@ class CCLE(object):
     def drug_response_data(self) -> pd.DataFrame:
         return self._drug_response_data
 
-    def to_transcriptomic_data(self):
+    def save_transcriptomic_data(self):
         os.makedirs("transcriptomic_data", exist_ok=True)
         self.gene_expression_data.to_csv("transcriptomic_data/CCLE_tpm_values.csv")
 
@@ -89,31 +98,22 @@ class CCLE(object):
             & (self.drug_response_data["Compound"].isin(compound))
         ]
         drug_response_info = []
-        for index in df.index:
+        for i in df.index:
             drug_response_info.append(
                 DrugResponse(
-                    df.at[index, "CCLE Cell Line Name"],
-                    df.at[index, "Primary Cell Line Name"],
-                    df.at[index, "Compound"],
-                    df.at[index, "Target"],
-                    [float(val) for val in df.at[index, "Doses (uM)"].split(",")],
-                    [float(val) for val in df.at[index, "Activity Data (median)"].split(",")],
-                    [float(val) for val in df.at[index, "Activity SD"].split(",")],
-                    df.at[index, "Num Data"],
-                    df.at[index, "FitType"],
-                    df.at[index, "EC50 (uM)"],
-                    df.at[index, "IC50 (uM)"],
-                    df.at[index, "Amax"],
-                    df.at[index, "ActArea"],
+                    df.at[i, "CCLE Cell Line Name"],
+                    df.at[i, "Primary Cell Line Name"],
+                    df.at[i, "Compound"],
+                    df.at[i, "Target"],
+                    [float(val) for val in df.at[i, "Doses (uM)"].split(",")],
+                    [float(val) for val in df.at[i, "Activity Data (median)"].split(",")],
+                    [float(val) for val in df.at[i, "Activity SD"].split(",")],
+                    df.at[i, "Num Data"],
+                    df.at[i, "FitType"],
+                    df.at[i, "EC50 (uM)"],
+                    df.at[i, "IC50 (uM)"],
+                    df.at[i, "Amax"],
+                    df.at[i, "ActArea"],
                 )
             )
         return drug_response_info
-
-
-@dataclass
-class TCGA(object):
-    """
-    The Cancer Genome Atlas (TCGA).
-    """
-
-    pass
