@@ -72,7 +72,7 @@ class Individualization(object):
                 ] * self._get_tpm(gene, id)
         return weighted_sum
 
-    def as_initial_condition(
+    def as_initial_conditions(
         self,
         id: str,
         x: List[float],
@@ -102,7 +102,7 @@ class Individualization(object):
             y0[self.species.index(protein)] *= weighted_sum[protein]
         return y0
 
-    def as_maximal_transcription_rate(
+    def as_reaction_rate(
         self,
         id: str,
         x: List[float],
@@ -110,7 +110,7 @@ class Individualization(object):
         protein: str,
     ) -> float:
         """
-        Gene expression levels are incorporated as maximal transcription rates.
+        Gene expression levels are incorporated as a reaction rate.
         """
         weighted_sum = self._calculate_weighted_sum(id, x)
         x[self.parameters.index(param_name)] *= weighted_sum[protein]
