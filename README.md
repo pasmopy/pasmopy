@@ -31,4 +31,4 @@ Dyaus is compatible with [biomass](https://github.com/okadalabipr/biomass) and o
 
 ### License
 
-[Apache-2.0 License](https://opensource.org/licenses/Apache-2.0)
+[Apache License 2.0](LICENSE)
