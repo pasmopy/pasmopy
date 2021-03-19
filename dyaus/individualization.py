@@ -72,6 +72,36 @@ class Individualization(object):
                 ] * self._get_tpm(gene, id)
         return weighted_sum
 
+    def as_reaction_rate(
+        self,
+        id: str,
+        x: List[float],
+        param_name: str,
+        protein: str,
+    ) -> float:
+        """
+        Gene expression levels are incorporated as a reaction rate.
+
+        Parameters
+        ----------
+        id : str
+            CCLE_ID or TCGA_ID.
+
+        param_name : str
+            Parameter incorporating gene_expression_data.
+
+        protein: str
+            Protein involved in the reaction.
+
+        Returns
+        -------
+        param_value : float
+        """
+        weighted_sum = self._calculate_weighted_sum(id, x)
+        param_value = x[self.parameters.index(param_name)]
+        param_value *= weighted_sum[protein]
+        return param_value
+
     def as_initial_conditions(
         self,
         id: str,
@@ -101,17 +131,3 @@ class Individualization(object):
         for protein in self.structure.keys():
             y0[self.species.index(protein)] *= weighted_sum[protein]
         return y0
-
-    def as_reaction_rate(
-        self,
-        id: str,
-        x: List[float],
-        param_name: str,
-        protein: str,
-    ) -> float:
-        """
-        Gene expression levels are incorporated as a reaction rate.
-        """
-        weighted_sum = self._calculate_weighted_sum(id, x)
-        x[self.parameters.index(param_name)] *= weighted_sum[protein]
-        return x[self.parameters.index(param_name)]
