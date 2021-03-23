@@ -87,6 +87,9 @@ class Individualization(object):
         id : str
             CCLE_ID or TCGA_ID.
 
+        x : List[float]
+            List of parameter values.
+
         param_name : str
             Parameter incorporating gene_expression_data.
 
