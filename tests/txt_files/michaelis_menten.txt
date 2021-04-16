@@ -1,0 +1,11 @@
+E binds S --> ES | kf=1050, kr=300 | E=0.01, S=10
+ES releases E and P | kf=15, kr=0
+
+# E + S <=> ES -> E + P
+
+@obs Enzyme = u[E]
+@obs Substrate = u[S]
+@obs Complex = u[ES]
+@obs Product = u[P]
+
+@sim tspan: [0, 100]
