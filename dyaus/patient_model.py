@@ -91,11 +91,11 @@ class PatientModelSimulations(InSilico):
 
     Attributes
     ----------
-    biomass_options : dict, optional
-        Arguments of biomass.run_simulation.
+    biomass_kwargs : dict, optional
+        Arguments to biomass.run_simulation.
     """
 
-    biomass_options: Optional[dict] = field(default=None)
+    biomass_kwargs: Optional[dict] = field(default=None)
 
     def _run_single_patient(self, patient: str) -> None:
         """
@@ -107,17 +107,17 @@ class PatientModelSimulations(InSilico):
             Name (ID) of each patient.
         """
 
-        options = self.biomass_options
-        if options is None:
-            options = {}
-        options.setdefault("viz_type", "average")
-        options.setdefault("show_all", False)
-        options.setdefault("stdev", True)
-        options.setdefault("save_format", "pdf")
-        options.setdefault("param_range", None)
+        kwargs = self.biomass_kwargs
+        if kwargs is None:
+            kwargs = {}
+        kwargs.setdefault("viz_type", "average")
+        kwargs.setdefault("show_all", False)
+        kwargs.setdefault("stdev", True)
+        kwargs.setdefault("save_format", "pdf")
+        kwargs.setdefault("param_range", None)
 
         biomass_model = self.import_model_package(patient.strip())
-        run_simulation(ModelObject(biomass_model.create()), **options)
+        run_simulation(ModelObject(biomass_model.create()), **kwargs)
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """
@@ -139,11 +139,11 @@ class PatientModelAnalyses(InSilico):
 
     Attributes
     ----------
-    biomass_options : dict, optional
-        Arguments of biomass.run_analysis.
+    biomass_kwargs : dict, optional
+        Arguments to biomass.run_analysis.
     """
 
-    biomass_options: Optional[dict] = field(default=None)
+    biomass_kwargs: Optional[dict] = field(default=None)
 
     def _run_single_patient(self, patient: str) -> None:
         """
@@ -155,16 +155,16 @@ class PatientModelAnalyses(InSilico):
             Name (ID) of each patient.
         """
 
-        options = self.biomass_options
-        if options is None:
-            options = {}
-        options.setdefault("target", "initial_condition")
-        options.setdefault("metric", "integral")
-        options.setdefault("style", "barplot")
-        options.setdefault("options", None)
+        kwargs = self.biomass_kwargs
+        if kwargs is None:
+            kwargs = {}
+        kwargs.setdefault("target", "initial_condition")
+        kwargs.setdefault("metric", "integral")
+        kwargs.setdefault("style", "barplot")
+        kwargs.setdefault("options", None)
 
         biomass_model = self.import_model_package(patient.strip())
-        run_analysis(ModelObject(biomass_model.create()), **options)
+        run_analysis(ModelObject(biomass_model.create()), **kwargs)
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """

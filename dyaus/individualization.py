@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import pandas as pd
 
@@ -23,6 +23,9 @@ class Individualization(object):
     structure : Dict[str, List[str]]
         Pairs of proteins and their related genes.
 
+    read_csv_kwargs : dict, optional
+        Arguments to pandas.read_csv.
+
     prefix : str (default: "w_")
         Prefix of weighting factors on gene expression levels.
     """
@@ -31,10 +34,16 @@ class Individualization(object):
     species: List[str]
     tpm_values: str
     structure: Dict[str, List[str]]
+    read_csv_kwargs: Optional[dict] = field(default=None)
     prefix: str = field(default="w_", init=False)
 
     def __post_init__(self) -> None:
-        self._tpm_rle_postComBat: pd.DataFrame = pd.read_csv(self.tpm_values, index_col=2)
+        kwargs = self.read_csv_kwargs
+        if kwargs is None:
+            kwargs = {}
+        kwargs.setdefault("index_col", 2)
+        self._tpm_rle_postComBat: pd.DataFrame = pd.read_csv(self.tpm_values, **kwargs)
+        del kwargs
 
     @property
     def tpm_rle_postComBat(self):
@@ -86,6 +95,9 @@ class Individualization(object):
         ----------
         id : str
             CCLE_ID or TCGA_ID.
+
+        x : List[float]
+            List of parameter values.
 
         param_name : str
             Parameter incorporating gene_expression_data.

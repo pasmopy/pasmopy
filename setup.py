@@ -1,4 +1,5 @@
 import sys
+import warnings
 from pathlib import Path
 
 from setuptools import find_packages, setup
@@ -15,7 +16,11 @@ except ImportError:
 def main():
     # Python version check.
     if sys.version_info[:2] < (3, 7):
-        sys.exit("Dyaus requires at least Python version 3.7")
+        raise RuntimeError("dyaus requires at least Python version 3.7")
+    elif sys.version_info[:2] >= (3, 9):
+        fmt = "Dyaus {} may not yet support Python {}.{}"
+        warnings.warn(fmt.format(__version__, *sys.version_info[:2]), RuntimeWarning)
+        del fmt
 
     setup(
         name="dyaus",
@@ -63,7 +68,6 @@ def main():
             "Programming Language :: Python :: 3",
             "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
-            "Programming Language :: Python :: 3.9",
             "Topic :: Scientific/Engineering",
             "Topic :: Scientific/Engineering :: Bio-Informatics",
             "Topic :: Scientific/Engineering :: Medical Science Apps.",
