@@ -334,7 +334,7 @@ class Text2Model(ReactionRules):
                         + "\n"
                     ).replace("x[C.", "p[C.")
             with open(
-                f"{self.name}_jl/set_search_param.jl",
+                os.path.join(f"{self.name}_jl", "set_search_param.jl"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -524,130 +524,134 @@ class Text2Model(ReactionRules):
             ) as f:
                 f.writelines(lines)
         else:
-            # observable.jl
-            lines = jl.OBSERVABLE.splitlines()
-            for line_num, line in enumerate(lines):
-                if "const observables = []" in line:
-                    lines[line_num] = "const observables = [\n"
-                    lines[line_num + 1] = (
-                        f'{self.indentation}"'
-                        + f'",\n{self.indentation}"'.join(
-                            [desc[0].strip() for desc in self.obs_desc]
-                        )
-                        + '",\n'
+            self._split_observables_julia()
+
+    def _split_observables_julia(self) -> None:
+        """
+        Create observable.jl, simulation.jl and experimental_data.jl
+        """
+        # observable.jl
+        lines = jl.OBSERVABLE.splitlines()
+        for line_num, line in enumerate(lines):
+            if "const observables = []" in line:
+                lines[line_num] = "const observables = [\n"
+                lines[line_num + 1] = (
+                    f'{self.indentation}"'
+                    + f'",\n{self.indentation}"'.join([desc[0].strip() for desc in self.obs_desc])
+                    + '",\n'
+                )
+                lines[line_num + 1] += "]\n"
+        with open(
+            os.path.join(f"{self.name}_jl", "observable.jl"),
+            encoding="utf-8",
+            mode="w",
+        ) as f:
+            f.write("\n".join(lines))
+        # simulation.jl
+        lines = jl.SIMULATION.splitlines()
+        for line_num, line in enumerate(lines):
+            if line.startswith("const t = collect(0.0:dt:100.0)"):
+                # Write interval of integration
+                if self.sim_tspan:
+                    lines[line_num] = "const t = collect({}:dt:{})".format(
+                        self.sim_tspan[0].strip(),
+                        self.sim_tspan[1].strip(),
                     )
-                    lines[line_num + 1] += "]\n"
-            with open(
-                f"{self.name}_jl/observable.jl",
-                encoding="utf-8",
-                mode="w",
-            ) as f:
-                f.write("\n".join(lines))
-            # simulation.jl
-            lines = jl.SIMULATION.splitlines()
-            for line_num, line in enumerate(lines):
-                if line.startswith("const t = collect(0.0:dt:100.0)"):
-                    # Write interval of integration
-                    if self.sim_tspan:
-                        lines[line_num] = "const t = collect({}:dt:{})".format(
-                            self.sim_tspan[0].strip(),
-                            self.sim_tspan[1].strip(),
-                        )
-                elif line.startswith("const conditions = []"):
-                    # Write sim.condition
-                    lines[line_num] = "const conditions = ["
-                    lines[line_num + 1] = (
-                        f'{self.indentation}"'
-                        + f'",\n{self.indentation}"'.join(
-                            [condition[0].strip() for condition in self.sim_conditions]
-                        )
-                        + '",\n'
+            elif line.startswith("const conditions = []"):
+                # Write sim.condition
+                lines[line_num] = "const conditions = ["
+                lines[line_num + 1] = (
+                    f'{self.indentation}"'
+                    + f'",\n{self.indentation}"'.join(
+                        [condition[0].strip() for condition in self.sim_conditions]
                     )
-                    lines[line_num + 1] += "]\n"
-                elif "# unperturbed steady state" in line:
-                    if self.sim_unperturbed:
+                    + '",\n'
+                )
+                lines[line_num + 1] += "]\n"
+            elif "# unperturbed steady state" in line:
+                if self.sim_unperturbed:
+                    lines[line_num + 1] = (
+                        self.indentation
+                        + f"\n{self.indentation}".join(
+                            c.strip() for c in self.sim_unperturbed.split(sep=";")
+                        )
+                        + "\n"
+                    )
+                    lines[line_num + 1] += (
+                        f"{self.indentation}u0 = get_steady_state(diffeq!, u0, p)\n"
+                        + f"{self.indentation}if isempty(u0)\n"
+                        + f"{2 * self.indentation}return false\n"
+                        + f"{self.indentation}end\n"
+                    )
+                    # pa: parameters
+                    # init: initial conditions
+                    lines[line_num + 1] = self._convert_names(
+                        line=lines[line_num + 1],
+                        p=re.findall(r"p\[(.*?)\]", self.sim_unperturbed),
+                        init=re.findall(r"init\[(.*?)\]", self.sim_unperturbed),
+                    )
+            elif "for (i, condition) in enumerate(conditions)" in line:
+                for i, condition in enumerate(self.sim_conditions):
+                    # Use ';' for adding description of each condition
+                    if i == 0:
                         lines[line_num + 1] = (
-                            self.indentation
-                            + f"\n{self.indentation}".join(
-                                c.strip() for c in self.sim_unperturbed.split(sep=";")
+                            3 * self.indentation
+                            + f'if condition == \'{condition[0].strip(" ")}\':\n'
+                            + 4 * self.indentation
+                            + f"\n{4 * self.indentation}".join(
+                                c.strip(" ") for c in condition[1].split(sep=";")
                             )
-                            + "\n"
+                            + ("\n\n" if len(self.sim_conditions) == 1 else "")
                         )
+                    else:
                         lines[line_num + 1] += (
-                            f"{self.indentation}u0 = get_steady_state(diffeq!, u0, p)\n"
-                            + f"{self.indentation}if isempty(u0)\n"
-                            + f"{2 * self.indentation}return false\n"
-                            + f"{self.indentation}end\n"
-                        )
-                        # pa: parameters
-                        # init: initial conditions
-                        lines[line_num + 1] = self._convert_names(
-                            line=lines[line_num + 1],
-                            p=re.findall(r"p\[(.*?)\]", self.sim_unperturbed),
-                            init=re.findall(r"init\[(.*?)\]", self.sim_unperturbed),
-                        )
-                elif "for (i, condition) in enumerate(conditions)" in line:
-                    for i, condition in enumerate(self.sim_conditions):
-                        # Use ';' for adding description of each condition
-                        if i == 0:
-                            lines[line_num + 1] = (
-                                3 * self.indentation
-                                + f'if condition == \'{condition[0].strip(" ")}\':\n'
-                                + 4 * self.indentation
-                                + f"\n{4 * self.indentation}".join(
-                                    c.strip(" ") for c in condition[1].split(sep=";")
-                                )
-                                + ("\n\n" if len(self.sim_conditions) == 1 else "")
+                            3 * self.indentation
+                            + f'elseif condition == "{condition[0].strip(" ")}"\n'
+                            + 4 * self.indentation
+                            + f"\n{4 * self.indentation}".join(
+                                c.strip(" ") for c in condition[1].split(sep=";")
                             )
-                        else:
-                            lines[line_num + 1] += (
-                                3 * self.indentation
-                                + f'elseif condition == "{condition[0].strip(" ")}"\n'
-                                + 4 * self.indentation
-                                + f"\n{4 * self.indentation}".join(
-                                    c.strip(" ") for c in condition[1].split(sep=";")
-                                )
-                                + f"\n{3 * self.indentation}end\n"
-                            )
-                        # pa: parameters
-                        # init: initial conditions
-                        lines[line_num + 1] = self._convert_names(
-                            line=lines[line_num + 1],
-                            p=re.findall(r"p\[(.*?)\]", condition[1]),
-                            init=re.findall(r"init\[(.*?)\]", condition[1]),
+                            + f"\n{3 * self.indentation}end\n"
                         )
-                elif "if sol === nothing" in line:
-                    lines[line_num + 4] = ""  # initialization (default: # line_num + 4)
-                    for desc in self.obs_desc:
-                        lines[line_num + 4] += (
-                            "{}".format(4 * self.indentation)
-                            + "simulations"
-                            + f'[observables_index("{desc[0].strip()}"), j, i] = (\n'
-                            + f"{5 * self.indentation}"
-                            + desc[1].strip(" ").strip()
-                        )
-                        # pa: parameters
-                        # sp: species
-                        lines[line_num + 4] = self._convert_names(
-                            line=lines[line_num + 4],
-                            p=re.findall(r"p\[(.*?)\]", desc[1]),
-                            u=re.findall(r"u\[(.*?)\]", desc[1]),
-                        )
-                        lines[line_num + 4] += "\n{}".format(4 * self.indentation + ")\n")
-            with open(
-                f"{self.name}_jl/simulation.jl",
-                encoding="utf-8",
-                mode="w",
-            ) as f:
-                f.write("\n".join(lines))
-            # experimental_data.jl
-            lines = jl.EXPERIMENTAL_DATA.splitlines()
-            with open(
-                f"{self.name}_jl/experimental_data.jl",
-                encoding="utf-8",
-                mode="w",
-            ) as f:
-                f.write("\n".join(lines))
+                    # pa: parameters
+                    # init: initial conditions
+                    lines[line_num + 1] = self._convert_names(
+                        line=lines[line_num + 1],
+                        p=re.findall(r"p\[(.*?)\]", condition[1]),
+                        init=re.findall(r"init\[(.*?)\]", condition[1]),
+                    )
+            elif "if sol === nothing" in line:
+                lines[line_num + 4] = ""  # initialization (default: # line_num + 4)
+                for desc in self.obs_desc:
+                    lines[line_num + 4] += (
+                        "{}".format(4 * self.indentation)
+                        + "simulations"
+                        + f'[observables_index("{desc[0].strip()}"), j, i] = (\n'
+                        + f"{5 * self.indentation}"
+                        + desc[1].strip(" ").strip()
+                    )
+                    # pa: parameters
+                    # sp: species
+                    lines[line_num + 4] = self._convert_names(
+                        line=lines[line_num + 4],
+                        p=re.findall(r"p\[(.*?)\]", desc[1]),
+                        u=re.findall(r"u\[(.*?)\]", desc[1]),
+                    )
+                    lines[line_num + 4] += "\n{}".format(4 * self.indentation + ")\n")
+        with open(
+            os.path.join(f"{self.name}_jl", "simulation.jl"),
+            encoding="utf-8",
+            mode="w",
+        ) as f:
+            f.write("\n".join(lines))
+        # experimental_data.jl
+        lines = jl.EXPERIMENTAL_DATA.splitlines()
+        with open(
+            os.path.join(f"{self.name}_jl", "experimental_data.jl"),
+            encoding="utf-8",
+            mode="w",
+        ) as f:
+            f.write("\n".join(lines))
 
     def to_biomass(self, overwrite: bool = False) -> None:
         """
@@ -675,7 +679,7 @@ class Text2Model(ReactionRules):
                 f"{self.name}",
             )
         else:
-            os.makedirs(f"{self.name}_jl/name2idx")
+            os.makedirs(os.path.join(f"{self.name}_jl", "name2idx"))
 
         self.create_ode()
         self.check_species_names()
@@ -688,7 +692,7 @@ class Text2Model(ReactionRules):
             # Create fitness.jl
             lines = jl.FITNESS.splitlines()
             with open(
-                f"{self.name}_jl/fitness.jl",
+                os.path.join(f"{self.name}_jl", "fitness.jl"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -711,7 +715,7 @@ class Text2Model(ReactionRules):
             The number of rate equations in the model.
 
         """
-        os.makedirs("markdown", exist_ok=True)
+        os.makedirs(os.path.join("markdown", f"{self.name.split(os.sep)[-1]}"), exist_ok=True)
         self.create_ode()
         self.check_species_names()
         with open(self.input_txt, encoding="utf-8") as f:
@@ -745,7 +749,7 @@ class Text2Model(ReactionRules):
                     + "\n"
                 )
         with open(
-            os.path.join("markdown", f"{self.name}_rate_equation.md"),
+            os.path.join("markdown", f"{self.name.split(os.sep)[-1]}", "rate_equation.md"),
             encoding="utf-8",
             mode="w",
         ) as f:
@@ -775,7 +779,7 @@ class Text2Model(ReactionRules):
                     )
             differential_equations_formatted[i] = eq + "|\n"
         with open(
-            os.path.join("markdown", f"{self.name}_differential_equation.md"),
+            os.path.join("markdown", f"{self.name.split(os.sep)[-1]}", "differential_equation.md"),
             encoding="utf-8",
             mode="w",
         ) as f:

@@ -91,7 +91,29 @@ def test_run_simulation():
 
 
 def test_text2markdown():
-    pass
+    for model in ["michaelis_menten", "Kholodenko_JBC_1999"]:
+        if model == "michaelis_menten":
+            mm_kinetics = Text2Model(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    "txt_files",
+                    f"{model}.txt",
+                )
+            )
+            mm_kinetics.register_word("is_dissociated", "releases")
+            mm_kinetics.to_markdown(n_reaction=2)
+        elif model == "Kholodenko_JBC_1999":
+            mapk_cascade = Text2Model(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    "txt_files",
+                    f"{model}.txt",
+                )
+            )
+            mapk_cascade.to_markdown(n_reaction=25)
+        assert os.path.isfile(os.path.join("markdown", model, "rate_equation.md"))
+        assert os.path.isfile(os.path.join("markdown", model, "differential_equation.md"))
+        shutil.rmtree("markdown")
 
 
 def test_julia_models():
