@@ -506,8 +506,8 @@ class Text2Model(ReactionRules):
                             + f"{5 * self.indentation}"
                             + desc[1].strip(" ").strip()
                         )
-                        # pa: parameters
-                        # sp: species
+                        # p: parameters
+                        # u: species
                         lines[line_num + 3] = self._convert_names(
                             line=lines[line_num + 3],
                             p=re.findall(r"p\[(.*?)\]", desc[1]),
@@ -583,7 +583,7 @@ class Text2Model(ReactionRules):
                         + f"{2 * self.indentation}return false\n"
                         + f"{self.indentation}end\n"
                     )
-                    # pa: parameters
+                    # p: parameters
                     # init: initial conditions
                     lines[line_num + 1] = self._convert_names(
                         line=lines[line_num + 1],
@@ -613,7 +613,7 @@ class Text2Model(ReactionRules):
                             )
                             + f"\n{3 * self.indentation}end\n"
                         )
-                    # pa: parameters
+                    # p: parameters
                     # init: initial conditions
                     lines[line_num + 1] = self._convert_names(
                         line=lines[line_num + 1],
@@ -630,8 +630,8 @@ class Text2Model(ReactionRules):
                         + f"{5 * self.indentation}"
                         + desc[1].strip(" ").strip()
                     )
-                    # pa: parameters
-                    # sp: species
+                    # p: parameters
+                    # u: species
                     lines[line_num + 4] = self._convert_names(
                         line=lines[line_num + 4],
                         p=re.findall(r"p\[(.*?)\]", desc[1]),

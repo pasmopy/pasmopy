@@ -20,7 +20,7 @@ class UnregisteredRule(NamedTuple):
 
 @dataclass
 class ReactionRules(object):
-    """Create an executable ODE model from a text file.
+    """Create an executable biochemical model from text.
 
     reaction | kinetic constants | initial conditions
 
@@ -201,7 +201,7 @@ class ReactionRules(object):
         Set model parameters.
         """
         for p_name in args:
-            if not p_name + f"{line_num:d}" in self.parameters:
+            if p_name + f"{line_num:d}" not in self.parameters:
                 self.parameters.append(p_name + f"{line_num:d}")
 
     def _set_species(self, *args: str) -> None:
