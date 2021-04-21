@@ -17,14 +17,14 @@ def test_preprocessing():
         if os.path.isdir(
             os.path.join(
                 os.path.dirname(__file__),
-                "txt_files",
+                "text_files",
                 model,
             )
         ):
             shutil.rmtree(
                 os.path.join(
                     os.path.dirname(__file__),
-                    "txt_files",
+                    "text_files",
                     model,
                 )
             )
@@ -35,14 +35,14 @@ def test_text2model():
         if os.path.isdir(
             os.path.join(
                 os.path.dirname(__file__),
-                "txt_files",
+                "text_files",
                 model,
             )
         ):
             shutil.rmtree(
                 os.path.join(
                     os.path.dirname(__file__),
-                    "txt_files",
+                    "text_files",
                     model,
                 )
             )
@@ -51,7 +51,7 @@ def test_text2model():
                 mm_kinetics = Text2Model(
                     os.path.join(
                         os.path.dirname(__file__),
-                        "txt_files",
+                        "text_files",
                         f"{model}.txt",
                     ),
                     lang=lang,
@@ -62,7 +62,7 @@ def test_text2model():
                 mapk_cascade = Text2Model(
                     os.path.join(
                         os.path.dirname(__file__),
-                        "txt_files",
+                        "text_files",
                         f"{model}.txt",
                     ),
                     lang=lang,
@@ -72,14 +72,14 @@ def test_text2model():
 
 def test_run_simulation():
     try:
-        from .txt_files import Kholodenko_JBC_1999, michaelis_menten
+        from .text_files import Kholodenko_JBC_1999, michaelis_menten
 
         for model in ["michaelis_menten", "Kholodenko_JBC_1999"]:
             run_simulation(eval(f"{model}.create()"), viz_type="original")
             simulated_values = np.load(
                 os.path.join(
                     os.path.dirname(__file__),
-                    "txt_files",
+                    "text_files",
                     model,
                     "simulation_data",
                     "simulations_original.npy",
@@ -96,7 +96,7 @@ def test_text2markdown():
             mm_kinetics = Text2Model(
                 os.path.join(
                     os.path.dirname(__file__),
-                    "txt_files",
+                    "text_files",
                     f"{model}.txt",
                 )
             )
@@ -106,7 +106,7 @@ def test_text2markdown():
             mapk_cascade = Text2Model(
                 os.path.join(
                     os.path.dirname(__file__),
-                    "txt_files",
+                    "text_files",
                     f"{model}.txt",
                 )
             )
@@ -132,7 +132,7 @@ def test_julia_models():
             assert os.path.isfile(
                 os.path.join(
                     os.path.dirname(__file__),
-                    "txt_files",
+                    "text_files",
                     f"{model}_jl",
                     file,
                 )
@@ -149,14 +149,14 @@ def test_cleanup():
         assert os.path.isdir(
             os.path.join(
                 os.path.dirname(__file__),
-                "txt_files",
+                "text_files",
                 model,
             )
         )
         shutil.rmtree(
             os.path.join(
                 os.path.dirname(__file__),
-                "txt_files",
+                "text_files",
                 model,
             )
         )
