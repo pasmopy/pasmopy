@@ -653,8 +653,10 @@ class Text2Model(ReactionRules):
         ) as f:
             f.write("\n".join(lines))
 
-    def to_biomass(self, overwrite: bool = False) -> None:
+    def to_biomass_model(self, overwrite: bool = False) -> None:
         """
+        Convert text to a biomass-formatted model.
+
         Parameters
         ----------
         overwrite : bool (defauld: False)
