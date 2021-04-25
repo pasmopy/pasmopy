@@ -160,7 +160,7 @@ class PatientModelAnalyses(InSilico):
             kwargs = {}
         kwargs.setdefault("target", "initial_condition")
         kwargs.setdefault("metric", "integral")
-        kwargs.setdefault("style", "barplot")
+        kwargs.setdefault("style", "heatmap")
         kwargs.setdefault("options", None)
 
         biomass_model = self.import_model_package(patient.strip())

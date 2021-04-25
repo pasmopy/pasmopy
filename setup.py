@@ -56,8 +56,6 @@ def main():
             "patient",
             "modeling",
             "simulation",
-            "ccle",
-            "tcga",
         ],
         classifiers=[
             "Intended Audience :: Science/Research",
