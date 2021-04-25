@@ -53,12 +53,12 @@ class Text2Model(ReactionRules):
             for line_num, line in enumerate(lines):
                 if line.startswith("NAMES: List[str] = []"):
                     lines[line_num] = "NAMES: List[str] = [\n"
-                    lines[line_num + 1] = (
+                    lines[line_num] += (
                         f"{self.indentation}'"
                         + f"',\n{self.indentation}'".join(self.parameters)
                         + "',\n"
                     )
-                    lines[line_num + 1] += "]\n"
+                    lines[line_num] += "]\n"
             with open(
                 os.path.join(
                     f"{self.name}",
@@ -74,12 +74,12 @@ class Text2Model(ReactionRules):
             for line_num, line in enumerate(lines):
                 if line.startswith("const NAMES = []"):
                     lines[line_num] = "const NAMES = [\n"
-                    lines[line_num + 1] = (
+                    lines[line_num] += (
                         f'{self.indentation}"'
                         + f'",\n{self.indentation}"'.join(self.parameters)
                         + '",\n'
                     )
-                    lines[line_num + 1] += "]\n"
+                    lines[line_num] += "]\n"
             with open(
                 os.path.join(
                     f"{self.name}_jl",
@@ -110,12 +110,12 @@ class Text2Model(ReactionRules):
             for line_num, line in enumerate(lines):
                 if line.startswith("NAMES: List[str] = []"):
                     lines[line_num] = "NAMES: List[str] = [\n"
-                    lines[line_num + 1] = (
+                    lines[line_num] += (
                         "{}'".format(self.indentation)
                         + "',\n{}'".format(self.indentation).join(self.species)
                         + "',\n"
                     )
-                    lines[line_num + 1] += "]\n"
+                    lines[line_num] += "]\n"
             with open(
                 os.path.join(
                     f"{self.name}",
@@ -131,12 +131,12 @@ class Text2Model(ReactionRules):
             for line_num, line in enumerate(lines):
                 if line.startswith("const NAMES = []"):
                     lines[line_num] = "const NAMES = [\n"
-                    lines[line_num + 1] = (
+                    lines[line_num] += (
                         '{}"'.format(self.indentation)
                         + '",\n{}"'.format(self.indentation).join(self.species)
                         + '",\n'
                     )
-                    lines[line_num + 1] += "]\n"
+                    lines[line_num] += "]\n"
             with open(
                 os.path.join(
                     f"{self.name}_jl",
@@ -596,7 +596,7 @@ class Text2Model(ReactionRules):
                     if i == 0:
                         lines[line_num + 1] = (
                             3 * self.indentation
-                            + f'if condition == \'{condition[0].strip(" ")}\':\n'
+                            + f'if condition == "{condition[0].strip(" ")}"\n'
                             + 4 * self.indentation
                             + f"\n{4 * self.indentation}".join(
                                 c.strip(" ") for c in condition[1].split(sep=";")
