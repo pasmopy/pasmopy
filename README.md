@@ -18,7 +18,6 @@ The dyaus core library is available on PyPI and can be installed via `pip instal
 
 Dyaus is compatible with [biomass](https://github.com/okadalabipr/biomass) and offers the following features:
 
-- Transcriptomic data integration
 - Construction of mechanistic models from text
 - Parameter estimation of ODE models
 - Personalized predictions of patient outcomes
