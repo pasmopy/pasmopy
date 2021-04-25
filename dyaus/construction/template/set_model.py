@@ -21,7 +21,7 @@ class DifferentialEquation(object):
 
 def param_values():
     """Parameter values"""
-    x = [0] * C.NUM
+    x = [1] * C.NUM
 
     return x
 
