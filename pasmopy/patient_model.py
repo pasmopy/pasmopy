@@ -97,11 +97,11 @@ class PatientModelSimulations(InSilico):
 
     Attributes
     ----------
-    biomass_kwargs : dict, optional
-        Arguments to biomass.run_simulation.
+    biomass_kws : dict, optional
+        Keyword arguments to pass to biomass.run_simulation.
     """
 
-    biomass_kwargs: Optional[dict] = field(default=None)
+    biomass_kws: Optional[dict] = field(default=None)
 
     def _run_single_patient(self, patient: str) -> None:
         """
@@ -113,7 +113,7 @@ class PatientModelSimulations(InSilico):
             Name (ID) of each patient.
         """
 
-        kwargs = self.biomass_kwargs
+        kwargs = self.biomass_kws
         if kwargs is None:
             kwargs = {}
         kwargs.setdefault("viz_type", "average")
@@ -280,11 +280,11 @@ class PatientModelAnalyses(InSilico):
 
     Attributes
     ----------
-    biomass_kwargs : dict, optional
-        Arguments to biomass.run_analysis.
+    biomass_kws : dict, optional
+        Keyword arguments to pass to biomass.run_analysis.
     """
 
-    biomass_kwargs: Optional[dict] = field(default=None)
+    biomass_kws: Optional[dict] = field(default=None)
 
     def _run_single_patient(self, patient: str) -> None:
         """
@@ -296,7 +296,7 @@ class PatientModelAnalyses(InSilico):
             Name (ID) of each patient.
         """
 
-        kwargs = self.biomass_kwargs
+        kwargs = self.biomass_kws
         if kwargs is None:
             kwargs = {}
         kwargs.setdefault("target", "initial_condition")

@@ -1,4 +1,4 @@
-"""Dynamics-driven automatic subtyping"""
+"""Patient-Specific Modeling in Python"""
 
 __author__ = ", ".join(["Hiroaki Imoto", "Sawa Yamashiro"])
 __maintainer__ = "Hiroaki Imoto"

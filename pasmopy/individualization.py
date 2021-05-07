@@ -20,11 +20,11 @@ class Individualization(object):
     tpm_values : str
         Path to (1) RLE-normalized and (2) post ComBat TPM values (CSV-formatted).
 
-    structure : Dict[str, List[str]]
+    gene_expression : Dict[str, List[str]]
         Pairs of proteins and their related genes.
 
-    read_csv_kwargs : dict, optional
-        Arguments to pandas.read_csv.
+    read_csv_kws : dict, optional
+        Keyword arguments to pass to pandas.read_csv.
 
     prefix : str (default: "w_")
         Prefix of weighting factors on gene expression levels.
@@ -33,17 +33,15 @@ class Individualization(object):
     parameters: List[str]
     species: List[str]
     tpm_values: str
-    structure: Dict[str, List[str]]
-    read_csv_kwargs: Optional[dict] = field(default=None)
+    gene_expression: Dict[str, List[str]]
+    read_csv_kws: Optional[dict] = field(default=None)
     prefix: str = field(default="w_", init=False)
 
     def __post_init__(self) -> None:
-        kwargs = self.read_csv_kwargs
+        kwargs = self.read_csv_kws
         if kwargs is None:
             kwargs = {}
-        kwargs.setdefault("index_col", 2)
         self._tpm_rle_postComBat: pd.DataFrame = pd.read_csv(self.tpm_values, **kwargs)
-        del kwargs
 
     @property
     def tpm_rle_postComBat(self):
@@ -73,8 +71,8 @@ class Individualization(object):
         weighted_sum : Dict[str, float]
             Estimated protein levels after incorporating transcriptomic data.
         """
-        weighted_sum = dict.fromkeys(self.structure, 0.0)
-        for (protein, genes) in self.structure.items():
+        weighted_sum = dict.fromkeys(self.gene_expression, 0.0)
+        for (protein, genes) in self.gene_expression.items():
             for gene in genes:
                 weighted_sum[protein] += x[
                     self.parameters.index(self.prefix + gene)
@@ -140,6 +138,6 @@ class Individualization(object):
             Cell-line- or patient-specific initial conditions.
         """
         weighted_sum = self._calculate_weighted_sum(id, x)
-        for protein in self.structure.keys():
+        for protein in self.gene_expression.keys():
             y0[self.species.index(protein)] *= weighted_sum[protein]
         return y0

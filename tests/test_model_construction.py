@@ -3,8 +3,7 @@ import shutil
 
 import numpy as np
 from biomass import run_simulation
-
-from dyaus import Text2Model
+from pasmopy import Text2Model
 
 
 def test_preprocessing():
