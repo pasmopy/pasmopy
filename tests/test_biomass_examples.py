@@ -1,4 +1,4 @@
-from dyaus import PatientModelSimulations
+from pasmopy import PatientModelSimulations
 
 
 class BiomassExamples(PatientModelSimulations):
@@ -16,6 +16,6 @@ def test_biomass_examples():
     biomass_examples = BiomassExamples(
         "biomass.models",
         model_list,
-        biomass_kwargs={"viz_type": "original"},
+        biomass_kws={"viz_type": "original"},
     )
     assert biomass_examples.run() is None
