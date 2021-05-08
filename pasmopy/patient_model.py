@@ -146,7 +146,7 @@ class PatientModelSimulations(InSilico):
             response_characteristics = np.max(time_course_data)
         elif metric.lower() == "auc":
             response_characteristics = simps(time_course_data)
-        elif metric.lower == "droprate":
+        elif metric.lower() == "droprate":
             response_characteristics = (np.max(time_course_data) - time_course_data[-1]) / (
                 len(time_course_data) - np.argmax(time_course_data)
             )
