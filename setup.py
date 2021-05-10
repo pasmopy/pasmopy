@@ -5,7 +5,7 @@ from pathlib import Path
 from setuptools import find_packages, setup
 
 try:
-    from dyaus import __author__, __email__, __maintainer__, __version__
+    from pasmopy import __author__, __email__, __maintainer__, __version__
 except ImportError:
     __author__ = ", ".join(["Hiroaki Imoto", "Sawa Yamashiro"])
     __maintainer__ = "Hiroaki Imoto"
@@ -16,16 +16,15 @@ except ImportError:
 def main():
     # Python version check.
     if sys.version_info[:2] < (3, 7):
-        raise RuntimeError("dyaus requires at least Python version 3.7")
-    elif sys.version_info[:2] >= (3, 9):
-        fmt = "Dyaus {} may not yet support Python {}.{}"
+        raise RuntimeError("Pasmopy requires at least Python version 3.7")
+    elif sys.version_info[:2] >= (3, 10):
+        fmt = "Pasmopy {} may not yet support Python {}.{}"
         warnings.warn(fmt.format(__version__, *sys.version_info[:2]), RuntimeWarning)
-        del fmt
 
     setup(
-        name="dyaus",
+        name="pasmopy",
         version=__version__,
-        description="Dynamics-driven automatic subtyping",
+        description="Patient-Specific Modeling in Python",
         long_description=Path("README.md").read_text("utf-8"),
         long_description_content_type="text/markdown",
         license="Apache 2.0",
@@ -33,7 +32,7 @@ def main():
         author_email=__email__,
         maintainer=__maintainer__,
         maintainer_email=__email__,
-        url="https://github.com/dyaus-dev/dyaus",
+        url="https://github.com/pasmopy/pasmopy",
         packages=find_packages(exclude=["tests"]),
         install_requires=[
             l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()
@@ -56,8 +55,6 @@ def main():
             "patient",
             "modeling",
             "simulation",
-            "ccle",
-            "tcga",
         ],
         classifiers=[
             "Intended Audience :: Science/Research",
@@ -68,6 +65,7 @@ def main():
             "Programming Language :: Python :: 3",
             "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: 3.9",
             "Topic :: Scientific/Engineering",
             "Topic :: Scientific/Engineering :: Bio-Informatics",
             "Topic :: Scientific/Engineering :: Medical Science Apps.",

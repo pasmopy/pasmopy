@@ -1,0 +1,28 @@
+from typing import List
+
+PREPOSITIONS: List[str] = [
+    " to",
+    " for",
+    " from",
+    " up",
+    " down",
+    " in",
+    " on",
+    " at",
+    " off",
+    " into",
+    " around",
+    " among",
+    " between",
+    " of",
+    " over",
+    " above",
+    " below",
+    " under",
+    " through",
+    " across",
+    " along",
+    " near",
+    " by",
+    " beside",
+]
