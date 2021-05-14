@@ -3,13 +3,12 @@ import multiprocessing
 import os
 import platform
 from dataclasses import dataclass, field
-from importlib import import_module
-from typing import Any, Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from biomass import ModelObject, run_analysis, run_simulation
+from biomass import Model, run_analysis, run_simulation
 from scipy.integrate import simps
 from tqdm import tqdm
 
@@ -38,26 +37,6 @@ class InSilico(object):
         duplicate = [patient for patient in set(self.patients) if self.patients.count(patient) > 1]
         if duplicate:
             raise NameError(f"Duplicate patient: {', '.join(duplicate)}")
-
-    def import_model_package(self, patient: str) -> Any:
-        """
-        Import biomass-formatted model package.
-
-        Parameters
-        ----------
-        patient : str
-            Name (ID) of each patient.
-
-        Returns
-        -------
-        biomass_model : module
-            Patient-specific BioMASS model.
-        """
-        try:
-            biomass_model = import_module(".".join([self.path_to_models, patient]))
-            return biomass_model
-        except ImportError:
-            print(f"cannot import {patient.strip()} from {self.path_to_models}.")
 
     def parallel_execute(
         self,
@@ -122,8 +101,8 @@ class PatientModelSimulations(InSilico):
         kwargs.setdefault("save_format", "pdf")
         kwargs.setdefault("param_range", None)
 
-        biomass_model = self.import_model_package(patient.strip())
-        run_simulation(ModelObject(biomass_model.create()), **kwargs)
+        model = Model(".".join([self.path_to_models, patient.strip()])).create()
+        run_simulation(model, **kwargs)
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """
@@ -178,8 +157,9 @@ class PatientModelSimulations(InSilico):
                 writer.writerow(header)
 
                 for patient in self.patients:
-                    biomass_model = self.import_model_package(patient.strip())
-                    patient_specific = biomass_model.create()
+                    patient_specific = Model(
+                        ".".join([self.path_to_models, patient.strip()])
+                    ).create()
                     all_data = np.load(
                         os.path.join(
                             patient_specific.path,
@@ -237,7 +217,7 @@ class PatientModelSimulations(InSilico):
         --------
         >>> with open ("models/breast/sample_names.txt", mode="r") as f:
                 TCGA_ID = f.read().splitlines()
-        >>> from dyaus import PatientModelSimulations
+        >>> from pasmopy import PatientModelSimulations
         >>> simulations = PatientModelSimulations("models.breast", TCGA_ID)
         >>> simulations.subtyping(
                 "subtype_classification.pdf",
@@ -304,8 +284,8 @@ class PatientModelAnalyses(InSilico):
         kwargs.setdefault("style", "heatmap")
         kwargs.setdefault("options", None)
 
-        biomass_model = self.import_model_package(patient.strip())
-        run_analysis(ModelObject(biomass_model.create()), **kwargs)
+        model = Model(".".join([self.path_to_models, patient.strip()])).create()
+        run_analysis(model, **kwargs)
 
     def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
         """

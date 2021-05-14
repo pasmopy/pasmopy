@@ -1,8 +1,10 @@
 import os
 import shutil
+from typing import Callable
 
 import numpy as np
-from biomass import run_simulation
+from biomass import Model, run_simulation
+
 from pasmopy import Text2Model
 
 
@@ -73,13 +75,17 @@ def test_run_simulation():
     try:
         from .text_files import Kholodenko_JBC_1999, michaelis_menten
 
-        for model in ["michaelis_menten", "Kholodenko_JBC_1999"]:
-            run_simulation(eval(f"{model}.create()"), viz_type="original")
+        _packaging: Callable[[str], str] = lambda model_name: ".".join(
+            ["tests.text_files", model_name]
+        )
+        for model_name in ["Kholodenko_JBC_1999", "michaelis_menten"]:
+            model = Model(_packaging(model_name)).create()
+            run_simulation(model, viz_type="original")
             simulated_values = np.load(
                 os.path.join(
                     os.path.dirname(__file__),
                     "text_files",
-                    model,
+                    model_name,
                     "simulation_data",
                     "simulations_original.npy",
                 )
