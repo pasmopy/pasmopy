@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from pasmopy import PatientModelSimulations
 
 
@@ -19,3 +22,8 @@ def test_biomass_examples():
         biomass_kws={"viz_type": "original"},
     )
     assert biomass_examples.run() is None
+
+
+def test_cleanup():
+    if os.path.isdir("biomass"):
+        shutil.rmtree("biomass")
