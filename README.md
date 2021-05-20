@@ -33,7 +33,7 @@ Pasmopy requires Python 3.7+ to run.
 
 This example shows you how to build a simple Michaelis-Menten two-step enzyme catalysis model with Pasmopy.
 
-> E + S ⟺ ES ⟶ E + P
+> E + S ⇄ ES → E + P
 
 An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.
 
@@ -57,7 +57,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
    ```python
    from pasmopy import Text2Model
 
-   Text2Model("michaelis_menten.txt").to_biomass_model()
+   Text2Model("michaelis_menten.txt").convert()
    ```
 
 1. Run simulation with [`biomass`](https://github.com/okadalabipr/biomass)

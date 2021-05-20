@@ -267,11 +267,7 @@ class Text2Model(ReactionRules):
         """
         if self.lang == "python":
             with open(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    "template",
-                    "set_search_param.py",
-                ),
+                os.path.join(os.path.dirname(__file__), "template", "set_search_param.py"),
                 encoding="utf-8",
                 mode="r",
             ) as f:
@@ -299,10 +295,7 @@ class Text2Model(ReactionRules):
                         + "\n\n"
                     )
             with open(
-                os.path.join(
-                    f"{self.name}",
-                    "set_search_param.py",
-                ),
+                os.path.join(f"{self.name}", "set_search_param.py"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -515,10 +508,7 @@ class Text2Model(ReactionRules):
                         )
                         lines[line_num + 3] += "\n{}".format(4 * self.indentation + ")\n")
             with open(
-                os.path.join(
-                    f"{self.name}",
-                    "observable.py",
-                ),
+                os.path.join(f"{self.name}", "observable.py"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -653,7 +643,7 @@ class Text2Model(ReactionRules):
         ) as f:
             f.write("\n".join(lines))
 
-    def to_biomass_model(self, overwrite: bool = False) -> None:
+    def convert(self, overwrite: bool = False) -> None:
         """
         Convert text to a biomass-formatted model.
 
