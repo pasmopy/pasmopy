@@ -144,6 +144,7 @@ class ReactionRules(object):
             ],
             is_dissociated=[
                 " is dissociated into",
+                " dissociates to",
             ],
             is_phosphorylated=[
                 " is phosphorylated",
@@ -1155,12 +1156,15 @@ class ReactionRules(object):
             # About observables
             elif line.startswith("@obs "):
                 line = line.lstrip("@obs ")
-                self.obs_desc.append(line.split("="))
+                if line.count(":") != 1:
+                    raise SyntaxError(f"line{line_num:d}: Missing colon")
+                else:
+                    self.obs_desc.append(line.split(":"))
             # About simulation info.
             elif line.startswith("@sim "):
                 line = line.lstrip("@sim ")
                 if line.count(":") != 1:
-                    raise SyntaxError("Missing colon")
+                    raise SyntaxError(f"line{line_num:d}: Missing colon")
                 else:
                     if line.startswith("tspan"):
                         t_info = line.split(":")[-1].strip()
@@ -1182,7 +1186,7 @@ class ReactionRules(object):
                         self.sim_conditions.append(line.lstrip("condition ").split(":"))
                     else:
                         raise ValueError(
-                            "Available options are: "
+                            f"(line{line_num:d}) Available options are: "
                             "'@sim tspan:', '@sim unperturbed:' or '@sim condition XXX:'."
                         )
             # Detect reaction rule

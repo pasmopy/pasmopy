@@ -31,13 +31,13 @@ pPLCg is translocated to cytoskeletal or membrane structures --> pPLCg_I | kf=1,
 # observable
 # p: parameters
 # u: species
-@obs Total_phosphorylated_Shc = u[pRSh] + u[RShG] + u[RShGS] + u[pShc] + u[ShG] + u[ShGS]
-@obs Total_Grb2_coprecipitated_with_Shc = u[RShG] + u[ShG] + u[RShGS] + u[ShGS]
-@obs Total_phosphorylated_Shc_bound_to_EGFR = u[pRSh] + u[RShG] + u[RShGS]
-@obs Total_Grb2_bound_to_EGFR = u[RG] + u[RGS] + u[RShG] + u[RShGS]
-@obs Total_SOS_bound_to_EGFR = u[RGS] + u[RShGS]
-@obs ShGS_complex = u[ShGS]
-@obs Total_phosphorylated_PLCg = u[pRPL] + u[pPLCg]
+@obs Total_phosphorylated_Shc: u[pRSh] + u[RShG] + u[RShGS] + u[pShc] + u[ShG] + u[ShGS]
+@obs Total_Grb2_coprecipitated_with_Shc: u[RShG] + u[ShG] + u[RShGS] + u[ShGS]
+@obs Total_phosphorylated_Shc_bound_to_EGFR: u[pRSh] + u[RShG] + u[RShGS]
+@obs Total_Grb2_bound_to_EGFR: u[RG] + u[RGS] + u[RShG] + u[RShGS]
+@obs Total_SOS_bound_to_EGFR: u[RGS] + u[RShGS]
+@obs ShGS_complex: u[ShGS]
+@obs Total_phosphorylated_PLCg: u[pRPL] + u[pPLCg]
 
 # simulation
 @sim tspan: [0, 120]
