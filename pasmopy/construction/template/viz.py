@@ -64,7 +64,7 @@ class Visualization(object):
     """
 
     def __init__(self):
-        self.cm = plt.cm.get_cmap("tab20")
+        self.cm = plt.cm.get_cmap("tab10")
 
         self.timecourse_options = [
             {
