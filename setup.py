@@ -13,68 +13,63 @@ except ImportError:
     __version__ = "0.0.1"
 
 
-def main():
-    # Python version check.
-    if sys.version_info[:2] < (3, 7):
-        raise RuntimeError("Pasmopy requires at least Python version 3.7")
-    elif sys.version_info[:2] >= (3, 10):
-        fmt = "Pasmopy {} may not yet support Python {}.{}"
-        warnings.warn(fmt.format(__version__, *sys.version_info[:2]), RuntimeWarning)
-
-    setup(
-        name="pasmopy",
-        version=__version__,
-        description="Patient-Specific Modeling in Python",
-        long_description=Path("README.md").read_text("utf-8"),
-        long_description_content_type="text/markdown",
-        license="Apache 2.0",
-        author=__author__,
-        author_email=__email__,
-        maintainer=__maintainer__,
-        maintainer_email=__email__,
-        url="https://github.com/pasmopy/pasmopy",
-        packages=find_packages(exclude=["tests"]),
-        install_requires=[
-            l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()
-        ],
-        extras_require={
-            "dev": [
-                "black==20.8b1",
-                "flake8",
-                "isort",
-                "pre-commit",
-                "pytest",
-            ]
-        },
-        python_requires=">=3.7",
-        keywords=[
-            "systems",
-            "biology",
-            "cancer",
-            "classification",
-            "patient",
-            "modeling",
-            "simulation",
-        ],
-        classifiers=[
-            "Intended Audience :: Science/Research",
-            "Intended Audience :: Healthcare Industry",
-            "License :: OSI Approved :: Apache Software License",
-            "Natural Language :: English",
-            "Operating System :: OS Independent",
-            "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.7",
-            "Programming Language :: Python :: 3.8",
-            "Programming Language :: Python :: 3.9",
-            "Topic :: Scientific/Engineering",
-            "Topic :: Scientific/Engineering :: Bio-Informatics",
-            "Topic :: Scientific/Engineering :: Medical Science Apps.",
-            "Topic :: Software Development",
-            "Topic :: Software Development :: Libraries",
-            "Topic :: Software Development :: Libraries :: Python Modules",
-        ],
-    )
+# Python version check.
+if sys.version_info[:2] < (3, 7):
+    raise RuntimeError("Pasmopy requires at least Python version 3.7")
+elif sys.version_info[:2] >= (3, 10):
+    fmt = "Pasmopy {} may not yet support Python {}.{}"
+    warnings.warn(fmt.format(__version__, *sys.version_info[:2]), RuntimeWarning)
+    del fmt
 
 
-if __name__ == "__main__":
-    main()
+setup(
+    name="pasmopy",
+    version=__version__,
+    description="Patient-Specific Modeling in Python",
+    long_description=Path("README.md").read_text("utf-8"),
+    long_description_content_type="text/markdown",
+    license="Apache 2.0",
+    author=__author__,
+    author_email=__email__,
+    maintainer=__maintainer__,
+    maintainer_email=__email__,
+    url="https://github.com/pasmopy/pasmopy",
+    packages=find_packages(exclude=["tests"]),
+    install_requires=[l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()],
+    extras_require={
+        "dev": [
+            "black>=20.8b1",
+            "flake8",
+            "isort",
+            "pre-commit",
+            "pytest",
+        ]
+    },
+    python_requires=">=3.7",
+    keywords=[
+        "systems",
+        "biology",
+        "cancer",
+        "classification",
+        "patient",
+        "modeling",
+        "simulation",
+    ],
+    classifiers=[
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: Healthcare Industry",
+        "License :: OSI Approved :: Apache Software License",
+        "Natural Language :: English",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
+        "Topic :: Scientific/Engineering :: Medical Science Apps.",
+        "Topic :: Software Development",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
+)
