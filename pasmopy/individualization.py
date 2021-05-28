@@ -62,14 +62,6 @@ class Individualization(object):
         """
         Incorporate gene expression levels in the model.
 
-        Parameters
-        ----------
-        id : str
-            CCLE_ID or TCGA_ID.
-
-        x : List[float]
-            Model parameters.
-
         Returns
         -------
         weighted_sum : Dict[str, float]
