@@ -34,7 +34,7 @@ setup(
     maintainer=__maintainer__,
     maintainer_email=__email__,
     url="https://github.com/pasmopy/pasmopy",
-    packages=find_packages(exclude=["tests"]),
+    packages=find_packages(exclude=["tests", "docs"]),
     install_requires=[l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()],
     extras_require={
         "dev": [
