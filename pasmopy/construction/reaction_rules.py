@@ -5,8 +5,6 @@ from typing import Dict, List, NamedTuple, Optional
 
 import numpy as np
 
-from .prepositions import PREPOSITIONS
-
 
 class Protein(NamedTuple):
     unphosphorylated: str
@@ -18,57 +16,71 @@ class UnregisteredRule(NamedTuple):
     original: Optional[str]
 
 
+PREPOSITIONS: List[str] = [
+    " to",
+    " for",
+    " from",
+    " up",
+    " down",
+    " in",
+    " on",
+    " at",
+    " off",
+    " into",
+    " around",
+    " among",
+    " between",
+    " of",
+    " over",
+    " above",
+    " below",
+    " under",
+    " through",
+    " across",
+    " along",
+    " near",
+    " by",
+    " beside",
+]
+
+
 @dataclass
 class ReactionRules(object):
     """Create an executable biochemical model from text.
 
-    reaction | kinetic constants | initial conditions
+    reaction | parameters | initial conditions
 
     Attributes
     ----------
-    * input_txt : str
+    input_txt : str
         Model description file (*.txt), e.g., 'Kholodenko_JBC_1999.txt'
-
-    * parameters : list of strings
+    parameters : list of strings
         x : model parameters.
-
-    * species : list of strings
+    species : list of strings
         y : model species.
-
-    * reactions : list of strings
+    reactions : list of strings
         v : flux vector.
-
-    * differential_equations : list of strings
+    differential_equations : list of strings
         dydt : right-hand side of the differential equation.
-
-    * obs_desc : list of List[str]
+    obs_desc : list of List[str]
         Description of observables.
-
-    * param_info : list of strings
+    param_info : list of strings
         Information about parameter values.
-
-    * init_info : list of strings
+    init_info : list of strings
         Information about initial values.
-
-    * param_constraints : list of strings
+    param_constraints : list of strings
         Information about parameter constraints.
-
-    * param_excluded : list of strings
+    param_excluded : list of strings
         Parameters excluded from search params because of parameter constraints.
-
-    * protein_phosphorylation : list of NamedTuples
+    protein_phosphorylation : list of NamedTuples
         Pairs of unphosphorylated and phosphorylated proteins.
-
-    * sim_tspan : list of strings ['t0', 'tf']
+    sim_tspan : list of strings ['t0', 'tf']
         Interval of integration.
-
-    * sim_conditions : list of List[str]
+    sim_conditions : list of List[str]
         Simulation conditions with stimulation.
-
-    * sim_unperturbed : str
+    sim_unperturbed : str
         Untreated conditions to get steady state.
-
-    * rule_words : dict
+    rule_words : dict
         Words to identify reaction rules.
 
     """
@@ -196,6 +208,15 @@ class ReactionRules(object):
             return True
         except ValueError:
             return False
+
+    @staticmethod
+    def _remove_prefix(text: str, prefix: str) -> str:
+        """
+        Remove prefix from a text.
+        """
+        if text.startswith(prefix):
+            return text[len(prefix) :]
+        assert False
 
     def _set_params(self, line_num: int, *args: str) -> None:
         """
@@ -397,32 +418,31 @@ class ReactionRules(object):
     @staticmethod
     def _remove_prepositions(sentence: str) -> str:
         """
-        Remove preposition from text not to use it to identify reaction rules.
+        Remove preposition from text not to use it for identifying reaction rules.
         """
         for preposition in PREPOSITIONS:
             if sentence.endswith(preposition):
-                return sentence.rstrip(preposition)
+                return sentence[: -len(preposition)]
         else:
             return sentence
 
     def dimerize(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `monomer` + `monomer` <=> `dimer`
+        * Event
+            monomer + monomer <=> dimer
 
-        Example
-        -------
-        `monomer` dimerizes --> `dimer`
+        * Example
+            monomer dimerizes --> dimer
 
-        Rate equation
-        -------------
-        v = kf * [monomer] * [monomer] - kr * [dimer]
+        * Rate equation
+            v = kf * [monomer] * [monomer] - kr * [dimer]
 
-        Differential equation
-        ---------------------
-        d[monomer]/dt = - 2 * v
-        d[dimer]/dt = + v
+        * Differential equation
+            d[monomer]/dt = - 2 * v
+
+            d[dimer]/dt = + v
 
         """
         description = self._preprocessing(
@@ -456,23 +476,23 @@ class ReactionRules(object):
 
     def bind(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `component1` + `component2` <=> `complex`
+        * Event
+            component1 + component2 <=> complex
 
-        Example
-        -------
-        `component1` binds `component2` --> `complex`
+        * Example
+            component1 binds component2 --> complex
 
-        Rate equation
-        -------------
-        v = kf * [component1] * [component2] - kr * [complex]
+        * Rate equation
+            v = kf * [component1] * [component2] - kr * [complex]
 
-        Differential equation
-        ---------------------
-        d[component1]/dt = - v
-        d[component2]/dt = - v
-        d[complex]/dt = + v
+        * Differential equation
+            d[component1]/dt = - v
+
+            d[component2]/dt = - v
+
+            d[complex]/dt = + v
 
         """
         description = self._preprocessing(
@@ -518,23 +538,23 @@ class ReactionRules(object):
 
     def is_dissociated(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `complex` <=> `component1` + `component2`
+        * Event
+            complex <=> component1 + component2
 
-        Examples
-        --------
-        `complex` is dissociated into `component1` and `component2`
+        * Example
+            complex is dissociated into component1 and component2
 
-        Rate equation
-        -------------
-        v = kf * [complex] - kr * [component1] * [component2]
+        * Rate equation
+            v = kf * [complex] - kr * [component1] * [component2]
 
-        Differential equation
-        ---------------------
-        d[component1]/dt = + v
-        d[component2]/dt = + v
-        d[complex]/dt = - v
+        * Differential equation
+            d[component1]/dt = + v
+
+            d[component2]/dt = + v
+
+            d[complex]/dt = - v
 
         """
         description = self._preprocessing(
@@ -578,22 +598,21 @@ class ReactionRules(object):
 
     def is_phosphorylated(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `unphosphorylated_form` <=> `phosphorylated_form`
+        * Event
+            unphosphorylated_form <=> phosphorylated_form
 
-        Examples
-        --------
-        `unphosphorylated_form` is phosphorylated --> `phosphorylated_form`
+        * Example
+            unphosphorylated_form is phosphorylated --> phosphorylated_form
 
-        Rate equation
-        -------------
-        v = kf * [unphosphorylated_form] - kr * [phosphorylated_form]
+        * Rate equation
+            v = kf * [unphosphorylated_form] - kr * [phosphorylated_form]
 
-        Differential equation
-        ---------------------
-        d[unphosphorylated_form]/dt = - v
-        d[phosphorylated_form]/dt = + v
+        * Differential equation
+            d[unphosphorylated_form]/dt = - v
+
+            d[phosphorylated_form]/dt = + v
 
         """
         description = self._preprocessing(
@@ -633,22 +652,21 @@ class ReactionRules(object):
 
     def is_dephosphorylated(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `phosphorylated_form` --> `unphosphorylated_form`
+        * Event
+            phosphorylated_form --> unphosphorylated_form
 
-        Example
-        -------
-        `phosphorylated_form` is dephosphorylated --> `unphosphorylated_form`
+        * Example
+            phosphorylated_form is dephosphorylated --> unphosphorylated_form
 
-        Rate equation
-        -------------
-        v = V * [phosphorylated_form] / (K + [phosphorylated_form])
+        * Rate equation
+            v = V * [phosphorylated_form] / (K + [phosphorylated_form])
 
-        Differential equation
-        ---------------------
-        d[unphosphorylated_form]/dt = + v
-        d[phosphorylated_form]/dt = - v
+        * Differential equation
+            d[unphosphorylated_form]/dt = + v
+
+            d[phosphorylated_form]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
@@ -686,24 +704,25 @@ class ReactionRules(object):
 
     def phosphorylate(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `kinase`
-            ↓
-        `unphosphorylated_form` --> phosphorylated_form
+        * Event
+            kinase
 
-        Example
-        -------
-        `kinase` phosphorylates `unphosphorylated_form` --> `phosphorylated_form`
+                ↓
 
-        Rate equation
-        -------------
-        v = V * [kinase] * [unphosphorylated_form] / (K + [unphosphorylated_form])
+            unphosphorylated_form --> phosphorylated_form
 
-        Differential equation
-        ---------------------
-        d[unphosphorylated_form]/dt = - v
-        d[phosphorylated_form]/dt = + v
+        * Example
+            kinase phosphorylates unphosphorylated_form --> phosphorylated_form
+
+        * Rate equation
+            v = V * [kinase] * [unphosphorylated_form] / (K + [unphosphorylated_form])
+
+        * Differential equation
+            d[unphosphorylated_form]/dt = - v
+
+            d[phosphorylated_form]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
@@ -745,24 +764,25 @@ class ReactionRules(object):
 
     def dephosphorylate(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `phosphatase`
-            ↓
-        `phosphorylated_form` --> `unphosphorylated_form`
+        * Event
+            phosphatase
 
-        Example
-        -------
-        `phosphatase` dephosphorylates `phosphorylated_form` --> `unphosphorylated_form`
+                ↓
 
-        Rate equation
-        -------------
-        v = V * [phosphatase] * [phosphorylated_form] / (K + [phosphorylated_form])
+            phosphorylated_form --> unphosphorylated_form
 
-        Differential equation
-        ---------------------
-        d[unphosphorylated_form]/dt = + v
-        d[phosphorylated_form]/dt = - v
+        * Example
+            phosphatase dephosphorylates phosphorylated_form --> unphosphorylated_form
+
+        * Rate equation
+            v = V * [phosphatase] * [phosphorylated_form] / (K + [phosphorylated_form])
+
+        * Differential equation
+            d[unphosphorylated_form]/dt = + v
+
+            d[phosphorylated_form]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
@@ -804,25 +824,23 @@ class ReactionRules(object):
 
     def transcribe(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `TF` --> `mRNA`
+        * Event
+            TF --> mRNA
 
-        Example
-        -------
-        - `TF` transcribes `mRNA`
-        - `TF1` and `TF2` transcribe mRNA (AND-gate)
-        - `TF` transcribes `mRNA`, repressed by `repressor` (Negative regulation)
+        * Example
+            - TF transcribes mRNA
+            - TF1 and TF2 transcribe mRNA (AND-gate)
+            - TF transcribes mRNA, repressed by repressor (Negative regulation)
 
-        Rate equation
-        -------------
-        - v = V * [TF] ** n / (K ** n + [TF] ** n)
-        - v = V * ([TF1] * [TF2]) ** n / (K ** n + ([TF1] * [TF2]) ** n)
-        - v = V * [TF] ** n / (K ** n + [TF] ** n + ([repressor] / KF) ** nF)
+        * Rate equation
+            - v = V * [TF] ** n / (K ** n + [TF] ** n)
+            - v = V * ([TF1] * [TF2]) ** n / (K ** n + ([TF1] * [TF2]) ** n)
+            - v = V * [TF] ** n / (K ** n + [TF] ** n + ([repressor] / KF) ** nF)
 
-        Differential equation
-        ---------------------
-        d[mRNA]/dt = + v
+        * Differential equation
+            d[mRNA]/dt = + v
 
         """
         description = self._preprocessing(
@@ -841,7 +859,7 @@ class ReactionRules(object):
                     "Add ', repressed by XXX' to describe negative regulation from XXX."
                 )
         else:
-            # Add negative regulation from `repressor`
+            # Add negative regulation from repressor
             mRNA = description[1].split(", repressed by")[0].strip()
             repressor = description[1].split(", repressed by")[1].strip()
         if " and " not in description[0]:
@@ -888,21 +906,19 @@ class ReactionRules(object):
 
     def is_translated(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `mRNA` --> `protein`
+        * Event
+            mRNA --> protein
 
-        Example
-        -------
-        `mRNA` is translated into `protein`
+        * Example
+            mRNA is translated into protein
 
-        Rate equation
-        -------------
-        v = kf * [mRNA]
+        * Rate equation
+            v = kf * [mRNA]
 
-        Differential equation
-        ---------------------
-        d[protein]/dt = + v
+        * Differential equation
+            d[protein]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -920,23 +936,23 @@ class ReactionRules(object):
 
     def synthesize(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `catalyst`
-            ↓
-        0 --> `product`
+        * Event
+            catalyst
 
-        Example
-        -------
-        `catalyst` synthesizes `product`.
+                ↓
 
-        Rate equation
-        -------------
-        v = kf * [catalyst]
+            0 --> product
 
-        Differential equation
-        ---------------------
-        d[product]/dt = + v
+        * Example
+            catalyst synthesizes product.
+
+        * Rate equation
+            v = kf * [catalyst]
+
+        * Differential equation
+            d[product]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -954,21 +970,19 @@ class ReactionRules(object):
 
     def is_synthesized(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        0 --> `chemical_species`
+        * Event
+            0 --> chemical_species
 
-        Example
-        -------
-        `chemical_species` is synthesized.
+        * Example
+            chemical_species is synthesized.
 
-        Rate equation
-        -------------
-        v = kf
+        * Rate equation
+            v = kf
 
-        Differential equation
-        ---------------------
-        d[chemical_species]/dt = + v
+        * Differential equation
+            d[chemical_species]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -985,23 +999,23 @@ class ReactionRules(object):
 
     def degrade(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `protease`
-            ↓
-        `protein` --> 0
+        * Event
+            protease
 
-        Example
-        -------
-        `protease` degrades `protein`.
+                ↓
 
-        Rate equation
-        -------------
-        v = kf * [protease]
+            protein --> 0
 
-        Differential equation
-        ---------------------
-        d[protein]/dt = - v
+        * Example
+            protease degrades protein.
+
+        * Rate equation
+            v = kf * [protease]
+
+        * Differential equation
+            d[protein]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1019,21 +1033,19 @@ class ReactionRules(object):
 
     def is_degraded(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `chemical_species` --> 0
+        * Event
+            chemical_species --> 0
 
-        Example
-        -------
-        `chemical_species` is degraded.
+        * Example
+            chemical_species is degraded.
 
-        Rate equation
-        -------------
-        v = kf * [chemical_species]
+        * Rate equation
+            v = kf * [chemical_species]
 
-        Differential equation
-        ---------------------
-        d[chemical_species]/dt = - v
+        * Differential equation
+            d[chemical_species]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1050,25 +1062,24 @@ class ReactionRules(object):
 
     def is_translocated(self, line_num: int, line: str) -> None:
         """
-        Event
+        Notes
         -----
-        `pre_translocation` <=> `post_translocation`
-        (Volume_pre_translocation <-> Volume_post_translocation)
+        * Event
+            pre_translocation <=> post_translocation \
+            (Volume_pre_translocation <-> Volume_post_translocation)
 
-        Example
-        -------
-        `pre_translocation` is translocated from one location to another \
-        (pre_volume, post_volume) --> post_translocation.
+        * Example
+            pre_translocation is translocated from one location to another \
+            (pre_volume, post_volume) --> post_translocation.
 
-        Rate equation
-        -------------
-        v = kf * [pre_translocation] - kr * (post_volume / pre_volume) \
+        * Rate equation
+            v = kf * [pre_translocation] - kr * (post_volume / pre_volume) \
             * [post_translocation]
 
-        Differential equation
-        ---------------------
-        d[pre_translocation]/dt = - v
-        d[post_translocation]/dt = + v * (pre_volume / post_volume)
+        * Differential equation
+            d[pre_translocation]/dt = - v
+
+            d[post_translocation]/dt = + v * (pre_volume / post_volume)
 
         """
         description = self._preprocessing(
@@ -1155,14 +1166,14 @@ class ReactionRules(object):
                 )
             # About observables
             elif line.startswith("@obs "):
-                line = line.lstrip("@obs ")
+                line = self._remove_prefix(line, "@obs ")
                 if line.count(":") != 1:
                     raise SyntaxError(f"line{line_num:d}: Missing colon")
                 else:
                     self.obs_desc.append(line.split(":"))
             # About simulation info.
             elif line.startswith("@sim "):
-                line = line.lstrip("@sim ")
+                line = self._remove_prefix(line, "@sim ")
                 if line.count(":") != 1:
                     raise SyntaxError(f"line{line_num:d}: Missing colon")
                 else:
@@ -1183,7 +1194,9 @@ class ReactionRules(object):
                     elif line.startswith("unperturbed"):
                         self.sim_unperturbed += line.split(":")[-1].strip()
                     elif line.startswith("condition "):
-                        self.sim_conditions.append(line.lstrip("condition ").split(":"))
+                        self.sim_conditions.append(
+                            self._remove_prefix(line, "condition ").split(":")
+                        )
                     else:
                         raise ValueError(
                             f"(line{line_num:d}) Available options are: "
