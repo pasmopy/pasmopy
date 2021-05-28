@@ -85,11 +85,6 @@ class PatientModelSimulations(InSilico):
     def _run_single_patient(self, patient: str) -> None:
         """
         Run a single patient-specifc model simulation.
-
-        Parameters
-        ----------
-        patient : str
-            Name (ID) of each patient.
         """
 
         kwargs = self.biomass_kws
@@ -104,16 +99,17 @@ class PatientModelSimulations(InSilico):
         model = Model(".".join([self.path_to_models, patient.strip()])).create()
         run_simulation(model, **kwargs)
 
-    def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
+    def run(self, n_proc: Optional[int] = None) -> None:
         """
         Run simulations of multiple patient-specific models in parallel.
 
         Parameters
         ----------
-        n_proc : int (default: multiprocessing.cpu_count() - 1)
+        n_proc : int, optional (default: None)
             The number of worker processes to use.
         """
-
+        if n_proc is None:
+            n_proc = multiprocessing.cpu_count() - 1
         self.parallel_execute(self._run_single_patient, n_proc)
 
     @staticmethod
@@ -269,11 +265,6 @@ class PatientModelAnalyses(InSilico):
     def _run_single_patient(self, patient: str) -> None:
         """
         Run a single patient-specifc model analysis.
-
-        Parameters
-        ----------
-        patient : str
-            Name (ID) of each patient.
         """
 
         kwargs = self.biomass_kws
@@ -287,14 +278,15 @@ class PatientModelAnalyses(InSilico):
         model = Model(".".join([self.path_to_models, patient.strip()])).create()
         run_analysis(model, **kwargs)
 
-    def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
+    def run(self, n_proc: Optional[int] = None) -> None:
         """
         Run analyses of multiple patient-specific models in parallel.
 
         Parameters
         ----------
-        n_proc : int (default: multiprocessing.cpu_count() - 1)
+        n_proc : int, optional (default: None)
             The number of worker processes to use.
         """
-
+        if n_proc is None:
+            n_proc = multiprocessing.cpu_count() - 1
         self.parallel_execute(self._run_single_patient, n_proc)
