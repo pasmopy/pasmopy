@@ -166,10 +166,11 @@ class PatientModelSimulations(InSilico):
                     data = np.array(all_data[patient_specific.obs.index(obs_name)])
                     if normalization:
                         for i in range(data.shape[0]):
-                            if not np.isnan(data[i]).all():
+                            if not np.isnan(data[i]).all() and not np.all(data[i] == 0.0):
                                 data[i] /= np.nanmax(data[i])
                         data = np.nanmean(data, axis=0)
-                        data /= np.max(data)
+                        if not np.all(data == 0.0):
+                            data /= np.max(data)
                     patient_specific_characteristics = [patient]
                     for h in header[1:]:
                         condition, metric = h.split("_")
