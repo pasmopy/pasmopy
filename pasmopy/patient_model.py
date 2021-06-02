@@ -152,7 +152,7 @@ class PatientModelSimulations(InSilico):
                         header.append(f"{condition}_{metric}")
                 writer.writerow(header)
 
-                for patient in self.patients:
+                for patient in tqdm(self.patients):
                     patient_specific = Model(
                         ".".join([self.path_to_models, patient.strip()])
                     ).create()
@@ -212,18 +212,19 @@ class PatientModelSimulations(InSilico):
         Examples
         --------
         >>> with open ("models/breast/sample_names.txt", mode="r") as f:
-                TCGA_ID = f.read().splitlines()
+        ...    TCGA_ID = f.read().splitlines()
         >>> from pasmopy import PatientModelSimulations
         >>> simulations = PatientModelSimulations("models.breast", TCGA_ID)
         >>> simulations.subtyping(
-                "subtype_classification.pdf",
-                {
-                    "Phosphorylated_Akt": {"EGF": ["max"], "HRG": ["max"]},
-                    "Phosphorylated_ERK": {"EGF": ["max"], "HRG": ["max"]},
-                    "Phosphorylated_c-Myc": {"EGF": ["max"], "HRG": ["max"]},
-                },
-                clustermap_kws={"figsize": (9, 12)}
-            )
+        ...    "subtype_classification.pdf",
+        ...    {
+        ...        "Phosphorylated_Akt": {"EGF": ["max"], "HRG": ["max"]},
+        ...        "Phosphorylated_ERK": {"EGF": ["max"], "HRG": ["max"]},
+        ...        "Phosphorylated_c-Myc": {"EGF": ["max"], "HRG": ["max"]},
+        ...    },
+        ...    clustermap_kws={"figsize": (9, 12)}
+        ... )
+
         """
         # seaborn clustermap
         if clustermap_kws is None:
