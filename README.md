@@ -4,10 +4,10 @@
 
 # Pasmopy – Patient-Specific Modeling in Python
 
-![overview](resources/images/overview.png)
+![overview](docs/_static/img/overview.png)
 
 <!--
-![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/resources/images/overview.png)
+![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png)
 -->
 
 **Pasmopy** is a scalable toolkit for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling. It is compatible with [biomass](https://github.com/okadalabipr/biomass) and offers the following features:
@@ -70,9 +70,9 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
    run_simulation(model, viz_type="original")
    ```
 
-   ![](resources/images/michaelis_menten_sim.png)
+   ![](docs/_static/img/michaelis_menten_sim.png)
     <!--
-    ![](https://raw.githubusercontent.com/pasmopy/pasmopy/master/resources/images/michaelis_menten_sim.png)
+    ![](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
     -->
 
 ## Author
