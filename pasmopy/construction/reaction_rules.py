@@ -48,7 +48,7 @@ PREPOSITIONS: List[str] = [
 class ReactionRules(object):
     """Create an executable biochemical model from text.
 
-    reaction | parameters | initial conditions
+    **reaction** | **parameters** | **initial conditions**
 
     Attributes
     ----------
@@ -191,7 +191,8 @@ class ReactionRules(object):
             is_degraded=[
                 " is degraded",
             ],
-            is_translocated=[
+            translocate=[
+                " translocates",
                 " is translocated",
             ],
         ),
@@ -428,13 +429,17 @@ class ReactionRules(object):
 
     def dimerize(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `monomer` dimerizes --> `dimer`
+        >>> `monomer` homodimerizes --> `dimer`
+        >>> `monomer` forms a dimer --> `dimer`
+        >>> `monomer` forms dimers --> `dimer`
+
         Notes
         -----
         * Event
             monomer + monomer <=> dimer
-
-        * Example
-            monomer dimerizes --> dimer
 
         * Rate equation
             v = kf * [monomer] * [monomer] - kr * [dimer]
@@ -476,13 +481,15 @@ class ReactionRules(object):
 
     def bind(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `component1` binds `component2` --> `complex`
+        >>> `component1` forms complexes with `component2` --> `complex`
+
         Notes
         -----
         * Event
             component1 + component2 <=> complex
-
-        * Example
-            component1 binds component2 --> complex
 
         * Rate equation
             v = kf * [component1] * [component2] - kr * [complex]
@@ -538,13 +545,15 @@ class ReactionRules(object):
 
     def is_dissociated(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `complex` is dissociated into `component1` and `component2`
+        >>> `complex` dissociates to `component1` and `component2`
+
         Notes
         -----
         * Event
             complex <=> component1 + component2
-
-        * Example
-            complex is dissociated into component1 and component2
 
         * Rate equation
             v = kf * [complex] - kr * [component1] * [component2]
@@ -598,13 +607,14 @@ class ReactionRules(object):
 
     def is_phosphorylated(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        `unphosphorylated_form` is phosphorylated --> `phosphorylated_form`
+
         Notes
         -----
         * Event
             unphosphorylated_form <=> phosphorylated_form
-
-        * Example
-            unphosphorylated_form is phosphorylated --> phosphorylated_form
 
         * Rate equation
             v = kf * [unphosphorylated_form] - kr * [phosphorylated_form]
@@ -652,13 +662,14 @@ class ReactionRules(object):
 
     def is_dephosphorylated(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `phosphorylated_form` is dephosphorylated --> `unphosphorylated_form`
+
         Notes
         -----
         * Event
             phosphorylated_form --> unphosphorylated_form
-
-        * Example
-            phosphorylated_form is dephosphorylated --> unphosphorylated_form
 
         * Rate equation
             v = V * [phosphorylated_form] / (K + [phosphorylated_form])
@@ -704,6 +715,10 @@ class ReactionRules(object):
 
     def phosphorylate(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `kinase` phosphorylates `unphosphorylated_form` --> `phosphorylated_form`
+
         Notes
         -----
         * Event
@@ -712,9 +727,6 @@ class ReactionRules(object):
                 ↓
 
             unphosphorylated_form --> phosphorylated_form
-
-        * Example
-            kinase phosphorylates unphosphorylated_form --> phosphorylated_form
 
         * Rate equation
             v = V * [kinase] * [unphosphorylated_form] / (K + [unphosphorylated_form])
@@ -764,6 +776,10 @@ class ReactionRules(object):
 
     def dephosphorylate(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `phosphatase` dephosphorylates `phosphorylated_form` --> `unphosphorylated_form`
+
         Notes
         -----
         * Event
@@ -772,9 +788,6 @@ class ReactionRules(object):
                 ↓
 
             phosphorylated_form --> unphosphorylated_form
-
-        * Example
-            phosphatase dephosphorylates phosphorylated_form --> unphosphorylated_form
 
         * Rate equation
             v = V * [phosphatase] * [phosphorylated_form] / (K + [phosphorylated_form])
@@ -824,15 +837,16 @@ class ReactionRules(object):
 
     def transcribe(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `TF` transcribes `mRNA`
+        >>> `TF1` and `TF2` transcribe `mRNA`  # (AND-gate)
+        >>> `TF` transcribes `mRNA`, repressed by `repressor`  # (Negative regulation)
+
         Notes
         -----
         * Event
             TF --> mRNA
-
-        * Example
-            - TF transcribes mRNA
-            - TF1 and TF2 transcribe mRNA (AND-gate)
-            - TF transcribes mRNA, repressed by repressor (Negative regulation)
 
         * Rate equation
             - v = V * [TF] ** n / (K ** n + [TF] ** n)
@@ -906,13 +920,14 @@ class ReactionRules(object):
 
     def is_translated(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `mRNA` is translated into `protein`
+
         Notes
         -----
         * Event
             mRNA --> protein
-
-        * Example
-            mRNA is translated into protein
 
         * Rate equation
             v = kf * [mRNA]
@@ -936,6 +951,10 @@ class ReactionRules(object):
 
     def synthesize(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `catalyst` synthesizes `product`
+
         Notes
         -----
         * Event
@@ -944,9 +963,6 @@ class ReactionRules(object):
                 ↓
 
             0 --> product
-
-        * Example
-            catalyst synthesizes product.
 
         * Rate equation
             v = kf * [catalyst]
@@ -970,13 +986,14 @@ class ReactionRules(object):
 
     def is_synthesized(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `chemical_species` is synthesized
+
         Notes
         -----
         * Event
             0 --> chemical_species
-
-        * Example
-            chemical_species is synthesized.
 
         * Rate equation
             v = kf
@@ -999,6 +1016,10 @@ class ReactionRules(object):
 
     def degrade(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `protease` degrades `protein`
+
         Notes
         -----
         * Event
@@ -1007,9 +1028,6 @@ class ReactionRules(object):
                 ↓
 
             protein --> 0
-
-        * Example
-            protease degrades protein.
 
         * Rate equation
             v = kf * [protease]
@@ -1033,13 +1051,14 @@ class ReactionRules(object):
 
     def is_degraded(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `chemical_species` is degraded
+
         Notes
         -----
         * Event
             chemical_species --> 0
-
-        * Example
-            chemical_species is degraded.
 
         * Rate equation
             v = kf * [chemical_species]
@@ -1060,8 +1079,13 @@ class ReactionRules(object):
         if counter_chemical_species == 0:
             self.differential_equations.append(f"dydt[V.{chemical_species}] = - v[{line_num:d}]")
 
-    def is_translocated(self, line_num: int, line: str) -> None:
+    def translocate(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> `pre_translocation` translocates from one location to another (pre_volume, post_volume) --> `post_translocation`
+        >>> `pre_translocation` is translocated from one location to another (pre_volume, post_volume) --> `post_translocation`
+
         Notes
         -----
         * Event
@@ -1069,8 +1093,7 @@ class ReactionRules(object):
             (Volume_pre_translocation <-> Volume_post_translocation)
 
         * Example
-            pre_translocation is translocated from one location to another \
-            (pre_volume, post_volume) --> post_translocation.
+            
 
         * Rate equation
             v = kf * [pre_translocation] - kr * (post_volume / pre_volume) \
