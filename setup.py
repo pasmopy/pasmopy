@@ -43,7 +43,13 @@ setup(
             "isort",
             "pre-commit",
             "pytest",
-        ]
+        ],
+        "docs": [
+            "sphinx>=1.7",
+            "sphinx_rtd_theme>=0.3",
+            "sphinx_autodoc_typehints>=1.10",
+            "sphinxcontrib-bibtex>=2.2",
+        ],
     },
     python_requires=">=3.7",
     keywords=[
