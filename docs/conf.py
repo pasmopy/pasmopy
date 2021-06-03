@@ -25,7 +25,6 @@ try:
     from pasmopy import __maintainer__, __version__
 except ImportError:
     __maintainer__ = "Hiroaki Imoto"
-    __email__ = "himoto@protein.osaka-u.ac.jp"
     __version__ = "0.0.1"
 
 project = "Pasmopy"
