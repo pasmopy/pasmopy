@@ -77,8 +77,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
 
 ## Author
 
-- Hiroaki Imoto
-- Sawa Yamashiro
+[Hiroaki Imoto](https://github.com/himoto)
 
 ## License
 

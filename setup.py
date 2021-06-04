@@ -7,8 +7,7 @@ from setuptools import find_packages, setup
 try:
     from pasmopy import __author__, __email__, __maintainer__, __version__
 except ImportError:
-    __author__ = ", ".join(["Hiroaki Imoto", "Sawa Yamashiro"])
-    __maintainer__ = "Hiroaki Imoto"
+    __author__ = __maintainer__ = "Hiroaki Imoto"
     __email__ = "himoto@protein.osaka-u.ac.jp"
     __version__ = "0.0.1"
 

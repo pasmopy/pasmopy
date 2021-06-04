@@ -22,14 +22,14 @@ sys.path.insert(0, os.path.abspath("../"))
 from datetime import datetime
 
 try:
-    from pasmopy import __maintainer__, __version__
+    from pasmopy import __author__, __version__
 except ImportError:
-    __maintainer__ = "Hiroaki Imoto"
+    __author__ = "Hiroaki Imoto"
     __version__ = "0.0.1"
 
 project = "Pasmopy"
 title = "Patient-Specific Modeling in Python"
-author = __maintainer__
+author = __author__
 copyright = f"{datetime.now():%Y}, {author}"
 
 # The short X.Y version
