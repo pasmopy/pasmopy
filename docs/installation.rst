@@ -1,6 +1,8 @@
 Installation
 ============
 
+Pasmopy requires Python 3.7+ to run.
+
 PyPI
 ^^^^
 
