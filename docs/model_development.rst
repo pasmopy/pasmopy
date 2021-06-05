@@ -5,7 +5,7 @@ This section walk you through the creation of a mechanistic model from text.
 
 How to use
 ----------
-Text2Model is a useful tool to build an ODE model from a text file describing biochemical reactions.
+Text2Model is a useful tool to build an ordinary differential equation (ODE) model from a text file describing biochemical reactions.
 
 The text file you need to prepare can be divided into three parts:
 
@@ -16,10 +16,10 @@ The text file you need to prepare can be divided into three parts:
 Reaction layer
 ^^^^^^^^^^^^^^
 
-   description | parameters | initial conditions
+   **description** | **parameters** | **initial conditions**
 
 In the reaction layer, you need to describe biochemical reactions.
-Each reaction described in the line number *i* will be converted into the rate equation v[*i*].
+Each reaction described in the line number *i* will be converted into *i*\ :sup:`th`\ rate equation.
 To specify parameters or initial conditions, you can put those information by using ``|``.
 
 * If you don't specify parameters/initial_conditions, they are initialized to 1 and 0, respectively, and the parameter values will be estimated from experimental data.
@@ -29,6 +29,18 @@ To specify parameters or initial conditions, you can put those information by us
 
    # The Hill coefficient is fixed to 1.
    TF transcribes mRNA | const n=1
+
+* You can impose parameter constraints by specifying line number in the **parameter** section.
+
+.. code-block:: python
+   :linenos:
+
+   # Nucleocytoplasmic Shuttling of DUSP
+   DUSP translocates from the cytoplasm to the nucleus
+   pDUSP translocates from the cytoplasm to the nucleus |2|
+
+In the example above, you can assume that import and export rates were identical for DUSP (line 2) and pDUSP (line 3).
+
 
 The available rules can be found at :doc:`modules/reaction_rules`.
 
@@ -98,6 +110,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
 #. Prepare a text file describing biochemical reactions (``michaelis_menten.txt``)
    
    .. code-block:: python
+      :linenos:
 
       E binds S --> ES | kf=0.003, kr=0.001 | E=100, S=50
       ES dissociates to E and P | kf=0.002, kr=0
@@ -128,6 +141,8 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
       model = Model(michaelis_menten.__package__).create()
       run_simulation(model, viz_type="original")
 
+.. image:: https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png
+
 EGF signaling
 ^^^^^^^^^^^^^
 Below is an example of Pasmopy in action to illustrate EGF signalling pathway. 
@@ -139,7 +154,8 @@ Reference:
 #. Prepare a text describing EGF signaling in hepatocytes (``Kholodenko_JBC_1999.txt``)
 
    .. code-block:: python
-
+      :linenos:
+      
       EGF binds EGFR --> Ra | kf=0.003, kr=0.06 | EGFR=100
       Ra dimerizes --> R2 | kf=0.01, kr=0.1
       R2 is phosphorylated --> pR2 | kf=1, kr=0.01

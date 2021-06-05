@@ -1,4 +1,4 @@
-Pasmopy Modules Reference
+Pasmopy modules reference
 =========================
 
 .. toctree::
