@@ -20,8 +20,8 @@ class Text2Model(ReactionRules):
     lang : str (default: 'python')
         Either 'python' or 'julia'.
 
-        - 'python': biomass (https://github.com/okadalabipr/biomass)
-        - 'julia': BioMASS.jl (https://github.com/himoto/BioMASS.jl)
+        - 'python': biomass (https://github.com/biomass-dev/biomass)
+        - 'julia': BioMASS.jl (https://github.com/biomass-dev/BioMASS.jl)
     """
 
     input_txt: str

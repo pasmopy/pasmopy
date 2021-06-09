@@ -10,7 +10,7 @@
 ![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png)
 -->
 
-**Pasmopy** is a scalable toolkit for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling. It is compatible with [biomass](https://github.com/okadalabipr/biomass) and offers the following features:
+**Pasmopy** is a scalable toolkit for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling. It is compatible with [biomass](https://github.com/biomass-dev/biomass) and offers the following features:
 
 - Construction of mechanistic models from text
 - Personalized predictions of patient outcomes
@@ -60,7 +60,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
    Text2Model("michaelis_menten.txt").convert()
    ```
 
-1. Run simulation with [`biomass`](https://github.com/okadalabipr/biomass)
+1. Run simulation with [`biomass`](https://github.com/biomass-dev/biomass)
 
    ```python
    from biomass import Model, run_simulation
