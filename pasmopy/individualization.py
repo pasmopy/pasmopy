@@ -17,8 +17,18 @@ class Individualization(object):
     species : List[str]
         List of model species.
 
-    tpm_values : str
-        Path to (1) RLE-normalized and (2) post ComBat TPM values (CSV-formatted).
+    transcriptomic_data : str
+        Path to normalized gene expression data (CSV-formatted),
+        e.g., (1) RLE-normalized and (2) post-ComBat TPM values.
+
+        =========== ======== ======== ======== ===
+        Description patient1 patient2 patient3 ...
+        =========== ======== ======== ======== ===
+        gene1       value1,1 value1,2 value1,3 ...
+        gene2       value2,1 value2,2 value2,3 ...
+        gene3       value3,1 value3,2 value3,3 ...
+        ...         ...      ...      ...      ...
+        =========== ======== ======== ======== ===
 
     gene_expression : Dict[str, List[str]]
         Pairs of proteins and their related genes.
@@ -32,7 +42,7 @@ class Individualization(object):
 
     parameters: List[str]
     species: List[str]
-    tpm_values: str
+    transcriptomic_data: str
     gene_expression: Dict[str, List[str]]
     read_csv_kws: Optional[dict] = field(default=None)
     prefix: str = field(default="w_", init=False)
@@ -41,14 +51,11 @@ class Individualization(object):
         kwargs = self.read_csv_kws
         if kwargs is None:
             kwargs = {}
-        self._tpm_rle_postComBat: pd.DataFrame = pd.read_csv(self.tpm_values, **kwargs)
+        self._expression_level: pd.DataFrame = pd.read_csv(self.transcriptomic_data, **kwargs)
 
     @property
-    def tpm_rle_postComBat(self):
-        return self._tpm_rle_postComBat
-
-    def _get_tpm(self, gene: str, id: str) -> float:
-        return self.tpm_rle_postComBat.at[gene, id]
+    def expression_level(self) -> pd.DataFrame:
+        return self._expression_level
 
     def _calculate_weighted_sum(
         self,
@@ -58,14 +65,6 @@ class Individualization(object):
         """
         Incorporate gene expression levels in the model.
 
-        Parameters
-        ----------
-        id : str
-            CCLE_ID or TCGA_ID.
-
-        x : List[float]
-            Model parameters.
-
         Returns
         -------
         weighted_sum : Dict[str, float]
@@ -74,9 +73,10 @@ class Individualization(object):
         weighted_sum = dict.fromkeys(self.gene_expression, 0.0)
         for (protein, genes) in self.gene_expression.items():
             for gene in genes:
-                weighted_sum[protein] += x[
-                    self.parameters.index(self.prefix + gene)
-                ] * self._get_tpm(gene, id)
+                weighted_sum[protein] += (
+                    x[self.parameters.index(self.prefix + gene)]
+                    * self.expression_level.at[gene, id]
+                )
         return weighted_sum
 
     def as_reaction_rate(

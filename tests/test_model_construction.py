@@ -58,7 +58,7 @@ def test_text2model():
                     lang=lang,
                 )
                 mm_kinetics.register_word("is_dissociated", "releases")
-                mm_kinetics.to_biomass_model()
+                mm_kinetics.convert()
             elif model == "Kholodenko_JBC_1999":
                 mapk_cascade = Text2Model(
                     os.path.join(
@@ -68,7 +68,7 @@ def test_text2model():
                     ),
                     lang=lang,
                 )
-                mapk_cascade.to_biomass_model()
+                mapk_cascade.convert()
 
 
 def test_run_simulation():

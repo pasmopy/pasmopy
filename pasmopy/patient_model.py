@@ -85,11 +85,6 @@ class PatientModelSimulations(InSilico):
     def _run_single_patient(self, patient: str) -> None:
         """
         Run a single patient-specifc model simulation.
-
-        Parameters
-        ----------
-        patient : str
-            Name (ID) of each patient.
         """
 
         kwargs = self.biomass_kws
@@ -104,16 +99,17 @@ class PatientModelSimulations(InSilico):
         model = Model(".".join([self.path_to_models, patient.strip()])).create()
         run_simulation(model, **kwargs)
 
-    def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
+    def run(self, n_proc: Optional[int] = None) -> None:
         """
         Run simulations of multiple patient-specific models in parallel.
 
         Parameters
         ----------
-        n_proc : int (default: multiprocessing.cpu_count() - 1)
+        n_proc : int, optional (default: None)
             The number of worker processes to use.
         """
-
+        if n_proc is None:
+            n_proc = multiprocessing.cpu_count() - 1
         self.parallel_execute(self._run_single_patient, n_proc)
 
     @staticmethod
@@ -156,7 +152,7 @@ class PatientModelSimulations(InSilico):
                         header.append(f"{condition}_{metric}")
                 writer.writerow(header)
 
-                for patient in self.patients:
+                for patient in tqdm(self.patients):
                     patient_specific = Model(
                         ".".join([self.path_to_models, patient.strip()])
                     ).create()
@@ -170,10 +166,11 @@ class PatientModelSimulations(InSilico):
                     data = np.array(all_data[patient_specific.obs.index(obs_name)])
                     if normalization:
                         for i in range(data.shape[0]):
-                            if not np.isnan(data[i]).all():
+                            if not np.isnan(data[i]).all() and not np.all(data[i] == 0.0):
                                 data[i] /= np.nanmax(data[i])
                         data = np.nanmean(data, axis=0)
-                        data /= np.max(data)
+                        if not np.all(data == 0.0):
+                            data /= np.max(data)
                     patient_specific_characteristics = [patient]
                     for h in header[1:]:
                         condition, metric = h.split("_")
@@ -216,18 +213,19 @@ class PatientModelSimulations(InSilico):
         Examples
         --------
         >>> with open ("models/breast/sample_names.txt", mode="r") as f:
-                TCGA_ID = f.read().splitlines()
+        ...    TCGA_ID = f.read().splitlines()
         >>> from pasmopy import PatientModelSimulations
         >>> simulations = PatientModelSimulations("models.breast", TCGA_ID)
         >>> simulations.subtyping(
-                "subtype_classification.pdf",
-                {
-                    "Phosphorylated_Akt": {"EGF": ["max"], "HRG": ["max"]},
-                    "Phosphorylated_ERK": {"EGF": ["max"], "HRG": ["max"]},
-                    "Phosphorylated_c-Myc": {"EGF": ["max"], "HRG": ["max"]},
-                },
-                clustermap_kws={"figsize": (9, 12)}
-            )
+        ...    "subtype_classification.pdf",
+        ...    {
+        ...        "Phosphorylated_Akt": {"EGF": ["max"], "HRG": ["max"]},
+        ...        "Phosphorylated_ERK": {"EGF": ["max"], "HRG": ["max"]},
+        ...        "Phosphorylated_c-Myc": {"EGF": ["max"], "HRG": ["max"]},
+        ...    },
+        ...    clustermap_kws={"figsize": (9, 12)}
+        ... )
+
         """
         # seaborn clustermap
         if clustermap_kws is None:
@@ -269,11 +267,6 @@ class PatientModelAnalyses(InSilico):
     def _run_single_patient(self, patient: str) -> None:
         """
         Run a single patient-specifc model analysis.
-
-        Parameters
-        ----------
-        patient : str
-            Name (ID) of each patient.
         """
 
         kwargs = self.biomass_kws
@@ -287,14 +280,15 @@ class PatientModelAnalyses(InSilico):
         model = Model(".".join([self.path_to_models, patient.strip()])).create()
         run_analysis(model, **kwargs)
 
-    def run(self, n_proc: int = multiprocessing.cpu_count() - 1) -> None:
+    def run(self, n_proc: Optional[int] = None) -> None:
         """
         Run analyses of multiple patient-specific models in parallel.
 
         Parameters
         ----------
-        n_proc : int (default: multiprocessing.cpu_count() - 1)
+        n_proc : int, optional (default: None)
             The number of worker processes to use.
         """
-
+        if n_proc is None:
+            n_proc = multiprocessing.cpu_count() - 1
         self.parallel_execute(self._run_single_patient, n_proc)

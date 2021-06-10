@@ -19,8 +19,9 @@ class Text2Model(ReactionRules):
 
     lang : str (default: 'python')
         Either 'python' or 'julia'.
-        - 'python': biomass (https://github.com/okadalabipr/biomass)
-        - 'julia': BioMASS.jl (https://github.com/himoto/BioMASS.jl)
+
+        - 'python': biomass (https://github.com/biomass-dev/biomass)
+        - 'julia': BioMASS.jl (https://github.com/biomass-dev/BioMASS.jl)
     """
 
     input_txt: str
@@ -267,11 +268,7 @@ class Text2Model(ReactionRules):
         """
         if self.lang == "python":
             with open(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    "template",
-                    "set_search_param.py",
-                ),
+                os.path.join(os.path.dirname(__file__), "template", "set_search_param.py"),
                 encoding="utf-8",
                 mode="r",
             ) as f:
@@ -299,10 +296,7 @@ class Text2Model(ReactionRules):
                         + "\n\n"
                     )
             with open(
-                os.path.join(
-                    f"{self.name}",
-                    "set_search_param.py",
-                ),
+                os.path.join(f"{self.name}", "set_search_param.py"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -515,10 +509,7 @@ class Text2Model(ReactionRules):
                         )
                         lines[line_num + 3] += "\n{}".format(4 * self.indentation + ")\n")
             with open(
-                os.path.join(
-                    f"{self.name}",
-                    "observable.py",
-                ),
+                os.path.join(f"{self.name}", "observable.py"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -653,7 +644,7 @@ class Text2Model(ReactionRules):
         ) as f:
             f.write("\n".join(lines))
 
-    def to_biomass_model(self, overwrite: bool = False) -> None:
+    def convert(self, overwrite: bool = False) -> None:
         """
         Convert text to a biomass-formatted model.
 
@@ -662,10 +653,10 @@ class Text2Model(ReactionRules):
         overwrite : bool (defauld: False)
             If True, the model folder will be overwritten.
 
-        Output
-        ------
-        Biomass model : Biomass model
-            e.g., Kholodenko_JBC_1999/
+        Examples
+        --------
+        >>> from pasmopy import Text2Model
+        >>> Text2Model("Kholodenko_JBC_1999.txt").convert()
 
         """
         if overwrite and os.path.isdir(
@@ -715,6 +706,11 @@ class Text2Model(ReactionRules):
         ----------
         n_reaction : int
             The number of rate equations in the model.
+
+        Examples
+        --------
+        >>> from pasmopy import Text2Model
+        >>> Text2Model("Kholodenko_JBC_1999.txt").to_markdown(25)
 
         """
         os.makedirs(os.path.join("markdown", f"{self.name.split(os.sep)[-1]}"), exist_ok=True)
@@ -803,6 +799,13 @@ class Text2Model(ReactionRules):
 
         my_word : str
             User-defined rule word.
+
+        Examples
+        --------
+        >>> from pasmopy import Text2Model
+        >>> mm_kinetics = Text2Model("michaelis_menten.txt")
+        >>> mm_kinetics.register_word("is_dissociated", "releases")
+        >>> mm_kinetics.convert()
 
         """
         if rxn_rule not in self.rule_words.keys():

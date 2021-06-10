@@ -14,9 +14,9 @@ A brief description of each file/folder is below:
 
 ## Examples
 
-- [Circadian clock](https://github.com/okadalabipr/biomass/tree/master/biomass/models/circadian_clock)
-- [Immediate-early gene response](https://github.com/okadalabipr/biomass/tree/master/biomass/models/Nakakuki_Cell_2010)
-- [Insulin signaling](https://github.com/okadalabipr/biomass/tree/master/biomass/models/insulin_signaling)
-- [MAPK cascade](https://github.com/okadalabipr/biomass/tree/master/biomass/models/mapk_cascade)
-- [NF-κB pathway](https://github.com/okadalabipr/biomass/tree/master/biomass/models/nfkb_pathway)
-- [TGF-β/SMAD pathway](https://github.com/okadalabipr/biomass/tree/master/biomass/models/tgfb_smad)
+- [Circadian clock](https://github.com/biomass-dev/biomass/tree/master/biomass/models/circadian_clock)
+- [Immediate-early gene response](https://github.com/biomass-dev/biomass/tree/master/biomass/models/Nakakuki_Cell_2010)
+- [Insulin signaling](https://github.com/biomass-dev/biomass/tree/master/biomass/models/insulin_signaling)
+- [MAPK cascade](https://github.com/biomass-dev/biomass/tree/master/biomass/models/mapk_cascade)
+- [NF-κB pathway](https://github.com/biomass-dev/biomass/tree/master/biomass/models/nfkb_pathway)
+- [TGF-β/SMAD pathway](https://github.com/biomass-dev/biomass/tree/master/biomass/models/tgfb_smad)

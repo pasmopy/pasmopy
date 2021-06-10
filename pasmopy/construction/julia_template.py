@@ -1,6 +1,6 @@
 """
 Model template for conversion of biomass models into
-BioMASS.jl (https://github.com/himoto/BioMASS.jl) format.
+BioMASS.jl (https://github.com/biomass-dev/BioMASS.jl) format.
 
 BioMASS.jl >= 0.4.2
 """

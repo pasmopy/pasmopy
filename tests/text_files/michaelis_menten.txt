@@ -3,9 +3,9 @@ ES releases E and P | kf=15, kr=0
 
 # E + S <=> ES -> E + P
 
-@obs Enzyme = u[E]
-@obs Substrate = u[S]
-@obs Complex = u[ES]
-@obs Product = u[P]
+@obs Enzyme: u[E]
+@obs Substrate: u[S]
+@obs Complex: u[ES]
+@obs Product: u[P]
 
 @sim tspan: [0, 100]
