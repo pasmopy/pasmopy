@@ -6,11 +6,6 @@ from typing import Dict, List, NamedTuple, Optional
 import numpy as np
 
 
-class Protein(NamedTuple):
-    unphosphorylated: str
-    phosphorylated: str
-
-
 class UnregisteredRule(NamedTuple):
     expected: Optional[str]
     original: Optional[str]
@@ -72,8 +67,6 @@ class ReactionRules(object):
         Information about parameter constraints.
     param_excluded : list of strings
         Parameters excluded from search params because of parameter constraints.
-    protein_phosphorylation : list of NamedTuples
-        Pairs of unphosphorylated and phosphorylated proteins.
     sim_tspan : list of strings ['t0', 'tf']
         Interval of integration.
     sim_conditions : list of List[str]
@@ -120,11 +113,6 @@ class ReactionRules(object):
         init=False,
     )
     param_excluded: List[str] = field(
-        default_factory=list,
-        init=False,
-    )
-    # Detection of mistakes
-    protein_phosphorylation: List[Protein] = field(
         default_factory=list,
         init=False,
     )
@@ -637,7 +625,7 @@ class ReactionRules(object):
                 "Use '-->' to specify the name of the phosphorylated protein."
             )
         self._set_species(unphosphorylated_form, phosphorylated_form)
-        self.protein_phosphorylation.append(Protein(unphosphorylated_form, phosphorylated_form))
+        
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.kf{line_num:d}] * y[V.{unphosphorylated_form}] - "
@@ -690,7 +678,7 @@ class ReactionRules(object):
                 "Use '-->' to specify the name of the dephosphorylated protein."
             )
         self._set_species(phosphorylated_form, unphosphorylated_form)
-        self.protein_phosphorylation.append(Protein(unphosphorylated_form, phosphorylated_form))
+        
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.V{line_num:d}] * y[V.{phosphorylated_form}] / "
@@ -751,7 +739,7 @@ class ReactionRules(object):
         if unphosphorylated_form == phosphorylated_form:
             raise ValueError(f"line{line_num:d}: {phosphorylated_form} <- Use a different name.")
         self._set_species(kinase, unphosphorylated_form, phosphorylated_form)
-        self.protein_phosphorylation.append(Protein(unphosphorylated_form, phosphorylated_form))
+        
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.V{line_num:d}] * y[V.{kinase}] * y[V.{unphosphorylated_form}] / "
@@ -812,7 +800,7 @@ class ReactionRules(object):
         if phosphorylated_form == unphosphorylated_form:
             raise ValueError(f"line{line_num:d}: {unphosphorylated_form} <- Use a different name.")
         self._set_species(phosphatase, phosphorylated_form, unphosphorylated_form)
-        self.protein_phosphorylation.append(Protein(unphosphorylated_form, phosphorylated_form))
+        
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.V{line_num:d}] * y[V.{phosphatase}] * y[V.{phosphorylated_form}] / "
@@ -1241,27 +1229,3 @@ class ReactionRules(object):
                             else ""
                         )
                     )
-
-    def check_species_names(self) -> None:
-        """
-        Check whether user-defined names of model species are appropriate.
-        """
-        unique_pairs = set(self.protein_phosphorylation)
-        for one in self.protein_phosphorylation:
-            if self.protein_phosphorylation.count(one) % 2 == 1:
-                for another in unique_pairs:
-                    if (
-                        one.unphosphorylated == another.unphosphorylated
-                        and one.phosphorylated != another.phosphorylated
-                    ) or (
-                        one.unphosphorylated != another.unphosphorylated
-                        and one.phosphorylated == another.phosphorylated
-                    ):
-                        raise NameError(
-                            "These species names should be same: "
-                            + (
-                                f"'{one.unphosphorylated}' and '{another.unphosphorylated}'."
-                                if one.unphosphorylated != another.unphosphorylated
-                                else f"'{one.phosphorylated}' and '{another.phosphorylated}'."
-                            )
-                        )

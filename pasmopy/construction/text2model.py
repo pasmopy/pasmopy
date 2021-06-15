@@ -675,7 +675,6 @@ class Text2Model(ReactionRules):
             os.makedirs(os.path.join(f"{self.name}_jl", "name2idx"))
 
         self.create_ode()
-        self.check_species_names()
         self._update_parameters()
         self._update_species()
         self._update_set_model()
@@ -715,7 +714,6 @@ class Text2Model(ReactionRules):
         """
         os.makedirs(os.path.join("markdown", f"{self.name.split(os.sep)[-1]}"), exist_ok=True)
         self.create_ode()
-        self.check_species_names()
         with open(self.input_txt, encoding="utf-8") as f:
             lines = f.readlines()
         for num, line in enumerate(lines):
