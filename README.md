@@ -1,5 +1,5 @@
 [![Actions Status](https://github.com/pasmopy/pasmopy/workflows/Tests/badge.svg)](https://github.com/pasmopy/pasmopy/actions)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg?logo=apache)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # Pasmopy – Patient-Specific Modeling in Python
@@ -67,7 +67,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
    import michaelis_menten
 
    model = Model(michaelis_menten.__package__).create()
-   run_simulation(model, viz_type="original")
+   run_simulation(model)
    ```
 
    ![](docs/_static/img/michaelis_menten_sim.png)

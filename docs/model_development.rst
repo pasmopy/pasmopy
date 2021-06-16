@@ -139,7 +139,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
       import michaelis_menten
 
       model = Model(michaelis_menten.__package__).create()
-      run_simulation(model, viz_type="original")
+      run_simulation(model)
 
 .. image:: https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png
 
@@ -212,7 +212,7 @@ Reference:
       import Kholodenko_JBC_1999
 
       model = Model(Kholodenko_JBC_1999.__package__).create()
-      run_simulation(model, viz_type="original")
+      run_simulation(model)
 
 
 .. _biomass: https://github.com/okadalabipr/biomass
