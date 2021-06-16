@@ -105,7 +105,7 @@ class PatientModelSimulations(InSilico):
 
         Parameters
         ----------
-        n_proc : int, optional (default: None)
+        n_proc : int, optional
             The number of worker processes to use.
         """
         if n_proc is None:
@@ -207,7 +207,7 @@ class PatientModelSimulations(InSilico):
         normalization : bool (default: True)
             Whether to perform max-normalization.
 
-        clustermap_kws : dict, optional (default: None)
+        clustermap_kws : dict, optional
             Keyword arguments to pass to seaborn.clustermap().
 
         Examples
@@ -286,7 +286,7 @@ class PatientModelAnalyses(InSilico):
 
         Parameters
         ----------
-        n_proc : int, optional (default: None)
+        n_proc : int, optional
             The number of worker processes to use.
         """
         if n_proc is None:
