@@ -139,6 +139,11 @@ class PatientModelSimulations(InSilico):
         Extract response characteristics from patient-specific signaling dynamics.
         """
         os.makedirs("classification", exist_ok=True)
+        # cleanup csv
+        files = os.listdir("classification")
+        for file in files:
+            if file.endswith(".csv"):
+                os.remove(os.path.join("classification", f"{file}"))
         for obs_name, conditions_and_metrics in dynamic_characteristics.items():
             with open(
                 os.path.join("classification", f"{obs_name}.csv"),
