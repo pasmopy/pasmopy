@@ -4,17 +4,26 @@ from biomass.dynamics.solver import *
 from .name2idx import C, V
 from .set_model import DifferentialEquation
 
-observables = []
 
-
-class NumericalSimulation(DifferentialEquation):
-    """Simulate a model using scipy.integrate.ode
+class Observable(DifferentialEquation):
+    """
+    Correlating model simulations and experimental measurements.
 
     Attributes
     ----------
+    obs_names : list of strings
+        Names of model observables.
+
+    t : range
+        Simulation time span.
+
+    conditions : list of strings
+        Expetimental conditions.
+
+    simulations : numpy.ndarray
+        The numpy array to store simulation results.
+
     normalization : nested dict
-        Keys for each observable
-        ------------------------
         * 'timepoint' : Optional[int]
             The time point at which simulated values are normalized.
             If None, the maximum value will be used for normalization.
@@ -23,18 +32,25 @@ class NumericalSimulation(DifferentialEquation):
             The experimental conditions to use for normalization.
             If empty, all conditions defined in sim.conditions will be used.
 
+    experiments : list of dict
+        Time series data.
+
+    error_bars : list of dict
+        Error bars to show in figures.
+
     """
 
     def __init__(self):
-        super().__init__(perturbation={})
-        self.normalization = {}
-
-    t = range(101)  # 0, 1, 2, ..., 100
-
-    # Experimental conditions
-    conditions = []
-
-    simulations = np.empty((len(observables), len(t), len(conditions)))
+        super(Observable, self).__init__(perturbation={})
+        self.obs_names: list = []
+        self.t: range = range(101)
+        self.conditions: list = []
+        self.simulations: np.ndarray = np.empty(
+            (len(self.obs_names), len(self.t), len(self.conditions))
+        )
+        self.normalization: dict = {}
+        self.experiments: list = [None] * len(self.obs_names)
+        self.error_bars: list = [None] * len(self.obs_names)
 
     def simulate(self, x: list, y0: list, _perturbation: dict = {}):
         if _perturbation:
@@ -50,29 +66,9 @@ class NumericalSimulation(DifferentialEquation):
             else:
                 pass
 
-
-class ExperimentalData(object):
-    """
-    Set experimental data.
-
-    Attributes
-    ----------
-    experiments : list of dict
-        Time series data.
-
-    error_bars : list of dict
-        Error bars to show in figures.
-
-    """
-
-    def __init__(self):
-        self.experiments = [None] * len(observables)
-        self.error_bars = [None] * len(observables)
-
     def set_data(self):
         pass
 
-    @staticmethod
-    def get_timepoint(obs_name: str):
-        if obs_name in observables:
+    def get_timepoint(self, obs_name: str):
+        if obs_name in self.obs_names:
             return []

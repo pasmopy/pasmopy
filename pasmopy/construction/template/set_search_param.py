@@ -8,11 +8,12 @@ from .set_model import initial_values, param_values
 class SearchParam(object):
     """Specify model parameters and/or initial values to optimize"""
 
-    # parameters
-    idx_params = []
+    def __init__(self):
+        # parameters
+        self.idx_params = []
 
-    # initial values
-    idx_initials = []
+        # initial values
+        self.idx_initials = []
 
     def get_region(self):
         x = param_values()
