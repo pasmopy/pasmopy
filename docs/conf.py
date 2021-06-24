@@ -21,11 +21,8 @@ sys.path.insert(0, os.path.abspath("../"))
 # -- Project information -----------------------------------------------------
 from datetime import datetime
 
-try:
-    from pasmopy import __author__, __version__
-except ImportError:
-    __author__ = "Hiroaki Imoto"
-    __version__ = "0.0.1"
+from pasmopy import __author__, __version__
+
 
 project = "Pasmopy"
 title = "Patient-Specific Modeling in Python"

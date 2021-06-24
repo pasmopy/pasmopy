@@ -105,7 +105,7 @@ class PatientModelSimulations(InSilico):
 
         Parameters
         ----------
-        n_proc : int, optional (default: None)
+        n_proc : int, optional
             The number of worker processes to use.
         """
         if n_proc is None:
@@ -139,6 +139,11 @@ class PatientModelSimulations(InSilico):
         Extract response characteristics from patient-specific signaling dynamics.
         """
         os.makedirs("classification", exist_ok=True)
+        # cleanup csv
+        files = os.listdir("classification")
+        for file in files:
+            if file.endswith(".csv"):
+                os.remove(os.path.join("classification", f"{file}"))
         for obs_name, conditions_and_metrics in dynamic_characteristics.items():
             with open(
                 os.path.join("classification", f"{obs_name}.csv"),
@@ -207,7 +212,7 @@ class PatientModelSimulations(InSilico):
         normalization : bool (default: True)
             Whether to perform max-normalization.
 
-        clustermap_kws : dict, optional (default: None)
+        clustermap_kws : dict, optional
             Keyword arguments to pass to seaborn.clustermap().
 
         Examples
@@ -286,7 +291,7 @@ class PatientModelAnalyses(InSilico):
 
         Parameters
         ----------
-        n_proc : int, optional (default: None)
+        n_proc : int, optional
             The number of worker processes to use.
         """
         if n_proc is None:
