@@ -55,9 +55,9 @@ class Text2Model(ReactionRules):
                 if line.startswith("NAMES: List[str] = []"):
                     lines[line_num] = "NAMES: List[str] = [\n"
                     lines[line_num] += (
-                        f"{self.indentation}'"
-                        + f"',\n{self.indentation}'".join(self.parameters)
-                        + "',\n"
+                        f'{self.indentation}"'
+                        + f'",\n{self.indentation}"'.join(self.parameters)
+                        + '",\n'
                     )
                     lines[line_num] += "]\n"
             with open(
@@ -112,9 +112,9 @@ class Text2Model(ReactionRules):
                 if line.startswith("NAMES: List[str] = []"):
                     lines[line_num] = "NAMES: List[str] = [\n"
                     lines[line_num] += (
-                        "{}'".format(self.indentation)
-                        + "',\n{}'".format(self.indentation).join(self.species)
-                        + "',\n"
+                        f'{self.indentation}"'
+                        + '",\n{}"'.format(self.indentation).join(self.species)
+                        + '",\n'
                     )
                     lines[line_num] += "]\n"
             with open(
@@ -274,15 +274,15 @@ class Text2Model(ReactionRules):
             ) as f:
                 lines = f.readlines()
             for line_num, line in enumerate(lines):
-                if "idx_params = []" in line:
+                if "self.idx_params = []" in line:
                     # Write all parameters in idx_params (except for param_excluded)
-                    lines[line_num] = f"{self.indentation}idx_params = [\n"
+                    lines[line_num] = f"{2 * self.indentation}self.idx_params = [\n"
                     lines[line_num] += (
-                        "{}".format(2 * self.indentation + "C.")
-                        + ",\n{}".format(2 * self.indentation + "C.").join(self.parameters)
+                        "{}".format(3 * self.indentation + "C.")
+                        + ",\n{}".format(3 * self.indentation + "C.").join(self.parameters)
                         + ",\n"
                     )
-                    lines[line_num] += f"{self.indentation}]\n"
+                    lines[line_num] += f"{2 * self.indentation}]\n"
                     for param_name in self.param_excluded:
                         # Comment out parameters in param_excluded
                         lines[line_num] = lines[line_num].replace(
@@ -408,36 +408,36 @@ class Text2Model(ReactionRules):
                 # When sim condition is not given, add 'sim condition control: pass'
                 self.sim_conditions = [["control", "pass"]]
             for line_num, line in enumerate(lines):
-                if line.startswith("observables = []"):
+                if line.startswith(f"{2 * self.indentation}self.obs_names: list = []"):
                     # Write observables
-                    lines[line_num] = "observables = [\n"
-                    lines[line_num + 1] = (
-                        f"{self.indentation}'"
-                        + f"',\n{self.indentation}'".join(
+                    lines[line_num] = f"{2 * self.indentation}self.obs_names: list = [\n"
+                    lines[line_num] += (
+                        f"{3 * self.indentation}'"
+                        + f"',\n{3 * self.indentation}'".join(
                             [desc[0].strip() for desc in self.obs_desc]
                         )
                         + "',\n"
                     )
-                    lines[line_num + 1] += "]\n"
-                elif "t = range(101)" in line:
+                    lines[line_num] += "]\n"
+                elif f"self.t: range = range(101)" in line:
                     # Write interval of integration
                     if self.sim_tspan:
-                        lines[line_num] = "{}t = range({}, {}+1)".format(
-                            self.indentation,
+                        lines[line_num] = "{}self.t: range = range({}, {}+1)\n".format(
+                            2 * self.indentation,
                             self.sim_tspan[0].strip(),
                             self.sim_tspan[1].strip(),
                         )
-                elif line.startswith(f"{self.indentation}conditions = []"):
+                elif line.startswith(f"{2 * self.indentation}self.conditions: list = []"):
                     # Write sim.condition
-                    lines[line_num] = f"{self.indentation}conditions = [\n"
-                    lines[line_num + 1] = (
-                        f"{2 * self.indentation}'"
-                        + f"',\n{2 * self.indentation}'".join(
+                    lines[line_num] = f"{2 * self.indentation}self.conditions: list = [\n"
+                    lines[line_num] += (
+                        f"{3 * self.indentation}'"
+                        + f"',\n{3 * self.indentation}'".join(
                             [condition[0].strip() for condition in self.sim_conditions]
                         )
                         + "',\n"
                     )
-                    lines[line_num + 1] += f"{self.indentation}]\n"
+                    lines[line_num] += f"{2 * self.indentation}]\n"
                 elif "# unperturbed steady state" in line:
                     if self.sim_unperturbed:
                         lines[line_num + 1] = (
@@ -496,7 +496,7 @@ class Text2Model(ReactionRules):
                         lines[line_num + 3] += (
                             "{}".format(4 * self.indentation)
                             + "self.simulations"
-                            + f"[observables.index('{desc[0].strip()}'), :, i] = (\n"
+                            + f"[self.obs_names.index('{desc[0].strip()}'), :, i] = (\n"
                             + f"{5 * self.indentation}"
                             + desc[1].strip(" ").strip()
                         )
