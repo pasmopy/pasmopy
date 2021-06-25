@@ -165,7 +165,7 @@ class PatientModelSimulations(InSilico):
                             "simulations_all.npy",
                         )
                     )
-                    data = np.array(all_data[patient_specific.obs.index(obs_name)])
+                    data = np.array(all_data[patient_specific.observables.index(obs_name)])
                     if normalization:
                         for i in range(data.shape[0]):
                             if not np.isnan(data[i]).all() and not np.all(data[i] == 0.0):
@@ -178,7 +178,7 @@ class PatientModelSimulations(InSilico):
                         condition, metric = h.split("_")
                         patient_specific_characteristics.append(
                             self._calc_response_characteristics(
-                                data[:, patient_specific.sim.conditions.index(condition)],
+                                data[:, patient_specific.problem.conditions.index(condition)],
                                 metric,
                             )
                         )
@@ -241,11 +241,11 @@ class PatientModelSimulations(InSilico):
             characteristics: List[pd.DataFrame] = []
             files = os.listdir("classification")
             for file in files:
-                obs, ext = os.path.splitext(file)
+                observable, ext = os.path.splitext(file)
                 if ext == ".csv":
                     df = pd.read_csv(os.path.join("classification", file), index_col="Sample")
                     characteristics.append(
-                        df.rename(columns=lambda s: obs.replace("_", " ") + "_" + s)
+                        df.rename(columns=lambda s: observable.replace("_", " ") + "_" + s)
                     )
             all_info = pd.concat(characteristics, axis=1)
             all_info.index.name = ""
