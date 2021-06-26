@@ -1,4 +1,4 @@
-biomass>=0.4
+biomass>=0.5
 numpy
 pandas>=0.23
 seaborn>=0.11
