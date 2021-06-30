@@ -10,7 +10,7 @@
 ![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png)
 -->
 
-**Pasmopy** is a scalable toolkit for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling. It is compatible with [biomass](https://github.com/biomass-dev/biomass) and offers the following features:
+**Pasmopy** is a scalable toolkit to identify prognostic factors for cancers based on intracellular signaling dynamics generated from personalized kinetic models. It is compatible with [biomass](https://github.com/biomass-dev/biomass) and offers the following features:
 
 - Construction of mechanistic models from text
 - Personalized predictions of patient outcomes
