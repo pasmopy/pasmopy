@@ -3,7 +3,7 @@ import multiprocessing
 import os
 import platform
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -78,9 +78,19 @@ class PatientModelSimulations(InSilico):
     ----------
     biomass_kws : dict, optional
         Keyword arguments to pass to biomass.run_simulation.
+    response_characteristics : dict[str, Callable[[1d-array], int ot float]]
+        A dictionary containing functions to extract dynamic response characteristics
+        from time-course simulations.
     """
 
     biomass_kws: Optional[dict] = field(default=None)
+    response_characteristics: Dict[str, Callable[[np.ndarray], Union[int, float]]] = field(
+        default_factory=lambda: dict(
+            max=np.max,
+            AUC=simps,
+        ),
+        init=False,
+    )
 
     def _run_single_patient(self, patient: str) -> None:
         """
@@ -108,24 +118,6 @@ class PatientModelSimulations(InSilico):
         if n_proc is None:
             n_proc = multiprocessing.cpu_count() - 1
         self.parallel_execute(self._run_single_patient, n_proc)
-
-    @staticmethod
-    def _calc_response_characteristics(
-        time_course_data: np.ndarray,
-        metric: str,
-    ) -> str:
-        if metric.lower() == "max":
-            response_characteristics = np.max(time_course_data)
-        elif metric.lower() == "auc":
-            response_characteristics = simps(time_course_data)
-        elif metric.lower() == "droprate":
-            response_characteristics = (np.max(time_course_data) - time_course_data[-1]) / (
-                len(time_course_data) - np.argmax(time_course_data)
-            )
-        else:
-            raise ValueError("Available metrics are: 'max', 'AUC', 'droprate'.")
-
-        return str(response_characteristics)
 
     def _extract(
         self,
@@ -177,9 +169,10 @@ class PatientModelSimulations(InSilico):
                     for h in header[1:]:
                         condition, metric = h.split("_")
                         patient_specific_characteristics.append(
-                            self._calc_response_characteristics(
-                                data[:, patient_specific.problem.conditions.index(condition)],
-                                metric,
+                            str(
+                                self.response_characteristics[metric](
+                                    data[:, patient_specific.problem.conditions.index(condition)],
+                                )
                             )
                         )
                     writer = csv.writer(f, lineterminator="\n")
@@ -214,6 +207,8 @@ class PatientModelSimulations(InSilico):
 
         Examples
         --------
+        Subtype classification
+
         >>> with open ("models/breast/sample_names.txt", mode="r") as f:
         ...    TCGA_ID = f.read().splitlines()
         >>> from pasmopy import PatientModelSimulations
@@ -228,6 +223,11 @@ class PatientModelSimulations(InSilico):
         ...    clustermap_kws={"figsize": (9, 12)}
         ... )
 
+        Add new characteristics
+
+        >>> def droprate(time_course: np.ndarray) -> float:
+        ...     return - (time_course[-1] - np.max(time_course)) / (len(time_course) - np.argmax(time_course))
+        >>> simulations.response_characteristics["droprate"] = droprate
         """
         # seaborn clustermap
         if clustermap_kws is None:

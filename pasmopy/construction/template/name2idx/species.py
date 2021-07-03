@@ -6,7 +6,7 @@ NAMES: List[str] = []
 NUM: int = len(NAMES)
 
 Species = make_dataclass(
-    cls_name="Parameters",
+    cls_name="Species",
     fields=[(name, int) for name in NAMES],
     namespace={"NAMES": NAMES, "NUM": NUM},
     frozen=True,

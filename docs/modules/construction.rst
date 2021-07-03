@@ -6,3 +6,4 @@ Construction of executable models from text (:py:mod:`pasmopy.construction`)
    
    reaction_rules
    text2model
+   template
