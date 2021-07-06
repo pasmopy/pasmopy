@@ -77,7 +77,7 @@ class PatientModelSimulations(InSilico):
     Attributes
     ----------
     biomass_kws : dict, optional
-        Keyword arguments to pass to biomass.run_simulation.
+        Keyword arguments to pass to `biomass.run_simulation`.
     response_characteristics : dict[str, Callable[[1d-array], int ot float]]
         A dictionary containing functions to extract dynamic response characteristics
         from time-course simulations.
@@ -192,18 +192,17 @@ class PatientModelSimulations(InSilico):
         Parameters
         ----------
         fname : str, path-like or None
-            The clustermap is saved as fname if it is not None.
+            The clustermap is saved as fname if it is not `None`.
 
         dynamic_characteristics : Dict[str, Dict[str, List[str]]]
             {"observable": {"condition": ["metric", ...], ...}, ...}.
             Characteristics in the signaling dynamics used for classification.
-            'metric' must be one of 'max', 'AUC', 'droprate'.
 
         normalization : bool (default: True)
             Whether to perform max-normalization.
 
         clustermap_kws : dict, optional
-            Keyword arguments to pass to seaborn.clustermap().
+            Keyword arguments to pass to `seaborn.clustermap()`.
 
         Examples
         --------
@@ -261,7 +260,7 @@ class PatientModelAnalyses(InSilico):
     Attributes
     ----------
     biomass_kws : dict, optional
-        Keyword arguments to pass to biomass.run_analysis.
+        Keyword arguments to pass to `biomass.run_analysis`.
     """
 
     biomass_kws: Optional[dict] = field(default=None)
