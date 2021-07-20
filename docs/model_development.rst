@@ -165,7 +165,7 @@ Reference:
       pRPL is dissociated into pR2 and pPLCg | kf=0.3, kr=0.006
       pPLCg is dephosphorylated --> PLCg | V=1, K=100
       pR2 binds Grb2 --> RG | kf=0.003, kr=0.05 | Grb2=85
-      RG binds SOS --> RGS | kf=0.01, 0.06 | SOS=34
+      RG binds SOS --> RGS | kf=0.01, kr=0.06 | SOS=34
       RGS is dissociated into pR2 and GS | kf=0.03, kr=4.5e-3
       GS is dissociated into Grb2 and SOS | kf=1.5e-3, kr=1e-4
       pR2 binds Shc --> RSh | kf=0.09, kr=0.6 | Shc=150
