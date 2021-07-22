@@ -121,7 +121,7 @@ class PatientModelSimulations(InSilico):
 
     def _extract(
         self,
-        dynamic_characteristics: Dict[str, Dict[str, List[str]]],
+        dynamical_features: Dict[str, Dict[str, List[str]]],
         normalization: bool,
     ) -> None:
         """
@@ -133,7 +133,7 @@ class PatientModelSimulations(InSilico):
         for file in files:
             if file.endswith(".csv"):
                 os.remove(os.path.join("classification", f"{file}"))
-        for obs_name, conditions_and_metrics in dynamic_characteristics.items():
+        for obs_name, conditions_and_metrics in dynamical_features.items():
             with open(
                 os.path.join("classification", f"{obs_name}.csv"),
                 "w",
@@ -181,7 +181,7 @@ class PatientModelSimulations(InSilico):
     def subtyping(
         self,
         fname: Optional[str],
-        dynamic_characteristics: Dict[str, Dict[str, List[str]]],
+        dynamical_features: Dict[str, Dict[str, List[str]]],
         normalization: bool = True,
         *,
         clustermap_kws: Optional[dict] = None,
@@ -194,7 +194,7 @@ class PatientModelSimulations(InSilico):
         fname : str, path-like or None
             The clustermap is saved as fname if it is not `None`.
 
-        dynamic_characteristics : Dict[str, Dict[str, List[str]]]
+        dynamical_features : Dict[str, Dict[str, List[str]]]
             {"observable": {"condition": ["metric", ...], ...}, ...}.
             Characteristics in the signaling dynamics used for classification.
 
@@ -235,7 +235,7 @@ class PatientModelSimulations(InSilico):
         clustermap_kws.setdefault("cmap", "RdBu_r")
         clustermap_kws.setdefault("center", 0)
         # extract response characteristics
-        self._extract(dynamic_characteristics, normalization)
+        self._extract(dynamical_features, normalization)
         if fname is not None:
             characteristics: List[pd.DataFrame] = []
             files = os.listdir("classification")
