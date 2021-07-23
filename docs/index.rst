@@ -9,9 +9,9 @@ Pasmopy – Patient-Specific Modeling in Python
 **Pasmopy** is a scalable toolkit for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling. It is compatible with `biomass <https://github.com/biomass-dev/biomass>`_ and offers the following features:
 
 * Construction of mechanistic models from text
-* Personalized predictions of patient outcomes
-* Analysis of patient-specific pathway activities
-* Cancer subtype classification based on dynamic response characteristics
+* Personalization of the model using transcriptome data
+* Prediction of patient outcome through classification based on signaling dynamics
+* Sensitivity analysis for prediction of potential drug targets
 
 Contents
 ========
