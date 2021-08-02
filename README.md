@@ -35,7 +35,7 @@ This example shows you how to build a simple Michaelis-Menten two-step enzyme ca
 
 > E + S ⇄ ES → E + P
 
-An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.
+*An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.*
 
 1. Prepare a text file describing biochemical reactions (`michaelis_menten.txt`)
 
