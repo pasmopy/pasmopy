@@ -16,11 +16,7 @@ def test_biomass_examples():
         "nfkb_pathway",
         "tgfb_smad",
     ]
-    biomass_examples = BiomassExamples(
-        "biomass.models",
-        model_list,
-        biomass_kws={"viz_type": "original"},
-    )
+    biomass_examples = BiomassExamples("biomass.models", model_list)
     assert biomass_examples.run() is None
 
 

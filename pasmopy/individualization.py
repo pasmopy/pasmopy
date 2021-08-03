@@ -98,7 +98,7 @@ class Individualization(object):
             List of parameter values.
 
         param_name : str
-            Parameter incorporating gene_expression_data.
+            Name of the parameter incorporating gene_expression_data.
 
         protein: str
             Protein involved in the reaction.

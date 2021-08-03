@@ -271,7 +271,7 @@ class ReactionRules(object):
                                     + f"{line_num:d}] = "
                                     + pval.split("=")[1].strip(" ")
                                 )
-                                # If a parameter value is initialized to 0.0,
+                                # If a parameter value is initialized to 0.0 or fixed,
                                 # then add it to param_excluded.
                                 if float(pval.split("=")[1].strip(" ")) == 0.0 or fixed:
                                     self.param_excluded.append(base_param + f"{line_num:d}")
@@ -306,6 +306,10 @@ class ReactionRules(object):
                                 f"x[C.{param_name}"
                                 f"{int(param_values[0]):d}]"
                             )
+                else:
+                    raise ValueError(
+                        f"line{line_num:d}: {line}\nInvalid expression in the input parameter."
+                    )
             if line.count("|") > 1 and line.split("|")[2].strip():
                 initial_values = line.split("|")[2].strip().split(",")
                 for ival in initial_values:
@@ -625,7 +629,7 @@ class ReactionRules(object):
                 "Use '-->' to specify the name of the phosphorylated protein."
             )
         self._set_species(unphosphorylated_form, phosphorylated_form)
-        
+
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.kf{line_num:d}] * y[V.{unphosphorylated_form}] - "
@@ -678,7 +682,7 @@ class ReactionRules(object):
                 "Use '-->' to specify the name of the dephosphorylated protein."
             )
         self._set_species(phosphorylated_form, unphosphorylated_form)
-        
+
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.V{line_num:d}] * y[V.{phosphorylated_form}] / "
@@ -739,7 +743,7 @@ class ReactionRules(object):
         if unphosphorylated_form == phosphorylated_form:
             raise ValueError(f"line{line_num:d}: {phosphorylated_form} <- Use a different name.")
         self._set_species(kinase, unphosphorylated_form, phosphorylated_form)
-        
+
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.V{line_num:d}] * y[V.{kinase}] * y[V.{unphosphorylated_form}] / "
@@ -800,7 +804,7 @@ class ReactionRules(object):
         if phosphorylated_form == unphosphorylated_form:
             raise ValueError(f"line{line_num:d}: {unphosphorylated_form} <- Use a different name.")
         self._set_species(phosphatase, phosphorylated_form, unphosphorylated_form)
-        
+
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.V{line_num:d}] * y[V.{phosphatase}] * y[V.{phosphorylated_form}] / "

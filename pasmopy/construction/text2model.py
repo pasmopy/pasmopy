@@ -418,7 +418,7 @@ class Text2Model(ReactionRules):
                         )
                         + "',\n"
                     )
-                    lines[line_num] += "]\n"
+                    lines[line_num] += f"{2 * self.indentation}]\n"
                 elif f"self.t: range = range(101)" in line:
                     # Write interval of integration
                     if self.sim_tspan:

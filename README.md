@@ -13,9 +13,9 @@
 **Pasmopy** is a scalable toolkit to identify prognostic factors for cancers based on intracellular signaling dynamics generated from personalized kinetic models. It is compatible with [biomass](https://github.com/biomass-dev/biomass) and offers the following features:
 
 - Construction of mechanistic models from text
-- Personalized predictions of patient outcomes
-- Analysis of patient-specific pathway activities
-- Cancer subtype classification based on dynamic response characteristics
+- Personalization of the model using transcriptome data
+- Prediction of patient outcome through classification based on signaling dynamics
+- Sensitivity analysis for prediction of potential drug targets
 
 ## Installation
 
@@ -35,7 +35,7 @@ This example shows you how to build a simple Michaelis-Menten two-step enzyme ca
 
 > E + S ⇄ ES → E + P
 
-An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.
+*An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.*
 
 1. Prepare a text file describing biochemical reactions (`michaelis_menten.txt`)
 
@@ -72,8 +72,10 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
 
    ![](docs/_static/img/michaelis_menten_sim.png)
     <!--
-    ![](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
+    ![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
     -->
+
+For more examples, please refer to the Documentation.
 
 ## Author
 
