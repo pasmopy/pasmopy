@@ -321,9 +321,7 @@ class ReactionRules(object):
                 for ival in initial_values:
                     if ival.startswith("fixed "):
                         ival = ival.split("fixed ")[-1]
-                        fixed = True
-                    else:
-                        fixed = False
+                        self.fixed_species.append(ival.split("=")[0].strip(" "))
                     if ival.split("=")[0].strip(" ") in line.split("|")[0]:
                         if self._isfloat(ival.split("=")[1].strip(" ")):
                             self.init_info.append(
@@ -332,7 +330,6 @@ class ReactionRules(object):
                                 + "] = "
                                 + ival.split("=")[1].strip(" ")
                             )
-                            self.fixed_species.append(ival.split("=")[0].strip(" "))
                         else:
                             raise ValueError(
                                 f"line{line_num:d}: Initial value must be int or float."
