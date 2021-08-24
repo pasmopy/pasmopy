@@ -41,6 +41,13 @@ To specify parameters or initial conditions, you can put those information by us
 
 In the example above, you can assume that import and export rates were identical for DUSP (line 2) and pDUSP (line 3).
 
+* If the amount of a model species should be held fixed (never consumed) during simulation, you can add ``fixed`` prefix:
+
+.. code-block:: python
+
+   # [Ligand] will be held fixed to 10.0 during simulation
+   Ligand binds Receptor --> LR | kf = 1e-6, kr = 1e-1 | fixed Ligand = 10.0
+
 
 The available rules can be found at :doc:`modules/reaction_rules`.
 

@@ -12,30 +12,30 @@ class UnregisteredRule(NamedTuple):
 
 
 PREPOSITIONS: List[str] = [
-    " to",
-    " for",
-    " from",
-    " up",
-    " down",
-    " in",
-    " on",
-    " at",
-    " off",
-    " into",
-    " around",
-    " among",
-    " between",
-    " of",
-    " over",
-    " above",
-    " below",
-    " under",
-    " through",
-    " across",
-    " along",
-    " near",
-    " by",
-    " beside",
+    "to",
+    "for",
+    "from",
+    "up",
+    "down",
+    "in",
+    "on",
+    "at",
+    "off",
+    "into",
+    "around",
+    "among",
+    "between",
+    "of",
+    "over",
+    "above",
+    "below",
+    "under",
+    "through",
+    "across",
+    "along",
+    "near",
+    "by",
+    "beside",
 ]
 
 
@@ -66,7 +66,9 @@ class ReactionRules(object):
     param_constraints : list of strings
         Information about parameter constraints.
     param_excluded : list of strings
-        Parameters excluded from search params because of parameter constraints.
+        List of parameters excluded from search params because of parameter constraints.
+    fixed_species : list of strings
+        List of species which should be held fixed (never consumed) during simulation.
     sim_tspan : list of strings ['t0', 'tf']
         Interval of integration.
     sim_conditions : list of List[str]
@@ -113,6 +115,10 @@ class ReactionRules(object):
         init=False,
     )
     param_excluded: List[str] = field(
+        default_factory=list,
+        init=False,
+    )
+    fixed_species: List[str] = field(
         default_factory=list,
         init=False,
     )
@@ -313,6 +319,9 @@ class ReactionRules(object):
             if line.count("|") > 1 and line.split("|")[2].strip():
                 initial_values = line.split("|")[2].strip().split(",")
                 for ival in initial_values:
+                    if ival.startswith("fixed "):
+                        ival = ival.split("fixed ")[-1]
+                        self.fixed_species.append(ival.split("=")[0].strip(" "))
                     if ival.split("=")[0].strip(" ") in line.split("|")[0]:
                         if self._isfloat(ival.split("=")[1].strip(" ")):
                             self.init_info.append(
@@ -383,7 +392,7 @@ class ReactionRules(object):
 
         Returns
         -------
-        expected_word : str
+        unregistered_rule : UnregisteredRule
             Rule word with the highest similarity score.
 
         """
@@ -405,8 +414,9 @@ class ReactionRules(object):
         original_word = (
             None if expected_word is None else str_subset[match_words.index(expected_word)]
         )
+        unregistered_rule = UnregisteredRule(expected_word, original_word)
 
-        return UnregisteredRule(expected_word, original_word)
+        return unregistered_rule
 
     @staticmethod
     def _remove_prepositions(sentence: str) -> str:
@@ -414,8 +424,8 @@ class ReactionRules(object):
         Remove preposition from text not to use it for identifying reaction rules.
         """
         for preposition in PREPOSITIONS:
-            if sentence.endswith(preposition):
-                return sentence[: -len(preposition)]
+            if sentence.endswith(f" {preposition}"):
+                return sentence[: -len(preposition) - 1]
         else:
             return sentence
 

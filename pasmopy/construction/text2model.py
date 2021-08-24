@@ -162,6 +162,14 @@ class Text2Model(ReactionRules):
                 mode="r",
             ) as f:
                 lines = f.readlines()
+            # Check species which should be held fixed during simulation.
+            for species in self.fixed_species:
+                for i, equation in enumerate(self.differential_equations):
+                    if f"dydt[V.{species}] = " in equation:
+                        self.differential_equations[i] = equation.replace(
+                            f"dydt[V.{species}] = ",
+                            f"dydt[V.{species}] = 0 # ",
+                        )
             for line_num, line in enumerate(lines):
                 if line.startswith(2 * self.indentation + "v = {}\n"):
                     # Write flux vector: v
