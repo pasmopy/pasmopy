@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from biomass import Model, run_analysis, run_simulation
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from tqdm import tqdm
 
 
@@ -87,7 +87,7 @@ class PatientModelSimulations(InSilico):
     response_characteristics: Dict[str, Callable[[np.ndarray], Union[int, float]]] = field(
         default_factory=lambda: dict(
             max=np.max,
-            AUC=simps,
+            AUC=simpson,
         ),
         init=False,
     )
