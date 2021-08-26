@@ -91,6 +91,14 @@ def test_run_simulation():
                 )
             )
             assert np.isfinite(simulated_values).all()
+            if model_name == "Kholodenko_JBC_1999":
+                expected = np.load(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        "simulations_original_BN.npy",
+                    )
+                )
+                assert (np.abs(simulated_values - expected) < 1e-12).all()
     except ImportError as e:
         print(e)
 

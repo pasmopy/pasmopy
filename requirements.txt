@@ -1,6 +1,6 @@
-biomass>=0.5.1
+biomass>=0.5.2
 numpy
 pandas>=0.23
 seaborn>=0.11
-scipy
+scipy>=1.6
 tqdm
