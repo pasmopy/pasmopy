@@ -440,16 +440,15 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            monomer + monomer <=> dimer
-
         * Rate equation
-            v = kf * [monomer] * [monomer] - kr * [dimer]
+            .. math:: v = kf * [monomer] * [monomer] - kr * [dimer]
 
         * Differential equation
-            d[monomer]/dt = - 2 * v
+            .. math::
 
-            d[dimer]/dt = + v
+                d[monomer]/dt = - 2 * v
+
+                d[dimer]/dt = + v
 
         """
         description = self._preprocessing(
@@ -490,18 +489,17 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            component1 + component2 <=> complex
-
         * Rate equation
-            v = kf * [component1] * [component2] - kr * [complex]
+            .. math:: v = kf * [component1] * [component2] - kr * [complex]
 
         * Differential equation
-            d[component1]/dt = - v
+            .. math::
 
-            d[component2]/dt = - v
+                d[component1]/dt = - v
 
-            d[complex]/dt = + v
+                d[component2]/dt = - v
+
+                d[complex]/dt = + v
 
         """
         description = self._preprocessing(
@@ -554,18 +552,17 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            complex <=> component1 + component2
-
         * Rate equation
-            v = kf * [complex] - kr * [component1] * [component2]
+            .. math:: v = kf * [complex] - kr * [component1] * [component2]
 
         * Differential equation
-            d[component1]/dt = + v
+            .. math::
 
-            d[component2]/dt = + v
+                d[component1]/dt = + v
 
-            d[complex]/dt = - v
+                d[component2]/dt = + v
+
+                d[complex]/dt = - v
 
         """
         description = self._preprocessing(
@@ -611,20 +608,19 @@ class ReactionRules(object):
         """
         Examples
         --------
-        `unphosphorylated_form` is phosphorylated --> `phosphorylated_form`
+        >>> `uProtein` is phosphorylated --> `pProtein`
 
         Notes
         -----
-        * Event
-            unphosphorylated_form <=> phosphorylated_form
-
         * Rate equation
-            v = kf * [unphosphorylated_form] - kr * [phosphorylated_form]
+            .. math:: v = kf * [uProtein] - kr * [pProtein]
 
         * Differential equation
-            d[unphosphorylated_form]/dt = - v
+            .. math::
 
-            d[phosphorylated_form]/dt = + v
+                d[uProtein]/dt = - v
+
+                d[pProtein]/dt = + v
 
         """
         description = self._preprocessing(
@@ -666,20 +662,19 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> `phosphorylated_form` is dephosphorylated --> `unphosphorylated_form`
+        >>> `pProtein` is dephosphorylated --> `uProtein`
 
         Notes
         -----
-        * Event
-            phosphorylated_form --> unphosphorylated_form
-
         * Rate equation
-            v = V * [phosphorylated_form] / (K + [phosphorylated_form])
+            .. math:: v = V * [pProtein] / (K + [pProtein])
 
         * Differential equation
-            d[unphosphorylated_form]/dt = + v
+            .. math::
 
-            d[phosphorylated_form]/dt = - v
+                d[uProtein]/dt = + v
+
+                d[pProtein]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
@@ -719,24 +714,19 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> `kinase` phosphorylates `unphosphorylated_form` --> `phosphorylated_form`
+        >>> `kinase` phosphorylates `uProtein` --> `pProtein`
 
         Notes
         -----
-        * Event
-            kinase
-
-                ↓
-
-            unphosphorylated_form --> phosphorylated_form
-
         * Rate equation
-            v = V * [kinase] * [unphosphorylated_form] / (K + [unphosphorylated_form])
+            .. math:: v = V * [kinase] * [uProtein] / (K + [uProtein])
 
         * Differential equation
-            d[unphosphorylated_form]/dt = - v
+            .. math::
 
-            d[phosphorylated_form]/dt = + v
+                d[uProtein]/dt = - v
+
+                d[pProtein]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
@@ -780,24 +770,19 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> `phosphatase` dephosphorylates `phosphorylated_form` --> `unphosphorylated_form`
+        >>> `phosphatase` dephosphorylates `pProtein` --> `uProtein`
 
         Notes
         -----
-        * Event
-            phosphatase
-
-                ↓
-
-            phosphorylated_form --> unphosphorylated_form
-
         * Rate equation
-            v = V * [phosphatase] * [phosphorylated_form] / (K + [phosphorylated_form])
+            .. math:: v = V * [phosphatase] * [pProtein] / (K + [pProtein])
 
         * Differential equation
-            d[unphosphorylated_form]/dt = + v
+            .. math::
 
-            d[phosphorylated_form]/dt = - v
+                d[uProtein/dt = + v
+
+                d[pProtein]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
@@ -847,16 +832,17 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            TF --> mRNA
-
         * Rate equation
-            - v = V * [TF] ** n / (K ** n + [TF] ** n)
-            - v = V * ([TF1] * [TF2]) ** n / (K ** n + ([TF1] * [TF2]) ** n)
-            - v = V * [TF] ** n / (K ** n + [TF] ** n + ([repressor] / KF) ** nF)
+            .. math::
+
+                v = V * [TF] ^ {n} / (K ^ {n} + [TF] ^ {n})
+
+                v = V * ([TF1] * [TF2]) ^ {n} / (K ^ {n} + ([TF1] * [TF2]) ^ {n})
+
+                v = V * [TF] ^ {n} / (K ^ {n} + [TF] ^ {n} + ([repressor] / KF) ^ {nF})
 
         * Differential equation
-            d[mRNA]/dt = + v
+            .. math:: d[mRNA]/dt = + v
 
         """
         description = self._preprocessing(
@@ -928,14 +914,11 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            mRNA --> protein
-
         * Rate equation
-            v = kf * [mRNA]
+            .. math:: v = kf * [mRNA]
 
         * Differential equation
-            d[protein]/dt = + v
+            .. math:: d[protein]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -959,18 +942,11 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            catalyst
-
-                ↓
-
-            0 --> product
-
         * Rate equation
-            v = kf * [catalyst]
+            .. math:: v = kf * [catalyst]
 
         * Differential equation
-            d[product]/dt = + v
+            .. math:: d[product]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -994,14 +970,11 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            0 --> chemical_species
-
         * Rate equation
-            v = kf
+            .. math:: v = kf
 
         * Differential equation
-            d[chemical_species]/dt = + v
+            .. math:: d[chemical\_species]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1024,18 +997,11 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            protease
-
-                ↓
-
-            protein --> 0
-
         * Rate equation
-            v = kf * [protease]
+            .. math:: v = kf * [protease]
 
         * Differential equation
-            d[protein]/dt = - v
+            .. math:: d[protein]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1059,14 +1025,11 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            chemical_species --> 0
-
         * Rate equation
-            v = kf * [chemical_species]
+            .. math:: v = kf * [chemical_species]
 
         * Differential equation
-            d[chemical_species]/dt = - v
+            .. math:: d[chemical_species]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1090,21 +1053,15 @@ class ReactionRules(object):
 
         Notes
         -----
-        * Event
-            pre_translocation <=> post_translocation \
-            (Volume_pre_translocation <-> Volume_post_translocation)
-
-        * Example
-            
-
         * Rate equation
-            v = kf * [pre_translocation] - kr * (post_volume / pre_volume) \
-            * [post_translocation]
+            .. math:: v = kf * [pre\_translocation] - kr * (V_{post} / V{pre}) * [post\_translocation]
 
         * Differential equation
-            d[pre_translocation]/dt = - v
+            .. math::
 
-            d[post_translocation]/dt = + v * (pre_volume / post_volume)
+                d[pre\_translocation]/dt = - v
+
+                d[post\_translocation]/dt = + v * (V_{pre} / V_{post})
 
         """
         description = self._preprocessing(
