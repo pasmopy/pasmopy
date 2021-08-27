@@ -780,7 +780,7 @@ class ReactionRules(object):
         * Differential equation
             .. math::
 
-                d[uProtein/dt = + v
+                d[uProtein]/dt = + v
 
                 d[pProtein]/dt = - v
 
@@ -1054,7 +1054,7 @@ class ReactionRules(object):
         Notes
         -----
         * Rate equation
-            .. math:: v = kf * [pre\_translocation] - kr * (V_{post} / V{pre}) * [post\_translocation]
+            .. math:: v = kf * [pre\_translocation] - kr * (V_{post} / V_{pre}) * [post\_translocation]
 
         * Differential equation
             .. math::
