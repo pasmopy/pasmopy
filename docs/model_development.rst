@@ -5,7 +5,7 @@ This section walk you through the creation of a mechanistic model from text.
 
 How to use
 ----------
-Text2Model is a useful tool to build an ordinary differential equation (ODE) model from a text file describing biochemical reactions.
+**Text2Model** is a useful tool to build an ordinary differential equation (ODE) model from a text file describing biochemical reactions.
 
 The text file you need to prepare can be divided into three parts:
 
@@ -19,7 +19,7 @@ Reaction layer
    **description** | **parameters** | **initial conditions**
 
 In the reaction layer, you need to describe biochemical reactions.
-Each reaction described in the line number *i* will be converted into *i*\ :sup:`th`\ rate equation.
+Each reaction described in the line number *i* will be converted into *i*\ :sup:`th`\  rate equation.
 To specify parameters or initial conditions, you can put those information by using ``|``.
 
 * If you don't specify parameters/initial_conditions, they are initialized to 1 and 0, respectively, and the parameter values will be estimated from experimental data.
@@ -91,7 +91,7 @@ Example:
 
 * tspan:
 
-   Two element vector [t0, tf] specifying the initial and final times.
+   Two element vector ``[t0, tf]`` specifying the initial and final times.
 
 * unperturbed:
 
