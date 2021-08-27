@@ -2,7 +2,7 @@
 Model template for conversion of biomass models into
 BioMASS.jl (https://github.com/biomass-dev/BioMASS.jl) format.
 
-BioMASS.jl >= 0.4.2
+BioMASS.jl >= 0.5
 """
 
 PARAMETERS: str = """\
