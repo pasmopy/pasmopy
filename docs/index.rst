@@ -18,18 +18,12 @@ Contents
 
 .. toctree::
    :maxdepth: 2
+   :caption: Contents:
 
    about
    installation
    model_development
    modules/index
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 .. |Actions Status| image:: https://github.com/pasmopy/pasmopy/workflows/Tests/badge.svg
    :target: https://github.com/pasmopy/pasmopy/actions
