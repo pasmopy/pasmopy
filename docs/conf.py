@@ -23,7 +23,6 @@ from datetime import datetime
 
 from pasmopy import __author__, __version__
 
-
 project = "Pasmopy"
 title = "Patient-Specific Modeling in Python"
 author = __author__
@@ -85,11 +84,13 @@ pygments_style = "sphinx"
 
 
 # -- Options for HTML output -------------------------------------------------
+from sphinx.application import Sphinx
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+html_theme_options = {"logo_only": True, "navigation_with_keys": True}
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -101,6 +102,7 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+html_logo = "_static/img/pasmopy-project-logo.png"
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -119,7 +121,8 @@ html_static_path = ["_static"]
 htmlhelp_basename = "Pasmopydoc"
 title_doc = f"{project} documentation"
 
-
+def setup(app: Sphinx) -> None:
+    app.add_css_file("css/custom.css")
 # -- Options for LaTeX output ------------------------------------------------
 
 # Grouping the document tree into LaTeX files. List of tuples
