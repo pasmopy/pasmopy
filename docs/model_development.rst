@@ -1,4 +1,4 @@
-Model Development
+Model development
 =================
 
 This section walk you through the creation of a mechanistic model from text.
@@ -9,9 +9,11 @@ How to use
 
 The text file you need to prepare can be divided into three parts:
 
-#. Reaction layer
-#. Observable layer
-#. Simulation layer
+#. :ref:`Reaction Layer`
+#. :ref:`Observable layer`
+#. :ref:`Simulation layer`
+
+.. _Reaction Layer:
 
 Reaction layer
 ^^^^^^^^^^^^^^
@@ -63,6 +65,7 @@ You can also supply your own terminology in a reaction rule via:
    # Now you can use "releases" in your text, e.g., 'ES releases E and P'
    mm_kinetics.convert()
 
+.. _Observable Layer:
 
 Observable layer (Prefix: ``@obs``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -74,6 +77,8 @@ For example, if the total amount of SOS bound to EGFR should be the sum of RGS (
 .. code-block:: python
 
    @obs Total_SOS_bound_to_EGFR: u[RGS] + u[RShGS]
+
+.. _Simulation Layer:
 
 Simulation layer (Prefix: ``@sim``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -89,15 +94,15 @@ Example:
    @sim condition EGF20nM: init[EGF] = 680
    @sim condition EGF2nM: init[EGF] = 68
 
-* tspan:
+* **tspan**:
 
    Two element vector ``[t0, tf]`` specifying the initial and final times.
 
-* unperturbed:
+* **unperturbed**:
 
    Description of the untreated condition to find the steady state.
 
-* condition:
+* **condition**:
 
    Experimental conditions. Use ``p`` and ``init`` to modify model parameters and initial conditions, respectively.
 
@@ -112,7 +117,7 @@ This example shows you how to build a simple Michaelis-Menten two-step enzyme ca
 
    E + S ⇄ ES → E + P
 
-*An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.*
+An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.
 
 #. Prepare a text file describing biochemical reactions (``michaelis_menten.txt``)
    
