@@ -174,6 +174,7 @@ class ReactionRules(object):
             synthesize=[
                 " synthesizes",
                 " promotes synthesis of",
+                " increases",
             ],
             is_synthesized=[
                 " is synthesized",
@@ -181,6 +182,7 @@ class ReactionRules(object):
             degrade=[
                 " degrades",
                 " promotes degradation of",
+                " decreases",
             ],
             is_degraded=[
                 " is degraded",
