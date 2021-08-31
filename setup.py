@@ -1,29 +1,18 @@
 import sys
-import warnings
 from pathlib import Path
 
 from setuptools import find_packages, setup
 
-try:
-    from pasmopy import __author__, __email__, __maintainer__, __version__
-except ImportError:
-    __author__ = __maintainer__ = "Hiroaki Imoto"
-    __email__ = "himoto@protein.osaka-u.ac.jp"
-    __version__ = "0.0.1"
-
+from pasmopy import __author__, __email__, __maintainer__
 
 # Python version check.
 if sys.version_info[:2] < (3, 7):
     raise RuntimeError("Pasmopy requires at least Python version 3.7")
-elif sys.version_info[:2] >= (3, 10):
-    fmt = "Pasmopy {} may not yet support Python {}.{}"
-    warnings.warn(fmt.format(__version__, *sys.version_info[:2]), RuntimeWarning)
-    del fmt
-
 
 setup(
     name="pasmopy",
-    version=__version__,
+    use_scm_version=True,
+    setup_requires=["setuptools_scm"],
     description="Patient-Specific Modeling in Python",
     long_description=Path("README.md").read_text("utf-8"),
     long_description_content_type="text/markdown",
@@ -33,6 +22,10 @@ setup(
     maintainer=__maintainer__,
     maintainer_email=__email__,
     url="https://github.com/pasmopy/pasmopy",
+    project_urls={
+            "Source Code": "https://github.com/pasmopy/pasmopy",
+            "Bug Tracker": "https://github.com/pasmopy/pasmopy/issues",
+        },
     packages=find_packages(exclude=["tests", "docs"]),
     install_requires=[l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()],
     extras_require={
