@@ -2,7 +2,7 @@
 
 __author__ = __maintainer__ = "Hiroaki Imoto"
 __email__ = "himoto@protein.osaka-u.ac.jp"
-
+'''
 try:
     from setuptools_scm import get_version
 
@@ -17,7 +17,8 @@ except (LookupError, ImportError):
         from importlib.metadata import version
     __version__ = version(__name__)
     del version
-
+'''
+__version__ = "0.0.1"
 
 from .construction import Text2Model
 from .individualization import Individualization
