@@ -23,9 +23,9 @@ setup(
     maintainer_email=__email__,
     url="https://github.com/pasmopy/pasmopy",
     project_urls={
-            "Source Code": "https://github.com/pasmopy/pasmopy",
-            "Bug Tracker": "https://github.com/pasmopy/pasmopy/issues",
-        },
+        "Source Code": "https://github.com/pasmopy/pasmopy",
+        "Bug Tracker": "https://github.com/pasmopy/pasmopy/issues",
+    },
     packages=find_packages(exclude=["tests", "docs"]),
     install_requires=[l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()],
     extras_require={
@@ -37,6 +37,9 @@ setup(
             "pytest",
         ],
         "docs": [
+            "importlib_metadata",
+            "setuptools",
+            "setuptools_scm",
             "sphinx>=1.7",
             "sphinx_rtd_theme>=0.3",
             "sphinx_autodoc_typehints>=1.10",
