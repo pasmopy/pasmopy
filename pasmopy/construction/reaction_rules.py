@@ -829,7 +829,7 @@ class ReactionRules(object):
         Examples
         --------
         >>> `TF` transcribes `mRNA`
-        >>> `TF1` and `TF2` transcribe `mRNA`  # (AND-gate)
+        >>> `TF1` & `TF2` transcribe `mRNA`  # (AND-gate)
         >>> `TF` transcribes `mRNA`, repressed by `repressor`  # (Negative regulation)
 
         Notes
@@ -866,7 +866,7 @@ class ReactionRules(object):
             # Add negative regulation from repressor
             mRNA = description[1].split(", repressed by")[0].strip()
             repressor = description[1].split(", repressed by")[1].strip()
-        if " and " not in description[0]:
+        if " & " not in description[0]:
             TF = description[0].strip(" ")
             self._set_species(mRNA, TF)
             if repressor is not None:
@@ -884,16 +884,15 @@ class ReactionRules(object):
             )
         else:
             # AND-gate
-            TF1 = description[0].split(" and ")[0].strip(" ")
-            TF2 = description[0].split(" and ")[1].strip(" ")
-            self._set_species(mRNA, TF1, TF2)
+            TFs = [TF.strip(" ") for TF in description[0].split(" & ")]
+            self._set_species(mRNA, *TFs)
             if repressor is not None:
                 self._set_species(repressor)
             self.reactions.append(
                 f"v[{line_num:d}] = "
-                f"x[C.V{line_num:d}] * (y[V.{TF1}]*y[V.{TF2}]) ** x[C.n{line_num:d}] / "
+                f"x[C.V{line_num:d}] * ({'y[V.' + '] * y[V.'.join(TFs) + ']'}) ** x[C.n{line_num:d}] / "
                 f"(x[C.K{line_num:d}] ** x[C.n{line_num:d}] + "
-                f"(y[V.{TF1}]*y[V.{TF2}]) ** x[C.n{line_num:d}]"
+                f"({'y[V.' + '] * y[V.'.join(TFs) + ']'}) ** x[C.n{line_num:d}]"
                 + (
                     ")"
                     if repressor is None
