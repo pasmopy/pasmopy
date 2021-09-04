@@ -3,7 +3,14 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-from pasmopy import __author__, __email__, __maintainer__
+try:
+    from pasmopy import __author__, __email__, __maintainer__, __version__
+except ImportError:
+    __author__ = __maintainer__ = "Hiroaki Imoto"
+    __email__ = "himoto@protein.osaka-u.ac.jp"
+    __version__ = "0.0.2"
+
+
 
 # Python version check.
 if sys.version_info[:2] < (3, 7):
@@ -11,8 +18,7 @@ if sys.version_info[:2] < (3, 7):
 
 setup(
     name="pasmopy",
-    use_scm_version=True,
-    setup_requires=["setuptools_scm"],
+    version=__version__,
     description="Patient-Specific Modeling in Python",
     long_description=Path("README.md").read_text("utf-8"),
     long_description_content_type="text/markdown",
