@@ -1,17 +1,19 @@
-Model Development
+Model development
 =================
 
 This section walk you through the creation of a mechanistic model from text.
 
 How to use
 ----------
-Text2Model is a useful tool to build an ordinary differential equation (ODE) model from a text file describing biochemical reactions.
+**Text2Model** is a useful tool to build an ordinary differential equation (ODE) model from a text file describing biochemical reactions.
 
 The text file you need to prepare can be divided into three parts:
 
-#. Reaction layer
-#. Observable layer
-#. Simulation layer
+#. :ref:`Reaction Layer`
+#. :ref:`Observable layer`
+#. :ref:`Simulation layer`
+
+.. _Reaction Layer:
 
 Reaction layer
 ^^^^^^^^^^^^^^
@@ -19,7 +21,7 @@ Reaction layer
    **description** | **parameters** | **initial conditions**
 
 In the reaction layer, you need to describe biochemical reactions.
-Each reaction described in the line number *i* will be converted into *i*\ :sup:`th`\ rate equation.
+Each reaction described in the line number *i* will be converted into *i*\ :sup:`th`\  rate equation.
 To specify parameters or initial conditions, you can put those information by using ``|``.
 
 * If you don't specify parameters/initial_conditions, they are initialized to 1 and 0, respectively, and the parameter values will be estimated from experimental data.
@@ -63,6 +65,7 @@ You can also supply your own terminology in a reaction rule via:
    # Now you can use "releases" in your text, e.g., 'ES releases E and P'
    mm_kinetics.convert()
 
+.. _Observable Layer:
 
 Observable layer (Prefix: ``@obs``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -74,6 +77,8 @@ For example, if the total amount of SOS bound to EGFR should be the sum of RGS (
 .. code-block:: python
 
    @obs Total_SOS_bound_to_EGFR: u[RGS] + u[RShGS]
+
+.. _Simulation Layer:
 
 Simulation layer (Prefix: ``@sim``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -89,15 +94,15 @@ Example:
    @sim condition EGF20nM: init[EGF] = 680
    @sim condition EGF2nM: init[EGF] = 68
 
-* tspan:
+* **tspan**:
 
-   Two element vector [t0, tf] specifying the initial and final times.
+   Two element vector ``[t0, tf]`` specifying the initial and final times.
 
-* unperturbed:
+* **unperturbed**:
 
    Description of the untreated condition to find the steady state.
 
-* condition:
+* **condition**:
 
    Experimental conditions. Use ``p`` and ``init`` to modify model parameters and initial conditions, respectively.
 
@@ -112,7 +117,7 @@ This example shows you how to build a simple Michaelis-Menten two-step enzyme ca
 
    E + S ⇄ ES → E + P
 
-*An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.*
+An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.
 
 #. Prepare a text file describing biochemical reactions (``michaelis_menten.txt``)
    

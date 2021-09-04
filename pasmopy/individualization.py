@@ -34,7 +34,7 @@ class Individualization(object):
         Pairs of proteins and their related genes.
 
     read_csv_kws : dict, optional
-        Keyword arguments to pass to pandas.read_csv.
+        Keyword arguments to pass to ``pandas.read_csv``.
 
     prefix : str (default: "w_")
         Prefix of weighting factors on gene expression levels.

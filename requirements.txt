@@ -1,6 +1,7 @@
 biomass>=0.5.2
-numpy
+numpy>=1.17
 pandas>=0.23
 seaborn>=0.11
 scipy>=1.6
-tqdm
+tqdm>4.50.2
+typing_extensions

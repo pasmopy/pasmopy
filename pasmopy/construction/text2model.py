@@ -4,6 +4,11 @@ import shutil
 from dataclasses import dataclass, field
 from typing import List
 
+try:  # python 3.8+
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
+
 from . import julia_template as jl
 from .reaction_rules import ReactionRules
 
@@ -17,7 +22,7 @@ class Text2Model(ReactionRules):
     input_txt : str
         Model description file (*.txt), e.g., 'Kholodenko_JBC_1999.txt'
 
-    lang : str (default: 'python')
+    lang : Literal["python", "julia"] (default: 'python')
         Either 'python' or 'julia'.
 
         - 'python': biomass (https://github.com/biomass-dev/biomass)
@@ -25,7 +30,7 @@ class Text2Model(ReactionRules):
     """
 
     input_txt: str
-    lang: str = "python"
+    lang: Literal["python", "julia"] = "python"
     indentation: str = field(default=4 * " ", init=False)
 
     def __post_init__(self) -> None:
