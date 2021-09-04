@@ -78,6 +78,7 @@ class PatientModelSimulations(InSilico):
     ----------
     biomass_kws : dict, optional
         Keyword arguments to pass to ``biomass.run_simulation``.
+        
     response_characteristics : dict[str, Callable[[1d-array], int ot float]]
         A dictionary containing functions to extract dynamic response characteristics
         from time-course simulations.
@@ -118,6 +119,21 @@ class PatientModelSimulations(InSilico):
         if n_proc is None:
             n_proc = multiprocessing.cpu_count() - 1
         self.parallel_execute(self._run_single_patient, n_proc)
+    
+    @staticmethod
+    def _cleanup_csv(dirname: str) -> None:
+        """
+        Delete CSV files in folder.
+
+        Parameters
+        ----------
+        dirname: str
+            Name of the directory.
+        """
+        files = os.listdir(dirname)
+        for file in files:
+            if file.endswith(".csv"):
+                os.remove(os.path.join(dirname, f"{file}"))
 
     def _extract(
         self,
@@ -128,11 +144,7 @@ class PatientModelSimulations(InSilico):
         Extract response characteristics from patient-specific signaling dynamics.
         """
         os.makedirs("classification", exist_ok=True)
-        # cleanup csv
-        files = os.listdir("classification")
-        for file in files:
-            if file.endswith(".csv"):
-                os.remove(os.path.join("classification", f"{file}"))
+        self._cleanup_csv("classification")
         for obs_name, conditions_and_metrics in dynamical_features.items():
             with open(
                 os.path.join("classification", f"{obs_name}.csv"),
