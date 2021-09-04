@@ -1,10 +1,6 @@
 # Pasmopy – Patient-Specific Modeling in Python
 
-![overview](docs/_static/img/overview.png)
-
-<!--
 ![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png)
--->
 
 [![Actions Status](https://github.com/pasmopy/pasmopy/workflows/Tests/badge.svg)](https://github.com/pasmopy/pasmopy/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg?logo=apache)](https://opensource.org/licenses/Apache-2.0)
@@ -29,7 +25,7 @@ Pasmopy requires Python 3.7+ to run.
 
 ## Example
 
-### Model development
+### Building mathematical models of biochemical systems from text
 
 This example shows you how to build a simple Michaelis-Menten two-step enzyme catalysis model with Pasmopy.
 
@@ -70,10 +66,7 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
    run_simulation(model)
    ```
 
-   ![](docs/_static/img/michaelis_menten_sim.png)
-    <!--
-    ![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
-    -->
+   ![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
 
 For more examples, please refer to the Documentation.
 
