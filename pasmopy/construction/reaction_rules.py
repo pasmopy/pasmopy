@@ -428,8 +428,7 @@ class ReactionRules(object):
         for preposition in PREPOSITIONS:
             if sentence.endswith(f" {preposition}"):
                 return sentence[: -len(preposition) - 1]
-        else:
-            return sentence
+        return sentence
 
     def dimerize(self, line_num: int, line: str) -> None:
         """
