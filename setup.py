@@ -22,6 +22,7 @@ setup(
     maintainer=__maintainer__,
     maintainer_email=__email__,
     url="https://github.com/pasmopy/pasmopy",
+    download_url="https://github.com/pasmopy/pasmopy/releases",
     project_urls={
         "Source Code": "https://github.com/pasmopy/pasmopy",
         "Bug Tracker": "https://github.com/pasmopy/pasmopy/issues",
