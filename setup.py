@@ -11,9 +11,8 @@ if sys.version_info[:2] < (3, 7):
 
 setup(
     name="pasmopy",
-    #use_scm_version=True,
-    #setup_requires=["setuptools_scm"],
-    version="0.0.1",
+    use_scm_version=True,
+    setup_requires=["setuptools_scm"],
     description="Patient-Specific Modeling in Python",
     long_description=Path("README.md").read_text("utf-8"),
     long_description_content_type="text/markdown",
