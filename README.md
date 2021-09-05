@@ -20,7 +20,7 @@
 
 ## Installation
 
-The latest stable release (and required dependencies) can be installed from PyPI:
+The latest stable release (and required dependencies) can be installed from [PyPI](https://pypi.python.org/pypi/pasmopy/):
 
 ```bash
 $ pip install pasmopy
