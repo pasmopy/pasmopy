@@ -3,7 +3,12 @@
 ![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png)
 
 [![Actions Status](https://github.com/pasmopy/pasmopy/workflows/Tests/badge.svg)](https://github.com/pasmopy/pasmopy/actions)
+[![Documentation Status](https://img.shields.io/readthedocs/pasmopy/latest.svg?logo=read%20the%20docs&logoColor=white&&label=Docs&version=latest)](https://pasmopy.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://img.shields.io/pypi/v/pasmopy.svg?logo=PyPI&logoColor=white)](https://pypi.python.org/pypi/pasmopy/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg?logo=apache)](https://opensource.org/licenses/Apache-2.0)
+[![Downloads](https://pepy.tech/badge/pasmopy)](https://pepy.tech/project/pasmopy)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/pasmopy.svg?logo=Python&logoColor=white)](https://pypi.python.org/pypi/pasmopy/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/pasmopy/pasmopy.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/pasmopy/pasmopy/context:python)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **Pasmopy** is a scalable toolkit to identify prognostic factors for cancers based on intracellular signaling dynamics generated from personalized kinetic models. It is compatible with [biomass](https://github.com/biomass-dev/biomass) and offers the following features:
@@ -15,7 +20,7 @@
 
 ## Installation
 
-The latest stable release (and required dependencies) can be installed from PyPI:
+The latest stable release (and required dependencies) can be installed from [PyPI](https://pypi.python.org/pypi/pasmopy/):
 
 ```bash
 $ pip install pasmopy
@@ -68,7 +73,7 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
 
    ![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
 
-For more examples, please refer to the Documentation.
+For more examples, please refer to the [Documentation](https://pasmopy.readthedocs.io/en/latest/).
 
 ## Author
 

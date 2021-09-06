@@ -831,5 +831,4 @@ class Text2Model(ReactionRules):
                         f"Cannot register '{my_word}'. "
                         f"Currently, it is used in the rule: {rule}"
                     )
-        else:
-            self.rule_words[rxn_rule].append(" " + my_word)
+        self.rule_words[rxn_rule].append(" " + my_word)

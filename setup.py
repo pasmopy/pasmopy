@@ -30,6 +30,7 @@ setup(
     url="https://github.com/pasmopy/pasmopy",
     download_url="https://github.com/pasmopy/pasmopy/releases",
     project_urls={
+        "Documentation": "https://pasmopy.readthedocs.io/en/latest/",
         "Source Code": "https://github.com/pasmopy/pasmopy",
         "Bug Tracker": "https://github.com/pasmopy/pasmopy/issues",
     },
