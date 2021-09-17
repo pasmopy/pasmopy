@@ -30,7 +30,7 @@ class Observable(DifferentialEquation):
 
         * 'condition' : list of strings
             The experimental conditions to use for normalization.
-            If empty, all conditions defined in sim.conditions will be used.
+            If empty, all conditions defined in ``sim.conditions`` will be used.
 
     experiments : list of dict
         Time series data.
