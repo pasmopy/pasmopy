@@ -6,7 +6,7 @@ from biomass.analysis.reaction import is_duplicate
 class ReactionNetwork(object):
     """
     Reaction indices grouped according to biological processes.
-    This is used for sensitivity analysis (target='reaction').
+    This is used for sensitivity analysis (``target``='reaction').
     """
 
     def __init__(self) -> None:

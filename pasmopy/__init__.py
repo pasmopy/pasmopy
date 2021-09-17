@@ -2,7 +2,7 @@
 
 __author__ = __maintainer__ = "Hiroaki Imoto"
 __email__ = "himoto@protein.osaka-u.ac.jp"
-__version__ = "0.1.0"
+__version__ = "0.0.3"
 
 from .construction import Text2Model
 from .individualization import Individualization
