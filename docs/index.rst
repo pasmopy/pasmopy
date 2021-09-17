@@ -13,9 +13,6 @@ Pasmopy – Patient-Specific Modeling in Python
 * Prediction of patient outcome through classification based on signaling dynamics
 * Sensitivity analysis for prediction of potential drug targets
 
-Contents
-========
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
