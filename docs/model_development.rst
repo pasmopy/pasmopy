@@ -141,7 +141,8 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
 
       from pasmopy import Text2Model
 
-      Text2Model("michaelis_menten.txt").convert()
+      description = Text2Model("michaelis_menten.txt")
+      description.convert()
 
 #. Run simulation with biomass_
 
@@ -214,7 +215,8 @@ Reference:
 
       from pasmopy import Text2Model
 
-      Text2Model("Kholodenko_JBC_1999.txt").convert()
+      description = Text2Model("Kholodenko_JBC_1999.txt")
+      description.convert()
    
 #. Run simulation with biomass_
    

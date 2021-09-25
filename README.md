@@ -58,7 +58,8 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
    ```python
    from pasmopy import Text2Model
 
-   Text2Model("michaelis_menten.txt").convert()
+   description = Text2Model("michaelis_menten.txt")
+   description.convert()
    ```
 
 1. Run simulation with [`biomass`](https://github.com/biomass-dev/biomass)
