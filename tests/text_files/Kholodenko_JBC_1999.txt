@@ -28,9 +28,7 @@ pPLCg is translocated to cytoskeletal or membrane structures --> pPLCg_I | kf=1,
 # Quantification of short term signaling by the epidermal growth factor receptor.
 # J. Biol. Chem. 274, 30169–30181 (1999). https://doi.org/10.1074/jbc.274.42.30169
 
-# observable
-# p: parameters
-# u: species
+# observables
 @obs Total_phosphorylated_Shc: u[pRSh] + u[RShG] + u[RShGS] + u[pShc] + u[ShG] + u[ShGS]
 @obs Total_Grb2_coprecipitated_with_Shc: u[RShG] + u[ShG] + u[RShGS] + u[ShGS]
 @obs Total_phosphorylated_Shc_bound_to_EGFR: u[pRSh] + u[RShG] + u[RShGS]
