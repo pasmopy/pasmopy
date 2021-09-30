@@ -203,8 +203,8 @@ class PatientModelSimulations(InSilico):
 
         Parameters
         ----------
-        fname : str, path-like or None
-            The clustermap is saved as fname if it is not ``None``.
+        fname : str, path-like or :obj:`None`
+            The clustermap is saved as fname if it is not :obj:`None`.
 
         dynamical_features : Dict[str, Dict[str, List[str]]]
             ``{"observable": {"condition": ["metric", ...], ...}, ...}``.
@@ -214,7 +214,7 @@ class PatientModelSimulations(InSilico):
             Whether to perform max-normalization.
 
         clustermap_kws : dict, optional
-            Keyword arguments to pass to `seaborn.clustermap()`.
+            Keyword arguments to pass to ``seaborn.clustermap()``.
 
         Examples
         --------

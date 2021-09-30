@@ -29,7 +29,7 @@ class WeightingFactors(object):
     prefix: str = field(default="w_", init=False)
     indentation: str = field(default=" " * 4, init=False)
 
-    def add(self) -> None:
+    def add_to_params(self) -> None:
         """
         Add weighting factors to model parameters.
 
