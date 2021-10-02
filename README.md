@@ -62,10 +62,10 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
    description.convert()
    ```
 
-1. Run simulation with [`biomass`](https://github.com/biomass-dev/biomass)
+1. Run simulation
 
    ```python
-   from biomass import Model, run_simulation
+   from pasmopy import Model, run_simulation
    import michaelis_menten
 
    model = Model(michaelis_menten.__package__).create()

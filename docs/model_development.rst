@@ -144,11 +144,11 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
       description = Text2Model("michaelis_menten.txt")
       description.convert()
 
-#. Run simulation with biomass_
+#. Run simulation
 
    .. code-block:: python
 
-      from biomass import Model, run_simulation
+      from pasmopy import Model, run_simulation
       import michaelis_menten
 
       model = Model(michaelis_menten.__package__).create()
@@ -218,15 +218,12 @@ Reference:
       description = Text2Model("Kholodenko_JBC_1999.txt")
       description.convert()
    
-#. Run simulation with biomass_
+#. Run simulation
    
    .. code-block:: python
 
-      from biomass import Model, run_simulation
+      from pasmopy import Model, run_simulation
       import Kholodenko_JBC_1999
 
       model = Model(Kholodenko_JBC_1999.__package__).create()
       run_simulation(model)
-
-
-.. _biomass: https://github.com/okadalabipr/biomass
