@@ -121,8 +121,11 @@ html_logo = "_static/img/pasmopy-project-logo.png"
 htmlhelp_basename = "Pasmopydoc"
 title_doc = f"{project} documentation"
 
+
 def setup(app: Sphinx) -> None:
     app.add_css_file("css/custom.css")
+
+
 # -- Options for LaTeX output ------------------------------------------------
 
 # Grouping the document tree into LaTeX files. List of tuples

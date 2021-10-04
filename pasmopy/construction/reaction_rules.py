@@ -48,7 +48,7 @@ class ReactionRules(object):
     Attributes
     ----------
     input_txt : str
-        Model description file (*.txt), e.g., 
+        Model description file (*.txt), e.g.,
         `Kholodenko_JBC_1999.txt <https://github.com/pasmopy/pasmopy/blob/master/tests/text_files/Kholodenko_JBC_1999.txt>`_.
     parameters : list of strings
         x : model parameters.
