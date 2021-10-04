@@ -76,6 +76,10 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
 
 For more examples, please refer to the [Documentation](https://pasmopy.readthedocs.io/en/latest/).
 
+### Patient-specific simulations and model-based stratification
+
+Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained in cultured cell lines, and performed _in silico_ simulation of 377 breast cancer patients. All code for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
+
 ## Author
 
 [Hiroaki Imoto](https://github.com/himoto)
