@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
-#
+import os
+import sys
+from datetime import datetime
+
+from sphinx.application import Sphinx
+
+from pasmopy import __author__, __version__
+
 # Configuration file for the Sphinx documentation builder.
 #
 # This file does only contain a selection of the most common options. For a
@@ -12,16 +19,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-
 sys.path.insert(0, os.path.abspath("../"))
 
 
 # -- Project information -----------------------------------------------------
-from datetime import datetime
 
-from pasmopy import __author__, __version__
 
 project = "Pasmopy"
 title = "Patient-Specific Modeling in Python"
@@ -84,7 +86,6 @@ pygments_style = "sphinx"
 
 
 # -- Options for HTML output -------------------------------------------------
-from sphinx.application import Sphinx
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
