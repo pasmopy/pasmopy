@@ -1046,11 +1046,11 @@ class ReactionRules(object):
             self.differential_equations.append(f"dydt[V.{chemical_species}] = - v[{line_num:d}]")
 
     def translocate(self, line_num: int, line: str) -> None:
-        """
+        r"""
         Examples
         --------
-        >>> `pre_translocation translocates from one location to another (pre_volume, post_volume) --> post_translocation`
-        >>> `pre_translocation is translocated from one location to another (pre_volume, post_volume) --> post_translocation`
+        >>> 'pre_translocation translocates from one location to another (pre_volume, post_volume) --> post_translocation'
+        >>> 'pre_translocation is translocated from one location to another (pre_volume, post_volume) --> post_translocation'
 
         Notes
         -----
