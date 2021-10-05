@@ -63,10 +63,10 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
    description.convert()
    ```
 
-1. Run simulation with [`biomass`](https://github.com/biomass-dev/biomass)
+1. Run simulation
 
    ```python
-   from biomass import Model, run_simulation
+   from pasmopy import Model, run_simulation
    import michaelis_menten
 
    model = Model(michaelis_menten.__package__).create()
@@ -76,6 +76,10 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
    ![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
 
 For more examples, please refer to the [Documentation](https://pasmopy.readthedocs.io/en/latest/).
+
+### Patient-specific simulations and model-based stratification
+
+Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained in cultured cell lines, and performed _in silico_ simulation of 377 breast cancer patients. All code for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
 
 ## Author
 

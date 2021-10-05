@@ -1,4 +1,9 @@
-# -*- coding: utf-8 -*-
+# Configuration file for the Sphinx documentation builder.
+#
+# This file does only contain a selection of the most common options. For a
+# full list see the documentation:
+# http://www.sphinx-doc.org/en/master/config
+
 import os
 import sys
 from datetime import datetime
@@ -6,12 +11,6 @@ from datetime import datetime
 from sphinx.application import Sphinx
 
 from pasmopy import __author__, __version__
-
-# Configuration file for the Sphinx documentation builder.
-#
-# This file does only contain a selection of the most common options. For a
-# full list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
 
 # -- Path setup --------------------------------------------------------------
 
@@ -23,7 +22,6 @@ sys.path.insert(0, os.path.abspath("../"))
 
 
 # -- Project information -----------------------------------------------------
-
 
 project = "Pasmopy"
 title = "Patient-Specific Modeling in Python"

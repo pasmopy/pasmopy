@@ -3,9 +3,8 @@ import shutil
 from typing import Callable
 
 import numpy as np
-from biomass import Model, run_simulation
 
-from pasmopy import Text2Model
+from pasmopy import Model, Text2Model, run_simulation
 
 
 def test_preprocessing():
