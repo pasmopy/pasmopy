@@ -9,6 +9,7 @@
 [![Downloads](https://pepy.tech/badge/pasmopy)](https://pepy.tech/project/pasmopy)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/pasmopy.svg?logo=Python&logoColor=white)](https://pypi.python.org/pypi/pasmopy)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/pasmopy/pasmopy.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/pasmopy/pasmopy/context:python)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/pasmopy/pasmopy/master.svg)](https://results.pre-commit.ci/latest/github/pasmopy/pasmopy/master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **Pasmopy** is a scalable toolkit to identify prognostic factors for cancers based on intracellular signaling dynamics generated from personalized kinetic models. It is compatible with [biomass](https://github.com/biomass-dev/biomass) and offers the following features:

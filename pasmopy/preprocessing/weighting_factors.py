@@ -23,6 +23,7 @@ class WeightingFactors(object):
     indentation : str (default: 4 spaces)
         How many spaces as indentation.
     """
+
     model: ModelObject
     gene_expression: Dict[str, List[str]]
     weighting_factors: List[str] = field(default_factory=list, init=False)
@@ -92,7 +93,6 @@ class WeightingFactors(object):
             ) as f:
                 f.writelines(lines)
 
-
     def set_search_bounds(self, lb: float = 0.01, ub: float = 100.0) -> None:
         """
         Set search bounds for weighting factors.
@@ -115,11 +115,8 @@ class WeightingFactors(object):
             ) as f:
                 lines = f.readlines()
             for line_num, line in enumerate(lines):
-                if (
-                    line.startswith(f"{2 * self.indentation}]")
-                    and lines[line_num + 3].startswith(
-                        f"{2 * self.indentation}self.idx_initials = "
-                    )
+                if line.startswith(f"{2 * self.indentation}]") and lines[line_num + 3].startswith(
+                    f"{2 * self.indentation}self.idx_initials = "
                 ):
                     lines[line_num] = (
                         f"{3 * self.indentation}"
@@ -129,9 +126,8 @@ class WeightingFactors(object):
                         + f",\n{2 * self.indentation}]\n"
                     )
                 elif line.startswith(f"{2 * self.indentation}search_rgn = convert_scale("):
-                    lines[line_num] = (
-                        2 * self.indentation
-                        + f"\n{2 * self.indentation}".join(search_bounds)
+                    lines[line_num] = 2 * self.indentation + f"\n{2 * self.indentation}".join(
+                        search_bounds
                     )
                     lines[line_num] += f"\n\n{2 * self.indentation}search_rgn = convert_scale(\n"
             with open(
