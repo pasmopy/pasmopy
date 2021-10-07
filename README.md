@@ -79,7 +79,7 @@ For more examples, please refer to the [Documentation](https://pasmopy.readthedo
 
 ### Patient-specific simulations and model-based classification
 
-Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of protein activity on 377 breast cancer patients transcriptomic data obtained from TCGA and CCLE. All the codes for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
+Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on 377 breast cancer patients transcriptomic data obtained from TCGA. All the codes for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
 
 ## Author
 
