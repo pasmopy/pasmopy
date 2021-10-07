@@ -16,7 +16,7 @@
 
 - Construction of mechanistic models from text
 - Personalization of the model using transcriptome data
-- Prediction of patient outcome through classification based on signaling dynamics
+- Prediction of patient outcome through signaling dynamics differences
 - Sensitivity analysis for prediction of potential drug targets
 
 ## Installation
@@ -39,7 +39,7 @@ This example shows you how to build a simple Michaelis-Menten two-step enzyme ca
 
 _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme._
 
-1. Prepare a text file describing biochemical reactions (`michaelis_menten.txt`)
+1. Prepare a text file describing the biochemical reactions (e.g., `michaelis_menten.txt`)
 
    ```
    E binds S --> ES | kf=0.003, kr=0.001 | E=100, S=50
@@ -54,7 +54,7 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
    @sim tspan: [0, 100]
    ```
 
-1. Convert text into an executable model
+1. Convert the text into an executable model
 
    ```python
    from pasmopy import Text2Model
@@ -77,9 +77,9 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
 
 For more examples, please refer to the [Documentation](https://pasmopy.readthedocs.io/en/latest/).
 
-### Patient-specific simulations and model-based stratification
+### Patient-specific simulations and model-based classification
 
-Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained in cultured cell lines, and performed _in silico_ simulation of 377 breast cancer patients. All code for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
+Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on 377 breast cancer patients transcriptomic data obtained from TCGA. All the codes for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
 
 ## Author
 
