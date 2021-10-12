@@ -16,7 +16,7 @@
 
 - Construction of mechanistic models from text
 - Personalization of the model using transcriptome data
-- Prediction of patient outcome through signaling dynamics differences
+- Prediction of patient outcome based on _in silico_ signaling dynamics
 - Sensitivity analysis for prediction of potential drug targets
 
 ## Installation
@@ -77,9 +77,9 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
 
 For more examples, please refer to the [Documentation](https://pasmopy.readthedocs.io/en/latest/).
 
-### Patient-specific simulations and model-based classification
+### Personalized signaling models for cancer patient stratification
 
-Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on 377 breast cancer patients transcriptomic data obtained from TCGA. All the codes for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
+Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on 377 breast cancer patients using The Cancer Genome Atlas (TCGA) transcriptome datasets. All the codes for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
 
 ## Author
 
