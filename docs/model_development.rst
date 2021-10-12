@@ -119,7 +119,7 @@ This example shows you how to build a simple Michaelis-Menten two-step enzyme ca
 
 An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme.
 
-#. Prepare a text file describing biochemical reactions (``michaelis_menten.txt``)
+#. Prepare a text file describing biochemical reactions (e.g., ``michaelis_menten.txt``)
    
    .. code-block:: python
       :linenos:
@@ -135,7 +135,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
 
       @sim tspan: [0, 100]
 
-#. Convert text into an executable model
+#. Convert the text into an executable model
 
    .. code-block:: python
 
@@ -209,7 +209,7 @@ Reference:
       @sim condition EGF20nM: init[EGF] = 680
       @sim condition EGF2nM: init[EGF] = 68
 
-#. Convert text into an executable model
+#. Convert the text into an executable model
 
    .. code-block:: python
 
