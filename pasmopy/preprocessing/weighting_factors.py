@@ -22,6 +22,36 @@ class WeightingFactors(object):
         Prefix of weighting factors on gene expression levels.
     indentation : str (default: 4 spaces)
         How many spaces as indentation.
+    
+    Examples
+    --------
+    >>> import erbb_network
+    >>> model = Model(erbb_network.__package__).create()
+    >>> gene_expression = {
+    ...     "ErbB1": ["EGFR"],
+    ...     "ErbB2": ["ERBB2"],
+    ...     "ErbB3": ["ERBB3"],
+    ...     "ErbB4": ["ERBB4"],
+    ...     "Grb2": ["GRB2"],
+    ...     "Shc": ["SHC1", "SHC2", "SHC3", "SHC4"],
+    ...     "RasGAP": ["RASA1", "RASA2", "RASA3"],
+    ...     "PI3K": ["PIK3CA", "PIK3CB", "PIK3CD", "PIK3CG"],
+    ...     "PTEN": ["PTEN"],
+    ...     "SOS": ["SOS1", "SOS2"],
+    ...     "Gab1": ["GAB1"],
+    ...     "RasGDP": ["HRAS", "KRAS", "NRAS"],
+    ...     "Raf": ["ARAF", "BRAF", "RAF1"],
+    ...     "MEK": ["MAP2K1", "MAP2K2"],
+    ...     "ERK": ["MAPK1", "MAPK3"],
+    ...     "Akt": ["AKT1", "AKT2"],
+    ...     "PTP1B": ["PTPN1"],
+    ...     "GSK3b": ["GSK3B"],
+    ...     "DUSP": ["DUSP5", "DUSP6", "DUSP7"],
+    ...     "cMyc": ["MYC"],
+    ... }
+    >>> weighting_factors = WeightingFactors(model, gene_expression)
+    >>> weighting_factors.add_to_params()
+    >>> weighting_factors.set_search_bounds()
     """
 
     model: ModelObject
@@ -33,37 +63,6 @@ class WeightingFactors(object):
     def add_to_params(self) -> None:
         """
         Add weighting factors to model parameters.
-
-        Examples
-        --------
-        import erbb_network
-
-        model = Model(erbb_network.__package__).create()
-        gene_expression = {
-            "ErbB1": ["EGFR"],
-            "ErbB2": ["ERBB2"],
-            "ErbB3": ["ERBB3"],
-            "ErbB4": ["ERBB4"],
-            "Grb2": ["GRB2"],
-            "Shc": ["SHC1", "SHC2", "SHC3", "SHC4"],
-            "RasGAP": ["RASA1", "RASA2", "RASA3"],
-            "PI3K": ["PIK3CA", "PIK3CB", "PIK3CD", "PIK3CG"],
-            "PTEN": ["PTEN"],
-            "SOS": ["SOS1", "SOS2"],
-            "Gab1": ["GAB1"],
-            "RasGDP": ["HRAS", "KRAS", "NRAS"],
-            "Raf": ["ARAF", "BRAF", "RAF1"],
-            "MEK": ["MAP2K1", "MAP2K2"],
-            "ERK": ["MAPK1", "MAPK3"],
-            "Akt": ["AKT1", "AKT2"],
-            "PTP1B": ["PTPN1"],
-            "GSK3b": ["GSK3B"],
-            "DUSP": ["DUSP5", "DUSP6", "DUSP7"],
-            "cMyc": ["MYC"],
-        }
-
-        weighting_factors = WeightingFactors(model, gene_expression)
-        weighting_factors.add()
         """
         for genes in self.gene_expression.values():
             for gene in genes:
@@ -99,9 +98,9 @@ class WeightingFactors(object):
 
         Parameters
         ----------
-        lb : float
+        lb : float (default: 0.01)
             Lower bound.
-        ub : float
+        ub : float (default: 100.0)
             Upper bound.
         """
         if self.weighting_factors:

@@ -20,6 +20,7 @@ class Individualization(object):
     transcriptomic_data : str
         Path to normalized gene expression data (CSV-formatted),
         e.g., (1) RLE-normalized and (2) post-ComBat TPM values.
+        Below is an example of data table.
 
         =========== ======== ======== ======== ===
         Description patient1 patient2 patient3 ...
@@ -38,6 +39,65 @@ class Individualization(object):
 
     prefix : str (default: "w_")
         Prefix of weighting factors on gene expression levels.
+
+    Examples
+    --------
+    ``set_search_param.py``
+    
+    >>> import os
+    >>> import numpy as np
+    >>> from pasmopy import Individualization
+    >>> from . import __path__
+    >>> from .name2idx import C, V
+    >>> from .set_model import initial_values, param_values
+    >>> incorporating_gene_expression_levels = Individualization(
+    ...     parameters=C.NAMES,
+    ...     species=V.NAMES,
+    ...     transcriptomic_data=os.path.join("transcriptomic_data", "TPM_RLE_postComBat_BRCA_BREAST.csv"),
+    ...     gene_expression={
+    ...         "ErbB1": ["EGFR"],
+    ...         "ErbB2": ["ERBB2"],
+    ...         "ErbB3": ["ERBB3"],
+    ...         "ErbB4": ["ERBB4"],
+    ...         "Grb2": ["GRB2"],
+    ...         "Shc": ["SHC1", "SHC2", "SHC3", "SHC4"],
+    ...         "RasGAP": ["RASA1", "RASA2", "RASA3"],
+    ...         "PI3K": ["PIK3CA", "PIK3CB", "PIK3CD", "PIK3CG"],
+    ...         "PTEN": ["PTEN"],
+    ...         "SOS": ["SOS1", "SOS2"],
+    ...         "Gab1": ["GAB1"],
+    ...         "RasGDP": ["HRAS", "KRAS", "NRAS"],
+    ...         "Raf": ["ARAF", "BRAF", "RAF1"],
+    ...         "MEK": ["MAP2K1", "MAP2K2"],
+    ...         "ERK": ["MAPK1", "MAPK3"],
+    ...         "Akt": ["AKT1", "AKT2"],
+    ...         "PTP1B": ["PTPN1"],
+    ...         "GSK3b": ["GSK3B"],
+    ...         "DUSP": ["DUSP5", "DUSP6", "DUSP7"],
+    ...         "cMyc": ["MYC"],
+    ...     },
+    ...     read_csv_kws={"index_col": "Description"}
+    ... )
+    >>> ...
+    >>> def update(self, indiv):
+    ...     x = param_values()
+    ...     y0 = initial_values()
+    ...     for i, j in enumerate(self.idx_params):
+    ...         x[j] = indiv[i]
+    ...     for i, j in enumerate(self.idx_initials):
+    ...         y0[j] = indiv[i + len(self.idx_params)]
+    ...     # As maximal transcription rate
+    ...     x[C.V291] = incorporating_gene_expression_levels.as_reaction_rate(
+    ...         __path__[0].split(os.sep)[-1], x, "V291", "DUSP"
+    ...     )
+    ...     x[C.V310] = incorporating_gene_expression_levels.as_reaction_rate(
+    ...         __path__[0].split(os.sep)[-1], x, "V310", "cMyc"
+    ...     )
+    ...     # As initial conditions
+    ...     y0 = incorporating_gene_expression_levels.as_initial_conditions(
+    ...         __path__[0].split(os.sep)[-1], x, y0
+    ...     )
+    ...     ...
     """
 
     parameters: List[str]
