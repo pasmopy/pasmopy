@@ -10,7 +10,7 @@ Pasmopy – Patient-Specific Modeling in Python
 
 * Construction of mechanistic models from text
 * Personalization of the model using transcriptome data
-* Prediction of patient outcome through classification based on signaling dynamics
+* Prediction of patient outcome based on *in silico* signaling dynamics
 * Sensitivity analysis for prediction of potential drug targets
 
 .. toctree::
