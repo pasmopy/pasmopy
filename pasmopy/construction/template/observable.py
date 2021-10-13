@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 from biomass.dynamics.solver import *
 
@@ -66,9 +68,10 @@ class Observable(DifferentialEquation):
             else:
                 pass
 
-    def set_data(self):
+    def set_data(self) -> None:
         pass
 
-    def get_timepoint(self, obs_name: str):
+    def get_timepoint(self, obs_name: str) -> List[int]:
         if obs_name in self.obs_names:
             return []
+        assert False
