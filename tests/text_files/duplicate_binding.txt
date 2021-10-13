@@ -1,0 +1,2 @@
+A binds B --> AB
+AB dissociates to A and B
