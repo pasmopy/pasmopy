@@ -1,3 +1,5 @@
+from typing import List
+
 from biomass.plotting import *
 from matplotlib import pyplot as plt
 
@@ -20,7 +22,7 @@ class Visualization(Observable):
         Visualization options for sensitivity analysis results.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.cm = plt.cm.get_cmap("tab10")
@@ -30,20 +32,20 @@ class Visualization(Observable):
         self.multiple_observables_options = MultipleObservables(self.cm)
         self.sensitivity_options = SensitivityOptions(self.cm)
 
-    def get_single_observable_options(self):
+    def get_single_observable_options(self) -> List[SingleObservable]:
 
         return self.single_observable_options
 
-    def get_multiple_observables_options(self):
+    def get_multiple_observables_options(self) -> MultipleObservables:
 
         return self.multiple_observables_options
 
-    def get_sensitivity_options(self):
+    def get_sensitivity_options(self) -> SensitivityOptions:
 
         return self.sensitivity_options
 
     @staticmethod
-    def set_timecourse_rcParams():
+    def set_timecourse_rcParams() -> None:
         """figure/simulation"""
         plt.rcParams["font.size"] = 12
         plt.rcParams["axes.linewidth"] = 1.5
@@ -58,7 +60,7 @@ class Visualization(Observable):
         # plt.rcParams['mathtext.it'] = 'Arial:italic'
 
     @staticmethod
-    def set_sensitivity_rcParams():
+    def set_sensitivity_rcParams() -> None:
         """figure/sensitivity"""
         plt.rcParams["font.size"] = 12
         plt.rcParams["axes.linewidth"] = 1.2
@@ -69,7 +71,7 @@ class Visualization(Observable):
         # plt.rcParams['font.family'] = 'Arial'
 
     @staticmethod
-    def convert_species_name(name):
+    def convert_species_name(name: str) -> str:
         """figure/sensitivity/initial_condition
         - Sensitivity for species with nonzero initial conditions
         """

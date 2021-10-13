@@ -41,7 +41,7 @@ class OptimizationProblem(Observable, SearchParam):
 
         return np.array(sim_val) / sim_norm_max, np.array(exp_val)
 
-    def objective(self, indiv, *args):
+    def objective(self, indiv, *args) -> float:
         """Define an objective function to be minimized"""
         if len(args) == 0:
             (x, y0) = self.update(indiv)
