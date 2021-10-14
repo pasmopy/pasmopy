@@ -10,7 +10,7 @@ except ImportError:
     from typing_extensions import Literal
 
 from . import julia_template as jl
-from .reaction_rules import ReactionRules
+from .reaction_rules import DuplicateError, ReactionRules
 
 
 @dataclass
@@ -657,14 +657,30 @@ class Text2Model(ReactionRules):
         ) as f:
             f.write("\n".join(lines))
 
+    def _detect_duplicate_binding(self) -> None:
+        """
+        Check for duplicate binding-dissociation events.
+        """
+        for i, pattern_a in enumerate(self.complex_formations):
+            for j in range(i + 1, len(self.complex_formations)):
+                pattern_b = self.complex_formations[j]
+                if (
+                    pattern_a.components == pattern_b.components
+                    and pattern_a.complexes == pattern_b.complexes
+                ):
+                    raise DuplicateError(
+                        "Duplicate binding-dissociation events are detected "
+                        f"in lines {pattern_a.rxn_no:d} and {pattern_b.rxn_no:d}."
+                    )
+
     def convert(self, overwrite: bool = False) -> None:
         """
         Convert text to a biomass-formatted model.
 
         Parameters
         ----------
-        overwrite : bool (defauld: False)
-            If True, the model folder will be overwritten.
+        overwrite : bool (defauld: :obj:`False`)
+            If :obj:`True`, the model folder will be overwritten.
 
         Examples
         --------
@@ -688,6 +704,7 @@ class Text2Model(ReactionRules):
             os.makedirs(os.path.join(f"{self.name}_jl", "name2idx"))
 
         self.create_ode()
+        self._detect_duplicate_binding()
         self._update_parameters()
         self._update_species()
         self._update_set_model()
@@ -799,7 +816,26 @@ class Text2Model(ReactionRules):
                 ]
             )
 
-    def register_word(self, rxn_rule: str, my_word: str) -> None:
+    def register_word(
+        self,
+        rxn_rule: Literal[
+            "dimerize",
+            "bind",
+            "is_dissociated",
+            "is_phosphorylated",
+            "is_dephosphorylated",
+            "phosphorylate",
+            "dephosphorylate",
+            "transcribe",
+            "is_translated",
+            "synthesize",
+            "is_synthesized",
+            "degrade",
+            "is_degraded",
+            "translocate",
+        ],
+        my_word: str,
+    ) -> None:
         """
         Register user-defined rule word.
 
@@ -828,7 +864,7 @@ class Text2Model(ReactionRules):
             for registered_word in words:
                 if " " + my_word in registered_word and registered_word in " " + my_word:
                     raise NameError(
-                        f"Cannot register '{my_word}'. "
+                        f"Cannot supply '{my_word}' to '{rxn_rule}'. "
                         f"Currently, it is used in the rule: {rule}"
                     )
         self.rule_words[rxn_rule].append(" " + my_word)

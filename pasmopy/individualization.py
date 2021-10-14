@@ -43,7 +43,7 @@ class Individualization(object):
     Examples
     --------
     ``set_search_param.py``
-    
+
     >>> import os
     >>> import numpy as np
     >>> from pasmopy import Individualization
