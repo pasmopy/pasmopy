@@ -11,6 +11,7 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/pasmopy/pasmopy.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/pasmopy/pasmopy/context:python)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/pasmopy/pasmopy/master.svg)](https://results.pre-commit.ci/latest/github/pasmopy/pasmopy/master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 
 **Pasmopy** is a scalable toolkit to identify prognostic factors for cancers based on intracellular signaling dynamics generated from personalized kinetic models. It is compatible with [biomass](https://github.com/biomass-dev/biomass) and offers the following features:
 
@@ -23,7 +24,7 @@
 
 The latest stable release (and required dependencies) can be installed from [PyPI](https://pypi.python.org/pypi/pasmopy):
 
-```bash
+```
 $ pip install pasmopy
 ```
 
@@ -56,21 +57,28 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
 
 1. Convert the text into an executable model
 
-   ```python
-   from pasmopy import Text2Model
+   ```shell
+   $ python
+   ```
 
-   description = Text2Model("michaelis_menten.txt")
-   description.convert()
+   ```python
+   >>> from pasmopy import Text2Model
+   >>> description = Text2Model("michaelis_menten.txt")
+   >>> description.convert()
+   Model information
+   -----------------
+   2 reactions
+   4 species
+   4 parameters
    ```
 
 1. Run simulation
 
    ```python
-   from pasmopy import Model, run_simulation
-   import michaelis_menten
-
-   model = Model(michaelis_menten.__package__).create()
-   run_simulation(model)
+   >>> from pasmopy import Model, run_simulation
+   >>> import michaelis_menten
+   >>> model = Model(michaelis_menten.__package__).create()
+   >>> run_simulation(model)
    ```
 
    ![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
