@@ -5,7 +5,7 @@ This section walk you through the creation of a mechanistic model from text.
 
 How to use
 ----------
-**Text2Model** is a useful tool to build an ordinary differential equation (ODE) model from a text file describing biochemical reactions.
+**Text2Model** is a useful tool to build an ordinary differential equation (ODE) model from a text file describing biochemical systems.
 
 The text file you need to prepare can be divided into three parts:
 
@@ -49,7 +49,6 @@ In the example above, you can assume that import and export rates were identical
 
    # [Ligand] will be held fixed to 10.0 during simulation
    Ligand binds Receptor --> LR | kf = 1e-6, kr = 1e-1 | fixed Ligand = 10.0
-
 
 The available rules can be found at :doc:`modules/reaction_rules`.
 
@@ -137,22 +136,29 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
 
 #. Convert the text into an executable model
 
+   .. code-block:: shell
+
+      $ python
+
    .. code-block:: python
 
-      from pasmopy import Text2Model
-
-      description = Text2Model("michaelis_menten.txt")
-      description.convert()
+      >>> from pasmopy import Text2Model
+      >>> description = Text2Model("michaelis_menten.txt")
+      >>> description.convert()
+      Model information
+      -----------------
+      2 reactions
+      4 species
+      4 parameters
 
 #. Run simulation
 
    .. code-block:: python
 
-      from pasmopy import Model, run_simulation
-      import michaelis_menten
-
-      model = Model(michaelis_menten.__package__).create()
-      run_simulation(model)
+      >>> from pasmopy import Model, run_simulation
+      >>> import michaelis_menten
+      >>> model = Model(michaelis_menten.__package__).create()
+      >>> run_simulation(model)
 
 .. image:: https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png
 
@@ -211,19 +217,26 @@ Reference:
 
 #. Convert the text into an executable model
 
+   .. code-block:: shell
+
+      $ python
+
    .. code-block:: python
 
-      from pasmopy import Text2Model
-
-      description = Text2Model("Kholodenko_JBC_1999.txt")
-      description.convert()
+      >>> from pasmopy import Text2Model
+      >>> description = Text2Model("Kholodenko_JBC_1999.txt")
+      >>> description.convert()
+      Model information
+      -----------------
+      25 reactions
+      23 species
+      50 parameters
    
 #. Run simulation
    
    .. code-block:: python
 
-      from pasmopy import Model, run_simulation
-      import Kholodenko_JBC_1999
-
-      model = Model(Kholodenko_JBC_1999.__package__).create()
-      run_simulation(model)
+      >>> from pasmopy import Model, run_simulation
+      >>> import Kholodenko_JBC_1999
+      >>> model = Model(Kholodenko_JBC_1999.__package__).create()
+      >>> run_simulation(model)
