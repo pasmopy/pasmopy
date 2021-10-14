@@ -22,7 +22,7 @@ class WeightingFactors(object):
         Prefix of weighting factors on gene expression levels.
     indentation : str (default: 4 spaces)
         How many spaces as indentation.
-    
+
     Examples
     --------
     >>> import erbb_network

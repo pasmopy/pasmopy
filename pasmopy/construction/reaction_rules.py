@@ -10,7 +10,7 @@ class DuplicateError(Exception):
     pass
 
 
-class  ComplexFormation(NamedTuple):
+class ComplexFormation(NamedTuple):
     rxn_no: int
     components: set
     complexes: str
@@ -648,7 +648,7 @@ class ReactionRules(object):
         -----
         * Parameters
             .. math:: kf, kr
-        
+
         * Rate equation
             .. math:: v = kf * [uProtein] - kr * [pProtein]
 

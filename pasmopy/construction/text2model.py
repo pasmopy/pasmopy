@@ -656,7 +656,7 @@ class Text2Model(ReactionRules):
             mode="w",
         ) as f:
             f.write("\n".join(lines))
-    
+
     def _detect_duplicate_binding(self) -> None:
         """
         Check for duplicate binding-dissociation events.
