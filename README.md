@@ -65,11 +65,6 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
    >>> from pasmopy import Text2Model
    >>> description = Text2Model("michaelis_menten.txt")
    >>> description.convert()
-   Model information
-   -----------------
-   2 reactions
-   4 species
-   4 parameters
    ```
 
 1. Run simulation
