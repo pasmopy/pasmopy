@@ -720,7 +720,7 @@ class Text2Model(ReactionRules):
             ) as f:
                 f.write("\n".join(lines))
         print(
-            "Model Information\n"
+            "Model information\n"
             "-----------------\n"
             f"{len(self.reactions):d} reactions\n"
             f"{len(self.species):d} species\n"
