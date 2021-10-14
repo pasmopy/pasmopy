@@ -3,8 +3,10 @@ import shutil
 from typing import Callable
 
 import numpy as np
+import pytest
 
 from pasmopy import Model, Text2Model, run_simulation
+from pasmopy.construction.reaction_rules import DuplicateError
 
 
 def test_preprocessing():
@@ -68,6 +70,10 @@ def test_text2model():
                     lang=lang,
                 )
                 mapk_cascade.convert()
+    with pytest.raises(DuplicateError):
+        Text2Model(
+            os.path.join(os.path.dirname(__file__), "text_files", "duplicate_binding.txt")
+        ).convert()
 
 
 def test_run_simulation():
@@ -157,6 +163,7 @@ def test_cleanup():
         "Kholodenko_JBC_1999",
         "michaelis_menten_jl",
         "Kholodenko_JBC_1999_jl",
+        "duplicate_binding",
     ]:
         assert os.path.isdir(
             os.path.join(

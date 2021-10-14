@@ -6,6 +6,16 @@ from typing import Dict, List, NamedTuple, Optional
 import numpy as np
 
 
+class DuplicateError(Exception):
+    pass
+
+
+class ComplexFormation(NamedTuple):
+    rxn_no: int
+    components: set
+    complexes: str
+
+
 class UnregisteredRule(NamedTuple):
     expected: Optional[str]
     original: Optional[str]
@@ -78,6 +88,8 @@ class ReactionRules(object):
         Untreated conditions to get steady state.
     rule_words : dict
         Words to identify reaction rules.
+    complex_formations : list
+        List of ComplexFormation to detect duplicate binding-dissociation.
 
     """
 
@@ -193,6 +205,10 @@ class ReactionRules(object):
                 " is translocated",
             ],
         ),
+        init=False,
+    )
+    complex_formations: List[ComplexFormation] = field(
+        default_factory=list,
         init=False,
     )
 
@@ -442,6 +458,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf, kr
+
         * Rate equation
             .. math:: v = kf * [Monomer] * [Monomer] - kr * [Dimer]
 
@@ -464,6 +483,7 @@ class ReactionRules(object):
         if monomer == dimer:
             raise ValueError(f"{dimer} <- Use a different name.")
         self._set_species(monomer, dimer)
+        self.complex_formations.append(ComplexFormation(line_num, set(monomer), dimer))
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.kf{line_num:d}] * y[V.{monomer}] * y[V.{monomer}] - "
@@ -491,6 +511,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf, kr
+
         * Rate equation
             .. math:: v = kf * [Component1] * [Component2] - kr * [Complex]
 
@@ -522,6 +545,9 @@ class ReactionRules(object):
             self.dimerize(line_num, line)
         else:
             self._set_species(component1, component2, complex)
+            self.complex_formations.append(
+                ComplexFormation(line_num, set([component1, component2]), complex)
+            )
             self.reactions.append(
                 f"v[{line_num:d}] = "
                 f"x[C.kf{line_num:d}] * y[V.{component1}] * y[V.{component2}] - "
@@ -554,6 +580,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf, kr
+
         * Rate equation
             .. math:: v = kf * [Complex] - kr * [Component1] * [Component2]
 
@@ -579,6 +608,9 @@ class ReactionRules(object):
             component1 = description[1].split(" and ")[0].strip(" ")
             component2 = description[1].split(" and ")[1].strip(" ")
         self._set_species(complex, component1, component2)
+        self.complex_formations.append(
+            ComplexFormation(line_num, set([component1, component2]), complex)
+        )
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.kf{line_num:d}] * y[V.{complex}] - "
@@ -614,6 +646,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf, kr
+
         * Rate equation
             .. math:: v = kf * [uProtein] - kr * [pProtein]
 
@@ -668,6 +703,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: V, K
+
         * Rate equation
             .. math:: v = V * [pProtein] / (K + [pProtein])
 
@@ -720,6 +758,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: V, K
+
         * Rate equation
             .. math:: v = V * [Kinase] * [uProtein] / (K + [uProtein])
 
@@ -776,6 +817,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: V, K
+
         * Rate equation
             .. math:: v = V * [phosphatase] * [pProtein] / (K + [pProtein])
 
@@ -834,6 +878,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            ..math:: V, K, n, (KF, nF)
+
         * Rate equation
             .. math::
 
@@ -915,6 +962,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf
+
         * Rate equation
             .. math:: v = kf * [mRNA]
 
@@ -943,6 +993,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf
+
         * Rate equation
             .. math:: v = kf * [Catalyst]
 
@@ -971,6 +1024,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf
+
         * Rate equation
             .. math:: v = kf
 
@@ -998,6 +1054,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf
+
         * Rate equation
             .. math:: v = kf * [Protease]
 
@@ -1026,6 +1085,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf
+
         * Rate equation
             .. math:: v = kf * [ChemicalSpecies]
 
@@ -1054,6 +1116,9 @@ class ReactionRules(object):
 
         Notes
         -----
+        * Parameters
+            .. math:: kf, kr, (V_{pre}, V_{post})
+
         * Rate equation
             .. math:: v = kf * [pre\_translocation] - kr * (V_{post} / V_{pre}) * [post\_translocation]
 
@@ -1143,7 +1208,7 @@ class ReactionRules(object):
                 continue
             elif lines.count(line) > 1:
                 # Find duplicate lines
-                raise ValueError(
+                raise DuplicateError(
                     f"Reaction '{line}' is duplicated in lines "
                     + ", ".join([str(i + 1) for i, rxn in enumerate(lines) if rxn == line])
                 )
@@ -1171,7 +1236,7 @@ class ReactionRules(object):
                                 raise TypeError("@sim tspan: [t0, tf] must be a list of integers.")
                         else:
                             raise ValueError(
-                                "tspan must be a two element vector [t0, tf] "
+                                "`tspan` must be a two element vector [t0, tf] "
                                 "specifying the initial and final times."
                             )
                     elif line.startswith("unperturbed"):
@@ -1183,7 +1248,7 @@ class ReactionRules(object):
                     else:
                         raise ValueError(
                             f"(line{line_num:d}) Available options are: "
-                            "'@sim tspan:', '@sim unperturbed:' or '@sim condition XXX:'."
+                            "'@sim tspan:', '@sim unperturbed:', or '@sim condition XXX:'."
                         )
             # Detect reaction rule
             else:
