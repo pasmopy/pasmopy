@@ -669,7 +669,7 @@ class Text2Model(ReactionRules):
                     and pattern_a.complexes == pattern_b.complexes
                 ):
                     raise DuplicateError(
-                        "Duplicate binding-dissociation events are detected"
+                        "Duplicate binding-dissociation events are detected "
                         f"in lines {pattern_a.rxn_no:d} and {pattern_b.rxn_no:d}."
                     )
 
