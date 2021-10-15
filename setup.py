@@ -8,7 +8,7 @@ try:
 except ImportError:
     __author__ = __maintainer__ = "Hiroaki Imoto"
     __email__ = "himoto@protein.osaka-u.ac.jp"
-    __version__ = "0.0.5"
+    __version__ = "0.0.6"
 
 
 # Python version check.
@@ -37,9 +37,9 @@ setup(
     install_requires=[l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()],
     extras_require={
         "dev": [
-            "black>=20.8b1",
-            "flake8",
-            "isort",
+            "black==21.9b0",
+            "flake8==4.0.1",
+            "isort==5.9.3",
             "pre-commit",
             "pytest",
         ],
@@ -58,10 +58,12 @@ setup(
         "systems",
         "biology",
         "cancer",
-        "classification",
-        "patient",
+        "stratification",
+        "personalized",
         "modeling",
         "simulation",
+        "precision",
+        "oncology",
     ],
     classifiers=[
         "Intended Audience :: Science/Research",
