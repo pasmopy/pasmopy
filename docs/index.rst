@@ -4,7 +4,7 @@ Pasmopy – Patient-Specific Modeling in Python
 
 .. image:: https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png
 
-|Actions Status| |Documentation Status| |PyPI version| |License| |Downloads| |Python versions| |Code quality| |Pre commit| |Code style| |Imports|
+|PyPI version| |Actions Status| |Documentation Status| |License| |Downloads| |Python versions| |Code quality| |Pre commit| |Code style| |Imports|
 
 **Pasmopy** is a scalable toolkit for classifying cancer subtypes based on intracellular signaling dynamics generated from kinetic modeling. It is compatible with `biomass <https://github.com/biomass-dev/biomass>`_ and offers the following features:
 
@@ -22,6 +22,10 @@ Pasmopy – Patient-Specific Modeling in Python
    model_development
    modules/index
 
+.. |PyPI version| image:: https://img.shields.io/pypi/v/pasmopy.svg?logo=PyPI&logoColor=white
+   :target: https://pypi.python.org/pypi/pasmopy/
+   :alt: PyPI version
+
 .. |Actions Status| image:: https://github.com/pasmopy/pasmopy/workflows/Tests/badge.svg
    :target: https://github.com/pasmopy/pasmopy/actions
    :alt: Actions Status
@@ -29,10 +33,6 @@ Pasmopy – Patient-Specific Modeling in Python
 .. |Documentation Status| image:: https://img.shields.io/readthedocs/pasmopy/latest.svg?logo=read%20the%20docs&logoColor=white&&label=Docs&version=latest
    :target: https://pasmopy.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
-
-.. |PyPI version| image:: https://img.shields.io/pypi/v/pasmopy.svg?logo=PyPI&logoColor=white
-   :target: https://pypi.python.org/pypi/pasmopy/
-   :alt: PyPI version
 
 .. |License| image:: https://img.shields.io/badge/License-Apache%202.0-green.svg
    :target: https://opensource.org/licenses/Apache-2.0
