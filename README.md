@@ -2,9 +2,9 @@
 
 ![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png)
 
+[![PyPI version](https://img.shields.io/pypi/v/pasmopy.svg?logo=PyPI&logoColor=white)](https://pypi.python.org/pypi/pasmopy)
 [![Actions Status](https://github.com/pasmopy/pasmopy/workflows/Tests/badge.svg)](https://github.com/pasmopy/pasmopy/actions)
 [![Documentation Status](https://img.shields.io/readthedocs/pasmopy/latest.svg?logo=read%20the%20docs&logoColor=white&&label=Docs&version=latest)](https://pasmopy.readthedocs.io/en/latest/?badge=latest)
-[![PyPI version](https://img.shields.io/pypi/v/pasmopy.svg?logo=PyPI&logoColor=white)](https://pypi.python.org/pypi/pasmopy)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg?logo=apache)](https://opensource.org/licenses/Apache-2.0)
 [![Downloads](https://pepy.tech/badge/pasmopy)](https://pepy.tech/project/pasmopy)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/pasmopy.svg?logo=Python&logoColor=white)](https://pypi.python.org/pypi/pasmopy)
