@@ -1,10 +1,10 @@
-Installation and upgrade guide
-==============================
+Installation
+============
 
 Pasmopy requires Python 3.7+ to run.
 
-Installation
-------------
+Installing Pasmopy
+------------------
 
 PyPI
 ^^^^
