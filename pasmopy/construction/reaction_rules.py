@@ -356,7 +356,7 @@ class ReactionRules(object):
                     else:
                         raise NameError(
                             f"line{line_num:d}: "
-                            "Name'{ival.split('=')[0].strip(' ')}' is not defined."
+                            f"Name'{ival.split('=')[0].strip(' ')}' is not defined."
                         )
             line = line.split("|")[0]
         hit_words: List[str] = []
@@ -1216,7 +1216,10 @@ class ReactionRules(object):
             elif line.startswith("@obs "):
                 line = self._remove_prefix(line, "@obs ")
                 if line.count(":") != 1:
-                    raise SyntaxError(f"line{line_num:d}: Missing colon")
+                    raise SyntaxError(
+                        f"line{line_num:d}: Missing colon\n"
+                        "Should be `@obs <observable name>: <expression>`."
+                    )
                 else:
                     self.obs_desc.append(line.split(":"))
             # About simulation info.
