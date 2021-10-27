@@ -1,6 +1,8 @@
 import os
 import shutil
 
+from biomass import models
+
 from pasmopy import PatientModelSimulations
 
 
@@ -16,7 +18,7 @@ def test_biomass_examples():
         "nfkb_pathway",
         "tgfb_smad",
     ]
-    biomass_examples = BiomassExamples("biomass.models", model_list)
+    biomass_examples = BiomassExamples(models.__package__, model_list)
     assert biomass_examples.run() is None
 
 
