@@ -5,7 +5,7 @@ This section walk you through the creation of a mechanistic model from text.
 
 How to use
 ----------
-**Text2Model** is a useful tool to build an ordinary differential equation (ODE) model from a text file describing biochemical systems.
+**Text2Model** is a useful class to build an ordinary differential equation (ODE) model from a text file describing biochemical systems.
 
 The text file you need to prepare can be divided into three parts:
 
@@ -160,7 +160,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
       >>> model = Model(michaelis_menten.__package__).create()
       >>> run_simulation(model)
 
-.. image:: https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png
+   .. image:: _static/img/michaelis_menten_sim.png
 
 EGF signaling
 ^^^^^^^^^^^^^
@@ -214,6 +214,7 @@ Reference:
       @sim tspan: [0, 120]
       @sim condition EGF20nM: init[EGF] = 680
       @sim condition EGF2nM: init[EGF] = 68
+      @sim condition Absence_PLCgP_transloc: init[EGF] = 680; p[kf25] = 0; p[kr25] = 0
 
 #. Convert the text into an executable model
 
@@ -240,3 +241,121 @@ Reference:
       >>> import Kholodenko_JBC_1999
       >>> model = Model(Kholodenko_JBC_1999.__package__).create()
       >>> run_simulation(model)
+
+#. Plot simulation results
+
+   .. code-block:: python
+
+      %matplotlib inline
+      import os
+      import matplotlib.pyplot as plt
+      import numpy as np
+
+
+      def plot_simulation_results(res):
+
+         plt.figure(figsize=(9, 9))
+         plt.rcParams['font.family'] = 'Arial'
+         plt.rcParams['font.size'] = 12
+         plt.rcParams['axes.linewidth'] = 1
+         plt.rcParams['lines.linewidth'] = 2
+
+         plt.subplots_adjust(wspace=0.5, hspace=0.4)
+
+         plt.subplot(2, 2, 1)  # ----------------------------------------------------
+         for obs_name, color in zip(
+            ['Total_phosphorylated_Shc', 'Total_Grb2_coprecipitated_with_Shc'],
+            ['g', 'm'],
+         ):
+            obs_idx = model.observables.index(obs_name)
+            for j, condition in enumerate(['EGF20nM', 'EGF2nM']):
+                  plt.plot(
+                     model.problem.t,
+                     res[obs_idx, :, j],
+                     color=color,
+                     alpha=0.5 if condition == 'EGF2nM' else None,
+                  )
+         plt.xlim(0, 120)
+         plt.xticks([30*i for i in range(5)])
+         plt.ylim(0, 150)
+         plt.xlabel("TIME (s)")
+         plt.ylabel("Protein concentrations (nM)")
+
+         plt.subplot(2, 2, 2)  # ----------------------------------------------------
+         for obs_name, color in zip(
+            ['Total_phosphorylated_Shc_bound_to_EGFR', 'Total_Grb2_bound_to_EGFR'],
+            ['g', 'm'],
+         ):
+            obs_idx = model.observables.index(obs_name)
+            for j, condition in enumerate(['EGF20nM', 'EGF2nM']):
+                  plt.plot(
+                     model.problem.t,
+                     res[obs_idx, :, j],
+                     color=color,
+                     alpha=0.5 if condition == 'EGF2nM' else None,
+                  )
+         plt.xlim(0, 120)
+         plt.xticks([30*i for i in range(5)])
+         plt.ylim(0, 25)
+         plt.xlabel("TIME (s)")
+         plt.ylabel("Protein concentrations (nM)")
+
+         ax1=plt.subplot(2, 2, 3)  # ------------------------------------------------
+         ax2 = ax1.twinx()
+         for j, condition in enumerate(['EGF20nM', 'EGF2nM']):
+            ax1.plot(
+                  model.problem.t,
+                  res[model.observables.index('Total_SOS_bound_to_EGFR'), :, j],
+                  color='g',
+                  alpha=0.5 if condition == 'EGF2nM' else None,
+            )
+            ax2.plot(
+                  model.problem.t,
+                  res[model.observables.index('ShGS_complex'), :, j],
+                  color='m',
+                  alpha=0.5 if condition == 'EGF2nM' else None,
+            )
+         ax1.set_xlim(0, 120)
+         ax1.set_xticks([30*i for i in range(5)])
+         ax1.set_xlabel("TIME (s)")
+         ax1.set_ylim(0, 8)
+         ax2.set_ylim(0, 30)
+         ax1.set_ylabel("SOS bound to EGFR (nM)")
+         ax2.set_ylabel("Concentration of Sh-G-S (nM)")
+
+         ax1=plt.subplot(2, 2, 4)  # ------------------------------------------------
+         ax2 = ax1.twinx()
+         obs_idx = model.observables.index('Total_phosphorylated_PLCg')
+         ax1.plot(
+            model.problem.t,
+            res[obs_idx, :, model.problem.conditions.index('EGF20nM')],
+            'g',
+         )
+         ax1.plot(
+            model.problem.t,
+            res[obs_idx, :, model.problem.conditions.index('EGF2nM')],
+            'g',
+            alpha=0.5,
+         )
+         ax2.plot(
+            model.problem.t,
+            res[obs_idx, :, model.problem.conditions.index('Absence_PLCgP_transloc')],
+            'g--',
+         )
+         ax1.set_xlim(0, 120)
+         ax1.set_xticks([30*i for i in range(5)])
+         ax1.set_ylim(0, 15)
+         ax1.set_yticks([5*i for i in range(4)])
+         ax1.set_xlabel("TIME (s)")
+         ax1.set_ylabel("Total Phosphorylated PLCγ (nM)")
+         ax2.set_ylim(0, 105)
+         ax2.set_yticks([30*i for i in range(4)])
+
+         plt.show()
+
+
+         if __name__ == '__main__':
+            res = np.load(os.path.join(model.path, "simulation_data", "simulations_original.npy"))
+            plot_simulation_results(res)
+   
+   .. image:: _static/img/EGF_signaling_sim.png
