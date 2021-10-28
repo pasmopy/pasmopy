@@ -41,3 +41,4 @@ pPLCg is translocated to cytoskeletal or membrane structures --> pPLCg_I | kf=1,
 @sim tspan: [0, 120]
 @sim condition EGF20nM: init[EGF] = 680
 @sim condition EGF2nM: init[EGF] = 68
+@sim condition Absence_PLCgP_transloc: init[EGF] = 680; p[kf25] = 0; p[kr25] = 0
