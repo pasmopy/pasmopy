@@ -10,7 +10,7 @@ from datetime import datetime
 
 from sphinx.application import Sphinx
 
-from pasmopy import __author__, __version__
+import pasmopy
 
 # -- Path setup --------------------------------------------------------------
 
@@ -25,13 +25,13 @@ sys.path.insert(0, os.path.abspath("../"))
 
 project = "Pasmopy"
 title = "Patient-Specific Modeling in Python"
-author = __author__
+author = pasmopy.__author__
 copyright = f"{datetime.now():%Y}, {author}"
 
 # The short X.Y version
-version = __version__
+version = pasmopy.__version__
 # The full version, including alpha/beta/rc tags
-release = __version__
+release = version
 
 
 # -- General configuration ---------------------------------------------------
@@ -117,7 +117,7 @@ html_logo = "_static/img/pasmopy-project-logo.png"
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "Pasmopydoc"
+htmlhelp_basename = f"{project}doc"
 title_doc = f"{project} documentation"
 
 
