@@ -354,8 +354,8 @@ Reference:
          plt.show()
 
 
-         if __name__ == '__main__':
-            res = np.load(os.path.join(model.path, "simulation_data", "simulations_original.npy"))
-            plot_simulation_results(res)
+      if __name__ == '__main__':
+         res = np.load(os.path.join(model.path, "simulation_data", "simulations_original.npy"))
+         plot_simulation_results(res)
    
    .. image:: _static/img/EGF_signaling_sim.png
