@@ -85,7 +85,7 @@ def test_run_simulation():
         )
         for model_name in ["Kholodenko_JBC_1999", "michaelis_menten"]:
             model = Model(_packaging(model_name)).create()
-            run_simulation(model, viz_type="original")
+            run_simulation(model)
             simulated_values = np.load(
                 os.path.join(
                     os.path.dirname(__file__),

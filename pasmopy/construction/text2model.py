@@ -494,7 +494,7 @@ class Text2Model(ReactionRules):
                                 + f"\n{4 * self.indentation}".join(
                                     c.strip(" ") for c in condition[1].split(sep=";")
                                 )
-                                + "\n\n"
+                                + ("\n\n" if i == len(self.sim_conditions) - 1 else "")
                             )
                         # pa: parameters
                         # init: initial conditions
@@ -719,13 +719,10 @@ class Text2Model(ReactionRules):
                 mode="w",
             ) as f:
                 f.write("\n".join(lines))
-        print(
-            "Model information\n"
-            "-----------------\n"
-            f"{len(self.reactions):d} reactions\n"
-            f"{len(self.species):d} species\n"
-            f"{len(self.parameters):d} parameters"
-        )
+        print("Model information\n-----------------")
+        print(f"{len(self.reactions):d} reactions")
+        print(f"{len(self.species):d} species")
+        print(f"{len(self.parameters):d} parameters")
 
     def to_markdown(self, n_reaction: int) -> None:
         """
