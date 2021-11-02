@@ -879,7 +879,7 @@ class ReactionRules(object):
         Notes
         -----
         * Parameters
-            ..math:: V, K, n, (KF, nF)
+            .. math:: V, K, n, (KF, nF)
 
         * Rate equation
             .. math::
