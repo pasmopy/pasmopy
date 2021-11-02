@@ -55,19 +55,69 @@ class ReactionRules(object):
 
     **reaction** | **parameters** | **initial conditions**
 
+    .. list-table:: Available reacrion rules
+        :widths: 25 50 25
+        :header-rows: 1
+
+        * - Rule
+          - Sentence example
+          - Parameters
+        * - dimerize
+          - *Monomer* dimerizes --> *Dimer*
+          - .. math:: kf, kr
+        * - bind
+          - *Component1* binds *Component2* --> *Complex*
+          - .. math:: kf, kr
+        * - dissociate
+          - *Complex* dissociates to *Component1* and *Component2*
+          - .. math:: kf, kr
+        * - is_phosphorylated
+          - *uProtein* is phosphorylated --> *pProtein*
+          - .. math:: kf, kr
+        * - is_dephosphorylated
+          - *pProtein* is dephosphorylated --> *uProtein*
+          - .. math:: V, K
+        * - phosphorylate
+          - *Kinase* phosphorylates *uProtein* --> *pProtein*
+          - .. math:: V, K
+        * - dephosphorylate
+          - *Phosphatase* dephosphorylates *pProtein* --> *uProtein*
+          - .. math:: V, K
+        * - transcribe
+          - *TF* transcribes *mRNA*
+          - .. math:: V, K, n, (KF, nF)
+        * - is_translated
+          - *mRNA* is translated into *Protein*
+          - .. math:: kf
+        * - synthesize
+          - *Catalyst* synthesizes *Product*
+          - .. math:: kf
+        * - is_synthesized
+          - *ChemicalSpecies* is synthesized
+          - .. math:: kf
+        * - degrade
+          - *Protease* degrades *Protein*
+          - .. math:: kf
+        * - is_degraded
+          - *ChemicalSpecies* is degraded
+          - .. math:: kf
+        * - translocate
+          - *cytProtein* translocates from cytoplasm to nucleus (Vcyt, Vnuc) --> *nucProtein*
+          - .. math:: kf, kr, (V_{pre}, V_{post})
+
     Attributes
     ----------
     input_txt : str
         Model description file (*.txt), e.g.,
         `Kholodenko_JBC_1999.txt <https://github.com/pasmopy/pasmopy/blob/master/tests/text_files/Kholodenko_JBC_1999.txt>`_.
     parameters : list of strings
-        x : model parameters.
+        ``x`` : model parameters.
     species : list of strings
-        y : model species.
+        ``y`` : model species.
     reactions : list of strings
-        v : flux vector.
+        ``v`` : flux vector.
     differential_equations : list of strings
-        dydt : right-hand side of the differential equation.
+        ``dydt`` : right-hand side of the differential equation.
     obs_desc : list of List[str]
         Description of observables.
     param_info : list of strings
@@ -161,7 +211,7 @@ class ReactionRules(object):
                 " binds",
                 " forms complexes with",
             ],
-            is_dissociated=[
+            dissociate=[
                 " is dissociated into",
                 " dissociates to",
             ],
@@ -571,12 +621,12 @@ class ReactionRules(object):
             if counter_complex == 0:
                 self.differential_equations.append(f"dydt[V.{complex}] = + v[{line_num:d}]")
 
-    def is_dissociated(self, line_num: int, line: str) -> None:
+    def dissociate(self, line_num: int, line: str) -> None:
         """
         Examples
         --------
-        >>> 'Complex is dissociated into Component1 and Component2'
         >>> 'Complex dissociates to Component1 and Component2'
+        >>> 'Complex is dissociated into Component1 and Component2'
 
         Notes
         -----
