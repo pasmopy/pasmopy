@@ -60,7 +60,7 @@ class ReactionRules(object):
         :header-rows: 1
 
         * - Rule
-          - Sentence example
+          - Example sentence
           - Parameters
         * - dimerize
           - *Monomer* dimerizes --> *Dimer*
