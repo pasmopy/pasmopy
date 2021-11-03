@@ -65,43 +65,43 @@ class ReactionRules(object):
         * - :func:`~pasmopy.construction.reaction_rules.dimerize`
           - *Monomer* dimerizes --> *Dimer*
           - .. math:: kf, kr
-        * - bind
+        * - :func:`~pasmopy.construction.reaction_rules.bind`
           - *Component1* binds *Component2* --> *Complex*
           - .. math:: kf, kr
-        * - dissociate
+        * - :func:`~pasmopy.construction.reaction_rules.dissociate`
           - *Complex* dissociates to *Component1* and *Component2*
           - .. math:: kf, kr
-        * - is_phosphorylated
+        * - :func:`~pasmopy.construction.reaction_rules.is_phosphorylated`
           - *uProtein* is phosphorylated --> *pProtein*
           - .. math:: kf, kr
-        * - is_dephosphorylated
+        * - :func:`~pasmopy.construction.reaction_rules.is_dephosphorylated`
           - *pProtein* is dephosphorylated --> *uProtein*
           - .. math:: V, K
-        * - phosphorylate
+        * - :func:`~pasmopy.construction.reaction_rules.phosphorylate`
           - *Kinase* phosphorylates *uProtein* --> *pProtein*
           - .. math:: V, K
-        * - dephosphorylate
+        * - :func:`~pasmopy.construction.reaction_rules.dephosphorylate`
           - *Phosphatase* dephosphorylates *pProtein* --> *uProtein*
           - .. math:: V, K
-        * - transcribe
+        * - :func:`~pasmopy.construction.reaction_rules.transcribe`
           - *TF* transcribes *mRNA*
           - .. math:: V, K, n, (KF, nF)
-        * - is_translated
+        * - :func:`~pasmopy.construction.reaction_rules.is_translated`
           - *mRNA* is translated into *Protein*
           - .. math:: kf
-        * - synthesize
+        * - :func:`~pasmopy.construction.reaction_rules.synthesize`
           - *Catalyst* synthesizes *Product*
           - .. math:: kf
-        * - is_synthesized
+        * - :func:`~pasmopy.construction.reaction_rules.is_synthesized`
           - *ChemicalSpecies* is synthesized
           - .. math:: kf
-        * - degrade
+        * - :func:`~pasmopy.construction.reaction_rules.degrade`
           - *Protease* degrades *Protein*
           - .. math:: kf
-        * - is_degraded
+        * - :func:`~pasmopy.construction.reaction_rules.is_degraded`
           - *ChemicalSpecies* is degraded
           - .. math:: kf
-        * - translocate
+        * - :func:`~pasmopy.construction.reaction_rules.translocate`
           - *cytProtein* translocates from cytoplasm to nucleus (Vcyt, Vnuc) --> *nucProtein*
           - .. math:: kf, kr, (V_{pre}, V_{post})
 
