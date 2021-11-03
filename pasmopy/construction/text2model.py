@@ -818,7 +818,7 @@ class Text2Model(ReactionRules):
         rxn_rule: Literal[
             "dimerize",
             "bind",
-            "is_dissociated",
+            "dissociate",
             "is_phosphorylated",
             "is_dephosphorylated",
             "phosphorylate",

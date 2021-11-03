@@ -58,9 +58,9 @@ You can also supply your own terminology in a reaction rule via:
 
    from pasmopy import Text2Model
 
-   # Supply "releases" to the reaction rule: "is_dissociated"
+   # Supply "releases" to the reaction rule: "dissociate"
    mm_kinetics = Text2Model("michaelis_menten.txt")
-   mm_kinetics.register_word("is_dissociated", "releases")
+   mm_kinetics.register_word("dissociate", "releases")
    # Now you can use "releases" in your text, e.g., 'ES releases E and P'
    mm_kinetics.convert()
 
