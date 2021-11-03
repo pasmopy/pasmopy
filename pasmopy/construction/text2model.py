@@ -15,7 +15,10 @@ from .reaction_rules import DuplicateError, ReactionRules
 
 @dataclass
 class Text2Model(ReactionRules):
-    """Build a BioMASS-formatted model based on template.
+    """
+    Build a BioMASS-formatted model based on template.
+
+    **reaction** | **parameters** | **initial conditions**
 
     Attributes
     ----------
@@ -848,7 +851,7 @@ class Text2Model(ReactionRules):
         --------
         >>> from pasmopy import Text2Model
         >>> mm_kinetics = Text2Model("michaelis_menten.txt")
-        >>> mm_kinetics.register_word("is_dissociated", "releases")
+        >>> mm_kinetics.register_word("dissociate", "releases")
         >>> mm_kinetics.convert()
 
         """
