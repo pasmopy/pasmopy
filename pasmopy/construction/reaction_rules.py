@@ -62,7 +62,7 @@ class ReactionRules(object):
         * - Rule
           - Example sentence
           - Parameters
-        * - dimerize
+        * - :func:`~pasmopy.construction.reaction_rules.dimerize`
           - *Monomer* dimerizes --> *Dimer*
           - .. math:: kf, kr
         * - bind
