@@ -5,5 +5,6 @@ Pasmopy modules reference
    :maxdepth: 4
 
    patient_model
+   preprocessing
    individualization
    construction
