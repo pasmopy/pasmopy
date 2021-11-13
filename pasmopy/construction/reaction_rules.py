@@ -530,7 +530,7 @@ class ReactionRules(object):
             dimer = description[1].split(" <--> ")[1].strip(" ")
         elif " --> " in description[1]:
             warnings.warn(
-                f"line{line_num:d}: The symbol '-->' will be invalid for dimerize() in a future version. Use '<-->' instead.",
+                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
                 FutureWarning,
             )
             dimer = description[1].split(" --> ")[1].strip(" ")
