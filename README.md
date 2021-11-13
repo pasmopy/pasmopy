@@ -20,10 +20,6 @@
 - Prediction of patient outcome based on _in silico_ signaling dynamics
 - Sensitivity analysis for prediction of potential drug targets
 
-## Documentation
-
-Online documentation is available at https://pasmopy.readthedocs.io.
-
 ## Installation
 
 The latest stable release (and required dependencies) can be installed from [PyPI](https://pypi.python.org/pypi/pasmopy):
