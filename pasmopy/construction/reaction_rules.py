@@ -10,6 +10,7 @@ import numpy as np
 class DuplicateError(Exception):
     pass
 
+
 class ComplexFormation(NamedTuple):
     rxn_no: int
     components: set
