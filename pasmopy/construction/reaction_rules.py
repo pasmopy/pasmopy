@@ -54,8 +54,6 @@ PREPOSITIONS: List[str] = [
 class ReactionRules(object):
     """Create an executable biochemical model from text.
 
-    **reaction** | **parameters** | **initial conditions**
-
     .. list-table:: Available reaction rules
         :widths: 25 50 25
         :header-rows: 1

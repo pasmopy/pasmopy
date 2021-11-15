@@ -208,7 +208,7 @@ Reference:
       @obs Total_Grb2_bound_to_EGFR: u[RG] + u[RGS] + u[RShG] + u[RShGS]
       @obs Total_SOS_bound_to_EGFR: u[RGS] + u[RShGS]
       @obs ShGS_complex: u[ShGS]
-      @obs Total_phosphorylated_PLCg: u[pRPL] + u[pPLCg]
+      @obs Total_phosphorylated_PLCg: u[RPLP] + u[PLCgP]
 
       # simulation layer
       @sim tspan: [0, 120]
