@@ -592,7 +592,7 @@ class ReactionRules(object):
             complex = description[1].split(" <--> ")[1].strip(" ")
         elif " --> " in description[1]:
             warnings.warn(
-                f"line{line_num:d}: The symbol '-->' will be invalid for bind() in a future version. Use '<-->' instead.",
+                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
                 FutureWarning,
             )
             component2 = description[1].split(" --> ")[0].strip(" ")
@@ -730,7 +730,7 @@ class ReactionRules(object):
             phosphorylated_form = description[1].split(" <--> ")[1].strip(" ")
         elif " --> " in description[1]:
             warnings.warn(
-                f"line{line_num:d}: The symbol '-->' will be invalid for is_phosphorylated() in a future version. Use '<-->' instead.",
+                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
                 FutureWarning,
             )
             phosphorylated_form = description[1].split(" --> ")[1].strip(" ")
@@ -1206,7 +1206,7 @@ class ReactionRules(object):
             post_translocation = description[1].split(" <--> ")[1].strip(" ")
         elif " --> " in description[1]:
             warnings.warn(
-                f"line{line_num:d}: The symbol '-->' will be invalid for translocate() in a future version. Use '<-->' instead.",
+                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
                 FutureWarning,
             )
             post_translocation = description[1].split(" --> ")[1].strip(" ")
