@@ -76,7 +76,7 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
    >>> run_simulation(model)
    ```
 
-   ![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)
+   [![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)](https://pasmopy.readthedocs.io/en/latest/model_development.html#michaelis-menten-enzyme-kinetics)
 
 For more examples, please refer to the [Documentation](https://pasmopy.readthedocs.io/en/latest/).
 
