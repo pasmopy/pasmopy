@@ -210,7 +210,7 @@ class PatientModelSimulations(InSilico):
             ``{"observable": {"condition": ["metric", ...], ...}, ...}``.
             Characteristics in the signaling dynamics used for classification.
 
-        normalization : bool (default: True)
+        normalization : bool (default: :obj:`True`)
             Whether to perform max-normalization.
 
         clustermap_kws : dict, optional

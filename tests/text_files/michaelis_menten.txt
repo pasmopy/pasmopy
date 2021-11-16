@@ -1,4 +1,4 @@
-E binds S --> ES | kf=0.003, kr=0.001 | E=100, S=50
+E binds S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
 ES dissociates to E and P | kf=0.002, kr=0
 
 @obs Substrate: u[S]

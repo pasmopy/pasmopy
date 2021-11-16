@@ -1,6 +1,6 @@
 # Pasmopy – Patient-Specific Modeling in Python
 
-![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png)
+[![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png)](https://pasmopy.readthedocs.io)
 
 [![PyPI version](https://img.shields.io/pypi/v/pasmopy.svg?logo=PyPI&logoColor=white)](https://pypi.python.org/pypi/pasmopy)
 [![Actions Status](https://github.com/pasmopy/pasmopy/workflows/Tests/badge.svg)](https://github.com/pasmopy/pasmopy/actions)
@@ -19,10 +19,6 @@
 - Personalization of the model using transcriptome data
 - Prediction of patient outcome based on _in silico_ signaling dynamics
 - Sensitivity analysis for prediction of potential drug targets
-
-## Documentation
-
-The documentation is hosted on readthedocs.io: https://pasmopy.readthedocs.io
 
 ## Installation
 
@@ -47,7 +43,7 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
 1. Prepare a text file describing the biochemical reactions (e.g., `michaelis_menten.txt`)
 
    ```
-   E binds S --> ES | kf=0.003, kr=0.001 | E=100, S=50
+   E binds S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
    ES dissociates to E and P | kf=0.002, kr=0
 
    @obs Substrate: u[S]
@@ -86,7 +82,7 @@ For more examples, please refer to the [Documentation](https://pasmopy.readthedo
 
 ### Personalized signaling models for cancer patient stratification
 
-Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on 377 breast cancer patients using The Cancer Genome Atlas (TCGA) transcriptome datasets. All the codes for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
+Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on 377 breast cancer patients using The Cancer Genome Atlas (TCGA) transcriptome datasets. All code for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
 
 ## Author
 

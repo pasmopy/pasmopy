@@ -1,4 +1,5 @@
 import sys
+import warnings
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
 from typing import Dict, List, NamedTuple, Optional
@@ -59,18 +60,18 @@ class ReactionRules(object):
 
         * - Rule
           - Example sentence
-          - Parameters
+          - Parameters (optional)
         * - :func:`~pasmopy.construction.reaction_rules.dimerize`
-          - *Monomer* dimerizes --> *Dimer*
+          - *Monomer* dimerizes <--> *Dimer*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.bind`
-          - *Component1* binds *Component2* --> *Complex*
+          - *Component1* binds *Component2* <--> *Complex*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.dissociate`
           - *Complex* dissociates to *Component1* and *Component2*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.is_phosphorylated`
-          - *uProtein* is phosphorylated --> *pProtein*
+          - *uProtein* is phosphorylated <--> *pProtein*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.is_dephosphorylated`
           - *pProtein* is dephosphorylated --> *uProtein*
@@ -100,7 +101,7 @@ class ReactionRules(object):
           - *ChemicalSpecies* is degraded
           - .. math:: kf
         * - :func:`~pasmopy.construction.reaction_rules.translocate`
-          - *cytProtein* translocates from cytoplasm to nucleus (Vcyt, Vnuc) --> *nucProtein*
+          - *cytProtein* translocates from cytoplasm to nucleus (Vcyt, Vnuc) <--> *nucProtein*
           - .. math:: kf, kr, (V_{pre}, V_{post})
 
     Attributes
@@ -499,10 +500,10 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'Monomer dimerizes --> Dimer'
-        >>> 'Monomer homodimerizes --> Dimer'
-        >>> 'Monomer forms a dimer --> Dimer'
-        >>> 'Monomer forms dimers --> Dimer'
+        >>> 'Monomer dimerizes <--> Dimer'
+        >>> 'Monomer homodimerizes <--> Dimer'
+        >>> 'Monomer forms a dimer <--> Dimer'
+        >>> 'Monomer forms dimers <--> Dimer'
 
         Notes
         -----
@@ -524,10 +525,16 @@ class ReactionRules(object):
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
         monomer = description[0].strip(" ")
-        if " --> " in description[1]:
+        if " <--> " in description[1]:
+            dimer = description[1].split(" <--> ")[1].strip(" ")
+        elif " --> " in description[1]:
+            warnings.warn(
+                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
+                FutureWarning,
+            )
             dimer = description[1].split(" --> ")[1].strip(" ")
         else:
-            raise ValueError(f"line{line_num:d}: Use '-->' to specify the name of the dimer.")
+            raise ValueError(f"line{line_num:d}: Use '<-->' to specify the name of the dimer.")
         if monomer == dimer:
             raise ValueError(f"{dimer} <- Use a different name.")
         self._set_species(monomer, dimer)
@@ -554,8 +561,8 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'Component1 binds Component2 --> Complex'
-        >>> 'Component1 forms complexes with Component2 --> Complex'
+        >>> 'Component1 binds Component2 <--> Complex'
+        >>> 'Component1 forms complexes with Component2 <--> Complex'
 
         Notes
         -----
@@ -579,13 +586,20 @@ class ReactionRules(object):
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
         component1 = description[0].strip(" ")
-        if " --> " in description[1]:
+        if " <--> " in description[1]:
             # Specify name of the complex
+            component2 = description[1].split(" <--> ")[0].strip(" ")
+            complex = description[1].split(" <--> ")[1].strip(" ")
+        elif " --> " in description[1]:
+            warnings.warn(
+                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
+                FutureWarning,
+            )
             component2 = description[1].split(" --> ")[0].strip(" ")
             complex = description[1].split(" --> ")[1].strip(" ")
         else:
             raise ValueError(
-                f"line{line_num:d}: Use '-->' to specify the name of the protein complex."
+                f"line{line_num:d}: Use '<-->' to specify the name of the protein complex."
             )
         if component1 == complex or component2 == complex:
             raise ValueError(f"line{line_num:d}: {complex} <- Use a different name.")
@@ -690,7 +704,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'uProtein is phosphorylated --> pProtein'
+        >>> 'uProtein is phosphorylated <--> pProtein'
 
         Notes
         -----
@@ -712,12 +726,18 @@ class ReactionRules(object):
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
         unphosphorylated_form = description[0].strip(" ")
-        if " --> " in description[1]:
+        if " <--> " in description[1]:
+            phosphorylated_form = description[1].split(" <--> ")[1].strip(" ")
+        elif " --> " in description[1]:
+            warnings.warn(
+                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
+                FutureWarning,
+            )
             phosphorylated_form = description[1].split(" --> ")[1].strip(" ")
         else:
             raise ValueError(
                 f"line{line_num:d}: "
-                "Use '-->' to specify the name of the phosphorylated protein."
+                "Use '<-->' to specify the name of the phosphorylated protein."
             )
         self._set_species(unphosphorylated_form, phosphorylated_form)
 
@@ -1159,8 +1179,8 @@ class ReactionRules(object):
         r"""
         Examples
         --------
-        >>> 'pre_translocation translocates from one location to another (pre_volume, post_volume) --> post_translocation'
-        >>> 'pre_translocation is translocated from one location to another (pre_volume, post_volume) --> post_translocation'
+        >>> 'pre_translocation translocates from one location to another (pre_volume, post_volume) <--> post_translocation'
+        >>> 'pre_translocation is translocated from one location to another (pre_volume, post_volume) <--> post_translocation'
 
         Notes
         -----
@@ -1182,12 +1202,18 @@ class ReactionRules(object):
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
         pre_translocation = description[0].strip(" ")
-        if " --> " in description[1]:
+        if " <--> " in description[1]:
+            post_translocation = description[1].split(" <--> ")[1].strip(" ")
+        elif " --> " in description[1]:
+            warnings.warn(
+                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
+                FutureWarning,
+            )
             post_translocation = description[1].split(" --> ")[1].strip(" ")
         else:
             raise ValueError(
                 f"line{line_num:d}: "
-                "Use '-->' to specify the name of the species after translocation."
+                "Use '<-->' to specify the name of the species after translocation."
             )
         if pre_translocation == post_translocation:
             raise ValueError(f"line{line_num:d}: {post_translocation} <- Use a different name.")

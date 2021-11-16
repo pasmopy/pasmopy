@@ -123,7 +123,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
    .. code-block:: python
       :linenos:
 
-      E binds S --> ES | kf=0.003, kr=0.001 | E=100, S=50
+      E binds S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
       ES dissociates to E and P | kf=0.002, kr=0
 
       @obs Substrate: u[S]
@@ -175,36 +175,36 @@ Reference:
    .. code-block:: python
       :linenos:
       
-      EGF binds EGFR --> Ra | kf=0.003, kr=0.06 | EGFR=100
-      Ra dimerizes --> R2 | kf=0.01, kr=0.1
-      R2 is phosphorylated --> RP | kf=1, kr=0.01
+      EGF binds EGFR <--> Ra | kf=0.003, kr=0.06 | EGFR=100
+      Ra dimerizes <--> R2 | kf=0.01, kr=0.1
+      R2 is phosphorylated <--> RP | kf=1, kr=0.01
       RP is dephosphorylated --> R2 | V=450, K=50
-      RP binds PLCg --> RPL | kf=0.06, kr=0.2 | PLCg=105
-      RPL is phosphorylated --> RPLP | kf=1, kr=0.05
+      RP binds PLCg <--> RPL | kf=0.06, kr=0.2 | PLCg=105
+      RPL is phosphorylated <--> RPLP | kf=1, kr=0.05
       RPLP is dissociated into RP and PLCgP | kf=0.3, kr=0.006
       PLCgP is dephosphorylated --> PLCg | V=1, K=100
-      RP binds Grb2 --> RG | kf=0.003, kr=0.05 | Grb2=85
-      RG binds SOS --> RGS | kf=0.01, kr=0.06 | SOS=34
+      RP binds Grb2 <--> RG | kf=0.003, kr=0.05 | Grb2=85
+      RG binds SOS <--> RGS | kf=0.01, kr=0.06 | SOS=34
       RGS is dissociated into RP and GS | kf=0.03, kr=4.5e-3
       GS is dissociated into Grb2 and SOS | kf=1.5e-3, kr=1e-4
-      RP binds Shc --> RSh | kf=0.09, kr=0.6 | Shc=150
-      RSh is phosphorylated --> pRSh | kf=6, kr=0.06
-      pRSh is dissociated into pShc and RP | kf=0.3, kr=9e-4
-      pShc is dephosphorylated --> Shc | V=1.7, K=340
-      pRSh binds Grb2 --> RShG | kf=0.003, kr=0.1
+      RP binds Shc <--> RSh | kf=0.09, kr=0.6 | Shc=150
+      RSh is phosphorylated <--> RShP | kf=6, kr=0.06
+      RShP is dissociated into ShP and RP | kf=0.3, kr=9e-4
+      ShP is dephosphorylated --> Shc | V=1.7, K=340
+      RShP binds Grb2 <--> RShG | kf=0.003, kr=0.1
       RShG is dissociated into RP and ShG | kf=0.3, kr=9e-4
-      RShG binds SOS --> RShGS | kf=0.01, kr=2.14e-2
+      RShG binds SOS <--> RShGS | kf=0.01, kr=2.14e-2
       RShGS is dissociated into ShGS and RP | kf=0.12, kr=2.4e-4
-      pShc binds Grb2 --> ShG | kf=0.003, kr=0.1
-      ShG binds SOS --> ShGS | kf=0.03, kr=0.064
-      ShGS is dissociated into pShc and GS | kf=0.1, kr=0.021
-      pRSh binds GS --> RShGS | kf=0.009, kr=4.29e-2
-      PLCgP is translocated to cytoskeletal or membrane structures --> PLCgP_I | kf=1, kr=0.03
+      ShP binds Grb2 <--> ShG | kf=0.003, kr=0.1
+      ShG binds SOS <--> ShGS | kf=0.03, kr=0.064
+      ShGS is dissociated into ShP and GS | kf=0.1, kr=0.021
+      RShP binds GS <--> RShGS | kf=0.009, kr=4.29e-2
+      PLCgP is translocated to cytoskeletal or membrane structures <--> PLCgP_I | kf=1, kr=0.03
 
       # observable layer
-      @obs Total_phosphorylated_Shc: u[pRSh] + u[RShG] + u[RShGS] + u[pShc] + u[ShG] + u[ShGS]
+      @obs Total_phosphorylated_Shc: u[RShP] + u[RShG] + u[RShGS] + u[ShP] + u[ShG] + u[ShGS]
       @obs Total_Grb2_coprecipitated_with_Shc: u[RShG] + u[ShG] + u[RShGS] + u[ShGS]
-      @obs Total_phosphorylated_Shc_bound_to_EGFR: u[pRSh] + u[RShG] + u[RShGS]
+      @obs Total_phosphorylated_Shc_bound_to_EGFR: u[RShP] + u[RShG] + u[RShGS]
       @obs Total_Grb2_bound_to_EGFR: u[RG] + u[RGS] + u[RShG] + u[RShGS]
       @obs Total_SOS_bound_to_EGFR: u[RGS] + u[RShGS]
       @obs ShGS_complex: u[ShGS]

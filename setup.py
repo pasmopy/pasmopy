@@ -8,7 +8,7 @@ try:
 except ImportError:
     __author__ = __maintainer__ = "Hiroaki Imoto"
     __email__ = "himoto@protein.osaka-u.ac.jp"
-    __version__ = "0.0.7"
+    __version__ = "0.0.8"
 
 
 # Python version check.
