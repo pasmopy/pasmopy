@@ -12,7 +12,7 @@ class WeightingFactors(object):
 
     Attributes
     ----------
-    model : biomass.exec_model.ModelObject
+    model : ``biomass.exec_model.ModelObject``
         BioMASS model object.
     gene_expression : dict
         Pairs of proteins and their related genes.
