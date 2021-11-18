@@ -15,6 +15,7 @@ from .reaction_rules import DuplicateError, ReactionRules
 
 warnings.simplefilter(action="ignore", category=FutureWarning)  # pasmopy==0.1.0
 
+
 @dataclass
 class Text2Model(ReactionRules):
     """
