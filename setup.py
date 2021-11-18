@@ -37,9 +37,9 @@ setup(
     install_requires=[l.strip() for l in Path("requirements.txt").read_text("utf-8").splitlines()],
     extras_require={
         "dev": [
-            "black==21.9b0",
+            "black==21.10b0",
             "flake8==4.0.1",
-            "isort==5.9.3",
+            "isort==5.10.1",
             "pre-commit",
             "pytest",
         ],
