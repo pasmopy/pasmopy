@@ -5,7 +5,7 @@ This section walk you through the creation of a mechanistic model from text.
 
 How to use
 ----------
-**Text2Model** is a useful class to build an ordinary differential equation (ODE) model from a text file describing biochemical systems.
+:py:class:`pasmopy.Text2Model` is a useful class to build an ordinary differential equation (ODE) model from a text file describing biochemical systems.
 
 The text file you need to prepare can be divided into three parts:
 
@@ -22,7 +22,7 @@ Reaction layer
 
 In the reaction layer, you need to describe biochemical reactions.
 Each reaction described in the line number *i* will be converted into *i*\ :sup:`th`\  rate equation.
-To specify parameters or initial conditions, you can put those information by using ``|``.
+To specify parameters or initial conditions, you can put those information after ``|``.
 
 * If you don't specify parameters/initial_conditions, they are initialized to 1 and 0, respectively, and the parameter values will be estimated from experimental data.
 * If you want to set a parameter value to 1 and don't want to estimate, you can add ``const`` prefix:
@@ -38,8 +38,8 @@ To specify parameters or initial conditions, you can put those information by us
    :linenos:
 
    # Nucleocytoplasmic Shuttling of DUSP
-   DUSP translocates from the cytoplasm to the nucleus
-   pDUSP translocates from the cytoplasm to the nucleus |2|
+   DUSPc translocates from the cytoplasm to the nucleus <--> DUSPn
+   pDUSPc translocates from the cytoplasm to the nucleus <--> pDUSPn |2|
 
 In the example above, you can assume that import and export rates were identical for DUSP (line 2) and pDUSP (line 3).
 
@@ -48,7 +48,7 @@ In the example above, you can assume that import and export rates were identical
 .. code-block:: python
 
    # [Ligand] will be held fixed to 10.0 during simulation
-   Ligand binds Receptor --> LR | kf = 1e-6, kr = 1e-1 | fixed Ligand = 10.0
+   Ligand binds Receptor <--> LR | kf = 1e-6, kr = 1e-1 | fixed Ligand = 10.0
 
 The available rules can be found at :doc:`modules/reaction_rules`.
 
@@ -93,15 +93,15 @@ Example:
    @sim condition EGF20nM: init[EGF] = 680
    @sim condition EGF2nM: init[EGF] = 68
 
-* **tspan**:
+* **tspan:**
 
    Two element vector ``[t0, tf]`` specifying the initial and final times.
 
-* **unperturbed**:
+* **unperturbed:**
 
    Description of the untreated condition to find the steady state.
 
-* **condition**:
+* **condition:**
 
    Experimental conditions. Use ``p`` and ``init`` to modify model parameters and initial conditions, respectively.
 

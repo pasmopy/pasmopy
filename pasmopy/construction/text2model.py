@@ -1,6 +1,7 @@
 import os
 import re
 import shutil
+import warnings
 from dataclasses import dataclass, field
 from typing import List
 
@@ -11,6 +12,8 @@ except ImportError:
 
 from . import julia_template as jl
 from .reaction_rules import DuplicateError, ReactionRules
+
+warnings.simplefilter(action="ignore", category=FutureWarning)  # pasmopy==0.1.0
 
 
 @dataclass
