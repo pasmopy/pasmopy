@@ -1,0 +1,4 @@
+A binds B <--> AB
+AB binds C <--> ABC
+ABC dissociates to A and BC
+BC dissociates to B and C
