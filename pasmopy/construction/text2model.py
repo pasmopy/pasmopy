@@ -666,7 +666,7 @@ class Text2Model(ReactionRules):
     def convert(
         self,
         *,
-        show_restriction: bool = False,
+        show_restrictions: bool = False,
         overwrite: bool = False,
     ) -> None:
         """
@@ -674,7 +674,7 @@ class Text2Model(ReactionRules):
 
         Parameters
         ----------
-        show_restriction : bool (defauld: :obj:`False`)
+        show_restrictions : bool (defauld: :obj:`False`)
             Whether to display reaction indices in which thermodynamic restrictions should be 
             imposed. These detailed balance constraints require the product of the equilibrium 
             constants along a cycle to be equal to 1.
@@ -722,7 +722,7 @@ class Text2Model(ReactionRules):
         print(f"{len(self.reactions):d} reactions")
         print(f"{len(self.species):d} species")
         print(f"{len(self.parameters):d} parameters")
-        if show_restriction:
+        if show_restrictions:
             if len(self._restrictions) == 0:
                 print("No cyclic reaction routes.")
             else:
