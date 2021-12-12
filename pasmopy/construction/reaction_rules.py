@@ -6,15 +6,7 @@ from typing import Dict, List, NamedTuple, Optional
 
 import numpy as np
 
-
-class DuplicateError(Exception):
-    pass
-
-
-class ComplexFormation(NamedTuple):
-    rxn_no: int
-    components: set
-    complexes: str
+from .thermodynamic_restrictions import ComplexFormation, DuplicateError, ThermodynamicRestrictions
 
 
 class UnregisteredRule(NamedTuple):
@@ -51,7 +43,7 @@ PREPOSITIONS: List[str] = [
 
 
 @dataclass
-class ReactionRules(object):
+class ReactionRules(ThermodynamicRestrictions):
     """Create an executable biochemical model from text.
 
     .. list-table:: Available reaction rules
@@ -254,10 +246,6 @@ class ReactionRules(object):
                 " is translocated",
             ],
         ),
-        init=False,
-    )
-    complex_formations: List[ComplexFormation] = field(
-        default_factory=list,
         init=False,
     )
 
@@ -538,7 +526,7 @@ class ReactionRules(object):
         if monomer == dimer:
             raise ValueError(f"{dimer} <- Use a different name.")
         self._set_species(monomer, dimer)
-        self.complex_formations.append(ComplexFormation(line_num, set(monomer), dimer))
+        self.complex_formations.append(ComplexFormation(line_num, set(monomer), dimer, True))
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.kf{line_num:d}] * y[V.{monomer}] * y[V.{monomer}] - "
@@ -608,7 +596,7 @@ class ReactionRules(object):
         else:
             self._set_species(component1, component2, complex)
             self.complex_formations.append(
-                ComplexFormation(line_num, set([component1, component2]), complex)
+                ComplexFormation(line_num, set([component1, component2]), complex, True)
             )
             self.reactions.append(
                 f"v[{line_num:d}] = "
@@ -671,7 +659,7 @@ class ReactionRules(object):
             component2 = description[1].split(" and ")[1].strip(" ")
         self._set_species(complex, component1, component2)
         self.complex_formations.append(
-            ComplexFormation(line_num, set([component1, component2]), complex)
+            ComplexFormation(line_num, set([component1, component2]), complex, False)
         )
         self.reactions.append(
             f"v[{line_num:d}] = "

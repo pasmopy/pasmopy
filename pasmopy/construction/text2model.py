@@ -11,7 +11,7 @@ except ImportError:
     from typing_extensions import Literal
 
 from . import julia_template as jl
-from .reaction_rules import DuplicateError, ReactionRules
+from .reaction_rules import ReactionRules
 
 warnings.simplefilter(action="ignore", category=FutureWarning)  # pasmopy==0.1.0
 
@@ -663,28 +663,21 @@ class Text2Model(ReactionRules):
         ) as f:
             f.write("\n".join(lines))
 
-    def _detect_duplicate_binding(self) -> None:
-        """
-        Check for duplicate binding-dissociation events.
-        """
-        for i, pattern_a in enumerate(self.complex_formations):
-            for j in range(i + 1, len(self.complex_formations)):
-                pattern_b = self.complex_formations[j]
-                if (
-                    pattern_a.components == pattern_b.components
-                    and pattern_a.complexes == pattern_b.complexes
-                ):
-                    raise DuplicateError(
-                        "Duplicate binding-dissociation events are detected "
-                        f"in lines {pattern_a.rxn_no:d} and {pattern_b.rxn_no:d}."
-                    )
-
-    def convert(self, overwrite: bool = False) -> None:
+    def convert(
+        self,
+        *,
+        show_restriction: bool = False,
+        overwrite: bool = False,
+    ) -> None:
         """
         Convert text to a biomass-formatted model.
 
         Parameters
         ----------
+        show_restriction : bool (defauld: :obj:`False`)
+            Display reaction indices in which thermodynamic restrictions should be imposed.
+            These detailed balance constraints require the product of the equilibrium constants 
+            along a cycle to be equal to 1.
         overwrite : bool (defauld: :obj:`False`)
             If :obj:`True`, the model folder will be overwritten.
 
@@ -710,7 +703,7 @@ class Text2Model(ReactionRules):
             os.makedirs(os.path.join(f"{self.name}_jl", "name2idx"))
 
         self.create_ode()
-        self._detect_duplicate_binding()
+        self.find_cyclic_reaction_routes()
         self._update_parameters()
         self._update_species()
         self._update_set_model()
@@ -729,6 +722,14 @@ class Text2Model(ReactionRules):
         print(f"{len(self.reactions):d} reactions")
         print(f"{len(self.species):d} species")
         print(f"{len(self.parameters):d} parameters")
+        if show_restriction:
+            if len(self._restrictions) == 0:
+                print("No cyclic reaction routes.")
+            else:
+                print("\nThermodynamic restrictions")
+                print("--------------------------")
+                for restriction in self._restrictions:
+                    print("{" + ", ".join(restriction) + "}")
 
     def to_markdown(self, n_reaction: int) -> None:
         """
