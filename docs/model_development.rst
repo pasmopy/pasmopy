@@ -226,12 +226,21 @@ Reference:
 
       >>> from pasmopy import Text2Model
       >>> description = Text2Model("Kholodenko_JBC_1999.txt")
-      >>> description.convert()
+      >>> description.convert(show_restrictions=True)
       Model information
       -----------------
       25 reactions
       23 species
       50 parameters
+
+      Thermodynamic restrictions
+      --------------------------
+      {9, 12, 10, 11}
+      {15, 18, 21, 17}
+      {18, 22, 20, 19}
+      {17, 24, 12, 19}
+      {23, 24, 20, 15}
+      {23, 12, 22, 21}
    
 #. Run simulation
    
