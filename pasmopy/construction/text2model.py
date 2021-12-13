@@ -723,12 +723,12 @@ class Text2Model(ReactionRules):
         print(f"{len(self.species):d} species")
         print(f"{len(self.parameters):d} parameters")
         if show_restrictions:
-            if len(self._restrictions) == 0:
+            if len(self.restrictions) == 0:
                 print("No cyclic reaction routes.")
             else:
                 print("\nThermodynamic restrictions")
                 print("--------------------------")
-                for restriction in self._restrictions:
+                for restriction in self.restrictions:
                     print("{" + ", ".join(restriction) + "}")
 
     def to_markdown(self, n_reaction: int) -> None:

@@ -35,7 +35,7 @@ class ThermodynamicRestrictions(object):
         default_factory=dict,
         init=False,
     )
-    _restrictions: list = field(
+    restrictions: list = field(
         default_factory=list,
         init=False,
     )
@@ -161,7 +161,7 @@ class ThermodynamicRestrictions(object):
             self._add_to_rxn_indices1(complex_name, self._tree[complex_name])
             count = Counter(self._rxn_indices[complex_name])
             if all(n == 2 for n in count.values()):
-                self._restrictions.append(list(set(self._rxn_indices[complex_name])))
+                self.restrictions.append(list(set(self._rxn_indices[complex_name])))
             else:
                 _monomers = {}
                 for name in self._tree[complex_name].keys():
@@ -179,8 +179,8 @@ class ThermodynamicRestrictions(object):
                     if pair is not None:
                         self._add_to_rxn_indices2(complex_name, monomer, pair)
                         _reactions = list(set(self._rxn_indices[monomer]))
-                        if len(_reactions) > 2 and _reactions not in self._restrictions:
-                            self._restrictions.append(_reactions)
+                        if len(_reactions) > 2 and _reactions not in self.restrictions:
+                            self.restrictions.append(_reactions)
                 # initialize monomers
                 for monomer, ridx in _monomers.items():
                     self._rxn_indices[monomer] = [ridx]
@@ -194,5 +194,5 @@ class ThermodynamicRestrictions(object):
                     if pair is not None:
                         self._add_to_rxn_indices3(complex_name, monomer, pair)
                         _reactions = list(set(self._rxn_indices[monomer]))
-                        if len(_reactions) > 2 and _reactions not in self._restrictions:
-                            self._restrictions.append(_reactions)
+                        if len(_reactions) > 2 and _reactions not in self.restrictions:
+                            self.restrictions.append(_reactions)

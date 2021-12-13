@@ -66,7 +66,7 @@ def test_text2model():
                     {'15', '20', '23', '24'},
                     {'12', '21', '22', '23'},
                 ]
-                actual = [set(restriction) for restriction in  mapk_cascade._restrictions]
+                actual = [set(restriction) for restriction in  mapk_cascade.restrictions]
                 for l1 in actual:
                     assert l1 in desired
                 for l2 in desired:
