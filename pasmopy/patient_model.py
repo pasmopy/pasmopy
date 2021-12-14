@@ -1,7 +1,6 @@
 import csv
 import multiprocessing
 import os
-import platform
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Union
 
@@ -55,14 +54,8 @@ class InSilico(object):
             The number of worker processes to use.
         """
 
-        if platform.system() == "Darwin":
-            # fork() has always been unsafe on Mac
-            # spawn* functions should be instead
-            ctx = multiprocessing.get_context("spawn")
-            p = ctx.Pool(processes=n_proc)
-        else:
-            p = multiprocessing.Pool(processes=n_proc)
-
+        ctx = multiprocessing.get_context("spawn")
+        p = ctx.Pool(processes=n_proc)
         with tqdm(total=len(self.patients)) as t:
             for _ in p.imap_unordered(func, self.patients):
                 t.update(1)
