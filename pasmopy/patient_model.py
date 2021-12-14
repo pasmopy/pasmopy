@@ -69,6 +69,15 @@ class InSilico(object):
             for _ in p.imap_unordered(func, self.patients):
                 t.update(1)
         p.close()
+    
+    @staticmethod
+    def _check_ctx(context: str) -> None:
+        """
+        Check whether the context is appropriate.
+        """
+        contexts = ["spawn", "fork", "forkserver"]
+        if context not in contexts:
+            raise ValueError("context must be one of '{}'.".format("', '".join(contexts)))
 
 
 @dataclass
@@ -127,6 +136,7 @@ class PatientModelSimulations(InSilico):
         """
         if n_proc is None:
             n_proc = multiprocessing.cpu_count() - 1
+        self._check_ctx(context)
         self.parallel_execute(self._run_single_patient, n_proc, context)
 
     @staticmethod
@@ -320,4 +330,5 @@ class PatientModelAnalyses(InSilico):
         """
         if n_proc is None:
             n_proc = multiprocessing.cpu_count() - 1
+        self._check_ctx(context)
         self.parallel_execute(self._run_single_patient, n_proc, context)
