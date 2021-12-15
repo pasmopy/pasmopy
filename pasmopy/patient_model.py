@@ -69,7 +69,7 @@ class InSilico(object):
             for _ in p.imap_unordered(func, self.patients):
                 t.update(1)
         p.close()
-    
+
     @staticmethod
     def _check_ctx(context: str) -> None:
         """
@@ -130,7 +130,7 @@ class PatientModelSimulations(InSilico):
         ----------
         n_proc : int, optional
             The number of worker processes to use.
-        
+
         context : Literal["spawn", "fork", "forkserver"] (default: "spawn")
             The context used for starting the worker processes.
         """
@@ -324,7 +324,7 @@ class PatientModelAnalyses(InSilico):
         ----------
         n_proc : int, optional
             The number of worker processes to use.
-        
+
         context : Literal["spawn", "fork", "forkserver"] (default: "spawn")
             The context used for starting the worker processes.
         """
