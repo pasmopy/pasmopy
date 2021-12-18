@@ -35,7 +35,7 @@ def test_text2model():
     )
     abc.convert()
     # test thermodynamic restrictions
-    desired = [['1', '2', '3', '4']]
+    desired = [["1", "2", "3", "4"]]
     actual = abc.restrictions
     assert len(actual) == 1
     assert set(desired[0]) == set(actual[0])

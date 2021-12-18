@@ -58,15 +58,15 @@ def test_text2model():
                 mapk_cascade.convert()
                 # test thermodynamic restrictions
                 desired = [
-                    {'10', '11', '12', '9'},
-                    {'15', '17', '18', '21'},
-                    {'18', '19', '20', '22'},
-                    {'18', '19', '20', '22'},
-                    {'12', '17', '19', '24'},
-                    {'15', '20', '23', '24'},
-                    {'12', '21', '22', '23'},
+                    {"10", "11", "12", "9"},
+                    {"15", "17", "18", "21"},
+                    {"18", "19", "20", "22"},
+                    {"18", "19", "20", "22"},
+                    {"12", "17", "19", "24"},
+                    {"15", "20", "23", "24"},
+                    {"12", "21", "22", "23"},
                 ]
-                actual = [set(restriction) for restriction in  mapk_cascade.restrictions]
+                actual = [set(restriction) for restriction in mapk_cascade.restrictions]
                 for l1 in actual:
                     assert l1 in desired
                 for l2 in desired:

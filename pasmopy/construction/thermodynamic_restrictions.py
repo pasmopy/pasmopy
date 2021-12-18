@@ -22,11 +22,12 @@ class ThermodynamicRestrictions(object):
     Notes
     -----
     If a kinetic scheme includes "true" cycles, in which the initial and final states are
-    identical, the equilibrium constants of the reactions along any cycle satisfy so-called 
-    "detailed balance" relationships. These detailed balance relations require the product 
+    identical, the equilibrium constants of the reactions along any cycle satisfy so-called
+    "detailed balance" relationships. These detailed balance relations require the product
     of the equilibrium constants along a cycle to be equal to 1, since at equilibrium the net flux
     through any cycle vanishes.
     """
+
     _rxn_indices: dict = field(
         default_factory=dict,
         init=False,
@@ -61,10 +62,10 @@ class ThermodynamicRestrictions(object):
                     for k in another_pattern.components:
                         if component not in tree.keys():
                             tree.setdefault(component, {})
-                        tree[component].setdefault(k ,{f"{another_pattern.rxn_no}": {}})
+                        tree[component].setdefault(k, {f"{another_pattern.rxn_no}": {}})
                         tree[component][k] = self._create_tree(tree[component][k], another_pattern)
         return tree
-    
+
     def _add_to_rxn_indices1(self, complex_name: str, tree: dict) -> None:
         for component in tree.keys():
             if not tree[component]:
@@ -73,7 +74,7 @@ class ThermodynamicRestrictions(object):
                 self._add_to_rxn_indices1(complex_name, tree[component])
 
     def _add_to_rxn_indices2(self, complex_name: str, monomer: str, pair: str) -> None:
-        for another_complex in self._tree[complex_name].keys():  
+        for another_complex in self._tree[complex_name].keys():
             if (
                 monomer in self._tree[complex_name][another_complex].keys()
                 and len(self._tree[complex_name][another_complex][monomer]) > 1
@@ -87,9 +88,9 @@ class ThermodynamicRestrictions(object):
                             name,
                             another_complex,
                         )
-    
+
     def _add_to_rxn_indices3(self, complex_name: str, monomer: str, pair: str) -> None:
-        for another_complex in self._tree[complex_name].keys():  
+        for another_complex in self._tree[complex_name].keys():
             if (
                 monomer in self._tree[complex_name][another_complex].keys()
                 and len(self._tree[complex_name][another_complex][monomer]) == 1
@@ -108,7 +109,6 @@ class ThermodynamicRestrictions(object):
                                             another_complex,
                                         )
 
-    
     def _append_reaction_number(
         self,
         complex_name: str,
@@ -126,7 +126,7 @@ class ThermodynamicRestrictions(object):
         for val in self._tree[complex_name][pair][name].keys():
             if val.isdecimal():
                 self._rxn_indices[monomer].append(val)
-    
+
     def find_cyclic_reaction_routes(self) -> None:
         """
         Find cyclic pathways in a reaction network.
@@ -146,7 +146,7 @@ class ThermodynamicRestrictions(object):
                 elif (
                     pattern_a.is_binding != pattern_b.is_binding
                     and pattern_a.complex == pattern_b.complex
-                ):  
+                ):
                     complex_patterns.append((pattern_a, pattern_b))
         _tree = {}
         for patterns in complex_patterns:

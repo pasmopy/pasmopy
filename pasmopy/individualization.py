@@ -102,7 +102,7 @@ class Individualization(object):
             y0 = incorporating_gene_expression_levels.as_initial_conditions(
                 __path__[0].split(os.sep)[-1], x, y0
             )
-            
+
             ...
     """
 

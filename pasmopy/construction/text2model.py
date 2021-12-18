@@ -675,8 +675,8 @@ class Text2Model(ReactionRules):
         Parameters
         ----------
         show_restrictions : bool (defauld: :obj:`False`)
-            Whether to display reaction indices in which thermodynamic restrictions should be 
-            imposed. These detailed balance constraints require the product of the equilibrium 
+            Whether to display reaction indices in which thermodynamic restrictions should be
+            imposed. These detailed balance constraints require the product of the equilibrium
             constants along a cycle to be equal to 1.
         overwrite : bool (defauld: :obj:`False`)
             If :obj:`True`, the model folder will be overwritten.
