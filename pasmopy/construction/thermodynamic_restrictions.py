@@ -127,10 +127,7 @@ class ThermodynamicRestrictions(object):
             if val.isdecimal():
                 self._rxn_indices[monomer].append(val)
     
-    def find_cyclic_reaction_routes(self) -> None:
-        """
-        Find cyclic pathways in a reaction network.
-        """
+    def _get_complex_patterns(self) -> list:
         complex_patterns = []
         for i, pattern_a in enumerate(self.complex_formations):
             for j in range(i + 1, len(self.complex_formations)):
@@ -148,6 +145,52 @@ class ThermodynamicRestrictions(object):
                     and pattern_a.complex == pattern_b.complex
                 ):  
                     complex_patterns.append((pattern_a, pattern_b))
+        return complex_patterns
+    
+    def _impose_restrictions(self, complex_name: str) -> None:
+        count = Counter(self._rxn_indices[complex_name])
+        if all(n == 2 for n in count.values()):
+            self.restrictions.append(list(set(self._rxn_indices[complex_name])))
+        else:
+            _monomers = {}
+            for name in self._tree[complex_name].keys():
+                if len(self._tree[complex_name][name].values()) == 1:
+                    _monomers[name] = list(self._tree[complex_name][name].keys())[0]
+            for monomer, ridx in _monomers.items():
+                self._rxn_indices[monomer] = [ridx]
+                pair = None
+                for another_complex in self._tree[complex_name].keys():
+                    if (
+                        another_complex != monomer
+                        and ridx in self._tree[complex_name][another_complex]
+                    ):
+                        pair = another_complex
+                if pair is not None:
+                    self._add_to_rxn_indices2(complex_name, monomer, pair)
+                    _reactions = list(set(self._rxn_indices[monomer]))
+                    if len(_reactions) > 2 and _reactions not in self.restrictions:
+                        self.restrictions.append(_reactions)
+            # initialize monomers
+            for monomer, ridx in _monomers.items():
+                self._rxn_indices[monomer] = [ridx]
+                pair = None
+                for another_complex in self._tree[complex_name].keys():
+                    if (
+                        another_complex != monomer
+                        and ridx in self._tree[complex_name][another_complex]
+                    ):
+                        pair = another_complex
+                if pair is not None:
+                    self._add_to_rxn_indices3(complex_name, monomer, pair)
+                    _reactions = list(set(self._rxn_indices[monomer]))
+                    if len(_reactions) > 2 and _reactions not in self.restrictions:
+                        self.restrictions.append(_reactions)
+    
+    def find_cyclic_reaction_routes(self) -> None:
+        """
+        Find cyclic pathways in a reaction network.
+        """
+        complex_patterns = self._get_complex_patterns()
         _tree = {}
         for patterns in complex_patterns:
             for pattern in patterns:
@@ -159,40 +202,4 @@ class ThermodynamicRestrictions(object):
         for complex_name in self._tree.keys():
             self._rxn_indices.setdefault(complex_name, [])
             self._add_to_rxn_indices1(complex_name, self._tree[complex_name])
-            count = Counter(self._rxn_indices[complex_name])
-            if all(n == 2 for n in count.values()):
-                self.restrictions.append(list(set(self._rxn_indices[complex_name])))
-            else:
-                _monomers = {}
-                for name in self._tree[complex_name].keys():
-                    if len(self._tree[complex_name][name].values()) == 1:
-                        _monomers[name] = list(self._tree[complex_name][name].keys())[0]
-                for monomer, ridx in _monomers.items():
-                    self._rxn_indices[monomer] = [ridx]
-                    pair = None
-                    for another_complex in self._tree[complex_name].keys():
-                        if (
-                            another_complex != monomer
-                            and ridx in self._tree[complex_name][another_complex]
-                        ):
-                            pair = another_complex
-                    if pair is not None:
-                        self._add_to_rxn_indices2(complex_name, monomer, pair)
-                        _reactions = list(set(self._rxn_indices[monomer]))
-                        if len(_reactions) > 2 and _reactions not in self.restrictions:
-                            self.restrictions.append(_reactions)
-                # initialize monomers
-                for monomer, ridx in _monomers.items():
-                    self._rxn_indices[monomer] = [ridx]
-                    pair = None
-                    for another_complex in self._tree[complex_name].keys():
-                        if (
-                            another_complex != monomer
-                            and ridx in self._tree[complex_name][another_complex]
-                        ):
-                            pair = another_complex
-                    if pair is not None:
-                        self._add_to_rxn_indices3(complex_name, monomer, pair)
-                        _reactions = list(set(self._rxn_indices[monomer]))
-                        if len(_reactions) > 2 and _reactions not in self.restrictions:
-                            self.restrictions.append(_reactions)
+            self._impose_restrictions(complex_name)
