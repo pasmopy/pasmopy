@@ -1,6 +1,6 @@
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Tuple
 
 
 class DuplicateError(Exception):
@@ -127,7 +127,7 @@ class ThermodynamicRestrictions(object):
             if val.isdecimal():
                 self._rxn_indices[monomer].append(val)
 
-    def _get_complex_patterns(self) -> list:
+    def _get_complex_patterns(self) -> List[Tuple[ComplexFormation, ComplexFormation]]:
         complex_patterns = []
         for i, pattern_a in enumerate(self.complex_formations):
             for j in range(i + 1, len(self.complex_formations)):
