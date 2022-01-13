@@ -6,15 +6,7 @@ from typing import Dict, List, NamedTuple, Optional
 
 import numpy as np
 
-
-class DuplicateError(Exception):
-    pass
-
-
-class ComplexFormation(NamedTuple):
-    rxn_no: int
-    components: set
-    complexes: str
+from .thermodynamic_restrictions import ComplexFormation, DuplicateError, ThermodynamicRestrictions
 
 
 class UnregisteredRule(NamedTuple):
@@ -51,7 +43,7 @@ PREPOSITIONS: List[str] = [
 
 
 @dataclass
-class ReactionRules(object):
+class ReactionRules(ThermodynamicRestrictions):
     """Create an executable biochemical model from text.
 
     .. list-table:: Available reaction rules
@@ -62,46 +54,46 @@ class ReactionRules(object):
           - Example sentence
           - Parameters (optional)
         * - :func:`~pasmopy.construction.reaction_rules.dimerize`
-          - *Monomer* dimerizes <--> *Dimer*
+          - *A* dimerizes <--> *AA*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.bind`
-          - *Component1* binds *Component2* <--> *Complex*
+          - *A* binds *B* <--> *AB*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.dissociate`
-          - *Complex* dissociates to *Component1* and *Component2*
+          - *AB* dissociates to *A* and *B*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.is_phosphorylated`
-          - *uProtein* is phosphorylated <--> *pProtein*
+          - *uA* is phosphorylated <--> *pA*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.is_dephosphorylated`
-          - *pProtein* is dephosphorylated --> *uProtein*
+          - *pA* is dephosphorylated --> *uA*
           - .. math:: V, K
         * - :func:`~pasmopy.construction.reaction_rules.phosphorylate`
-          - *Kinase* phosphorylates *uProtein* --> *pProtein*
+          - *B* phosphorylates *uA* --> *pA*
           - .. math:: V, K
         * - :func:`~pasmopy.construction.reaction_rules.dephosphorylate`
-          - *Phosphatase* dephosphorylates *pProtein* --> *uProtein*
+          - *B* dephosphorylates *pA* --> *uA*
           - .. math:: V, K
         * - :func:`~pasmopy.construction.reaction_rules.transcribe`
-          - *TF* transcribes *mRNA*
+          - *B* transcribes *a*
           - .. math:: V, K, n, (KF, nF)
         * - :func:`~pasmopy.construction.reaction_rules.is_translated`
-          - *mRNA* is translated into *Protein*
+          - *a* is translated into *A*
           - .. math:: kf
         * - :func:`~pasmopy.construction.reaction_rules.synthesize`
-          - *Catalyst* synthesizes *Product*
+          - *B* synthesizes *A*
           - .. math:: kf
         * - :func:`~pasmopy.construction.reaction_rules.is_synthesized`
-          - *ChemicalSpecies* is synthesized
+          - *A* is synthesized
           - .. math:: kf
         * - :func:`~pasmopy.construction.reaction_rules.degrade`
-          - *Protease* degrades *Protein*
+          - *B* degrades *A*
           - .. math:: kf
         * - :func:`~pasmopy.construction.reaction_rules.is_degraded`
-          - *ChemicalSpecies* is degraded
+          - *A* is degraded
           - .. math:: kf
         * - :func:`~pasmopy.construction.reaction_rules.translocate`
-          - *cytProtein* translocates from cytoplasm to nucleus (Vcyt, Vnuc) <--> *nucProtein*
+          - *Acyt* translocates from cytoplasm to nucleus (Vcyt, Vnuc) <--> *Anuc*
           - .. math:: kf, kr, (V_{pre}, V_{post})
 
     Attributes
@@ -254,10 +246,6 @@ class ReactionRules(object):
                 " is translocated",
             ],
         ),
-        init=False,
-    )
-    complex_formations: List[ComplexFormation] = field(
-        default_factory=list,
         init=False,
     )
 
@@ -500,10 +488,10 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'Monomer dimerizes <--> Dimer'
-        >>> 'Monomer homodimerizes <--> Dimer'
-        >>> 'Monomer forms a dimer <--> Dimer'
-        >>> 'Monomer forms dimers <--> Dimer'
+        >>> 'A dimerizes <--> AA'
+        >>> 'A homodimerizes <--> AA'
+        >>> 'A forms a dimer <--> AA'
+        >>> 'A forms dimers <--> AA'
 
         Notes
         -----
@@ -511,14 +499,14 @@ class ReactionRules(object):
             .. math:: kf, kr
 
         * Rate equation
-            .. math:: v = kf * [Monomer] * [Monomer] - kr * [Dimer]
+            .. math:: v = kf * [A] * [A] - kr * [AA]
 
         * Differential equation
             .. math::
 
-                d[Monomer]/dt = - 2 * v
+                d[A]]/dt = - 2 * v
 
-                d[Dimer]/dt = + v
+                d[AA]/dt = + v
 
         """
         description = self._preprocessing(
@@ -538,7 +526,7 @@ class ReactionRules(object):
         if monomer == dimer:
             raise ValueError(f"{dimer} <- Use a different name.")
         self._set_species(monomer, dimer)
-        self.complex_formations.append(ComplexFormation(line_num, set(monomer), dimer))
+        self.complex_formations.append(ComplexFormation(line_num, set(monomer), dimer, True))
         self.reactions.append(
             f"v[{line_num:d}] = "
             f"x[C.kf{line_num:d}] * y[V.{monomer}] * y[V.{monomer}] - "
@@ -561,8 +549,8 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'Component1 binds Component2 <--> Complex'
-        >>> 'Component1 forms complexes with Component2 <--> Complex'
+        >>> 'A binds B <--> AB'
+        >>> 'A forms complexes with B <--> AB'
 
         Notes
         -----
@@ -570,16 +558,16 @@ class ReactionRules(object):
             .. math:: kf, kr
 
         * Rate equation
-            .. math:: v = kf * [Component1] * [Component2] - kr * [Complex]
+            .. math:: v = kf * [A] * [B] - kr * [AB]
 
         * Differential equation
             .. math::
 
-                d[Component1]/dt = - v
+                d[A]/dt = - v
 
-                d[Component2]/dt = - v
+                d[B]/dt = - v
 
-                d[Complex]/dt = + v
+                d[AB]/dt = + v
 
         """
         description = self._preprocessing(
@@ -608,7 +596,7 @@ class ReactionRules(object):
         else:
             self._set_species(component1, component2, complex)
             self.complex_formations.append(
-                ComplexFormation(line_num, set([component1, component2]), complex)
+                ComplexFormation(line_num, set([component1, component2]), complex, True)
             )
             self.reactions.append(
                 f"v[{line_num:d}] = "
@@ -637,8 +625,8 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'Complex dissociates to Component1 and Component2'
-        >>> 'Complex is dissociated into Component1 and Component2'
+        >>> 'AB dissociates to A and B'
+        >>> 'AB is dissociated into A and B'
 
         Notes
         -----
@@ -646,16 +634,16 @@ class ReactionRules(object):
             .. math:: kf, kr
 
         * Rate equation
-            .. math:: v = kf * [Complex] - kr * [Component1] * [Component2]
+            .. math:: v = kf * [AB] - kr * [A] * [B]
 
         * Differential equation
             .. math::
 
-                d[Component1]/dt = + v
+                d[A]/dt = + v
 
-                d[Component2]/dt = + v
+                d[B]/dt = + v
 
-                d[Complex]/dt = - v
+                d[AB]/dt = - v
 
         """
         description = self._preprocessing(
@@ -671,7 +659,7 @@ class ReactionRules(object):
             component2 = description[1].split(" and ")[1].strip(" ")
         self._set_species(complex, component1, component2)
         self.complex_formations.append(
-            ComplexFormation(line_num, set([component1, component2]), complex)
+            ComplexFormation(line_num, set([component1, component2]), complex, False)
         )
         self.reactions.append(
             f"v[{line_num:d}] = "
@@ -704,7 +692,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'uProtein is phosphorylated <--> pProtein'
+        >>> 'uA is phosphorylated <--> pA'
 
         Notes
         -----
@@ -712,14 +700,14 @@ class ReactionRules(object):
             .. math:: kf, kr
 
         * Rate equation
-            .. math:: v = kf * [uProtein] - kr * [pProtein]
+            .. math:: v = kf * [uA] - kr * [pA]
 
         * Differential equation
             .. math::
 
-                d[uProtein]/dt = - v
+                d[uA]/dt = - v
 
-                d[pProtein]/dt = + v
+                d[pA]/dt = + v
 
         """
         description = self._preprocessing(
@@ -767,7 +755,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'pProtein is dephosphorylated --> uProtein'
+        >>> 'pA is dephosphorylated --> uA'
 
         Notes
         -----
@@ -775,14 +763,14 @@ class ReactionRules(object):
             .. math:: V, K
 
         * Rate equation
-            .. math:: v = V * [pProtein] / (K + [pProtein])
+            .. math:: v = V * [pA] / (K + [pA])
 
         * Differential equation
             .. math::
 
-                d[uProtein]/dt = + v
+                d[uA]/dt = + v
 
-                d[pProtein]/dt = - v
+                d[pA]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
@@ -822,7 +810,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'Kinase phosphorylates uProtein --> pProtein'
+        >>> 'B phosphorylates uA --> pA'
 
         Notes
         -----
@@ -830,14 +818,14 @@ class ReactionRules(object):
             .. math:: V, K
 
         * Rate equation
-            .. math:: v = V * [Kinase] * [uProtein] / (K + [uProtein])
+            .. math:: v = V * [B] * [uA] / (K + [uA])
 
         * Differential equation
             .. math::
 
-                d[uProtein]/dt = - v
+                d[uA]/dt = - v
 
-                d[pProtein]/dt = + v
+                d[pA]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
@@ -881,7 +869,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'Phosphatase dephosphorylates pProtein --> uProtein'
+        >>> 'B dephosphorylates pA --> uA'
 
         Notes
         -----
@@ -889,14 +877,14 @@ class ReactionRules(object):
             .. math:: V, K
 
         * Rate equation
-            .. math:: v = V * [phosphatase] * [pProtein] / (K + [pProtein])
+            .. math:: v = V * [B] * [pA] / (K + [pA])
 
         * Differential equation
             .. math::
 
-                d[uProtein]/dt = + v
+                d[uA]/dt = + v
 
-                d[pProtein]/dt = - v
+                d[pA]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
@@ -940,9 +928,9 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'TF transcribes mRNA'
-        >>> 'TF1 & TF2 transcribe mRNA'  # (AND-gate)
-        >>> 'TF transcribes mRNA, repressed by Repressor'  # (Negative regulation)
+        >>> 'B transcribes a'
+        >>> 'B1 & B2 transcribe a'  # (AND-gate)
+        >>> 'B transcribes a, repressed by C'  # (Negative regulation)
 
         Notes
         -----
@@ -952,14 +940,14 @@ class ReactionRules(object):
         * Rate equation
             .. math::
 
-                v = V * [TF] ^ {n} / (K ^ {n} + [TF] ^ {n})
+                v = V * [B] ^ {n} / (K ^ {n} + [B] ^ {n})
 
-                v = V * ([TF1] * [TF2]) ^ {n} / (K ^ {n} + ([TF1] * [TF2]) ^ {n})
+                v = V * ([B1] * [B2]) ^ {n} / (K ^ {n} + ([B1] * [B2]) ^ {n})
 
-                v = V * [TF] ^ {n} / (K ^ {n} + [TF] ^ {n} + ([Repressor] / KF) ^ {nF})
+                v = V * [B] ^ {n} / (K ^ {n} + [B] ^ {n} + ([C] / KF) ^ {nF})
 
         * Differential equation
-            .. math:: d[mRNA]/dt = + v
+            .. math:: d[a]/dt = + v
 
         """
         description = self._preprocessing(
@@ -1026,7 +1014,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'mRNA is translated into Protein'
+        >>> 'a is translated into A'
 
         Notes
         -----
@@ -1034,10 +1022,10 @@ class ReactionRules(object):
             .. math:: kf
 
         * Rate equation
-            .. math:: v = kf * [mRNA]
+            .. math:: v = kf * [a]
 
         * Differential equation
-            .. math:: d[Protein]/dt = + v
+            .. math:: d[A]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1057,7 +1045,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'Catalyst synthesizes Product'
+        >>> 'B synthesizes A'
 
         Notes
         -----
@@ -1065,10 +1053,10 @@ class ReactionRules(object):
             .. math:: kf
 
         * Rate equation
-            .. math:: v = kf * [Catalyst]
+            .. math:: v = kf * [B]
 
         * Differential equation
-            .. math:: d[Product]/dt = + v
+            .. math:: d[A]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1088,7 +1076,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'ChemicalSpecies is synthesized'
+        >>> 'A is synthesized'
 
         Notes
         -----
@@ -1099,7 +1087,7 @@ class ReactionRules(object):
             .. math:: v = kf
 
         * Differential equation
-            .. math:: d[ChemicalSpecies]/dt = + v
+            .. math:: d[A]/dt = + v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1118,7 +1106,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'Protease degrades Protein'
+        >>> 'B degrades A'
 
         Notes
         -----
@@ -1126,10 +1114,10 @@ class ReactionRules(object):
             .. math:: kf
 
         * Rate equation
-            .. math:: v = kf * [Protease]
+            .. math:: v = kf * [B]
 
         * Differential equation
-            .. math:: d[Protein]/dt = - v
+            .. math:: d[A]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1149,7 +1137,7 @@ class ReactionRules(object):
         """
         Examples
         --------
-        >>> 'ChemicalSpecies is degraded'
+        >>> 'A is degraded'
 
         Notes
         -----
@@ -1157,10 +1145,10 @@ class ReactionRules(object):
             .. math:: kf
 
         * Rate equation
-            .. math:: v = kf * [ChemicalSpecies]
+            .. math:: v = kf * [A]
 
         * Differential equation
-            .. math:: d[ChemicalSpecies]/dt = - v
+            .. math:: d[A]/dt = - v
 
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
@@ -1179,8 +1167,8 @@ class ReactionRules(object):
         r"""
         Examples
         --------
-        >>> 'pre_translocation translocates from one location to another (pre_volume, post_volume) <--> post_translocation'
-        >>> 'pre_translocation is translocated from one location to another (pre_volume, post_volume) <--> post_translocation'
+        >>> 'A_at_cyt translocates from cytoplasm to nucleus (V_cyt, V_nuc) <--> A_at_nuc'
+        >>> 'A_at_cyt is translocated from cytoplasm to nucleus (V_cyt, V_nuc) <--> A_at_nuc'
 
         Notes
         -----
@@ -1188,14 +1176,14 @@ class ReactionRules(object):
             .. math:: kf, kr, (V_{pre}, V_{post})
 
         * Rate equation
-            .. math:: v = kf * [pre\_translocation] - kr * (V_{post} / V_{pre}) * [post\_translocation]
+            .. math:: v = kf * [A\_at\_pre] - kr * (V_{post} / V_{pre}) * [A\_at\_post]
 
         * Differential equation
             .. math::
 
-                d[pre\_translocation]/dt = - v
+                d[A\_at\_pre]/dt = - v
 
-                d[post\_translocation]/dt = + v * (V_{pre} / V_{post})
+                d[A\_at\_post]/dt = + v * (V_{pre} / V_{post})
 
         """
         description = self._preprocessing(
