@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from pasmopy import Model, Text2Model, run_simulation
-from pasmopy.construction.reaction_rules import DuplicateError
+from pasmopy.construction.thermodynamic_restrictions import DuplicateError
 
 
 def test_preprocessing():
@@ -34,20 +34,6 @@ def test_preprocessing():
 
 def test_text2model():
     for model in ["michaelis_menten", "Kholodenko_JBC_1999"]:
-        if os.path.isdir(
-            os.path.join(
-                os.path.dirname(__file__),
-                "text_files",
-                model,
-            )
-        ):
-            shutil.rmtree(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    "text_files",
-                    model,
-                )
-            )
         for lang in ["python", "julia"]:
             if model == "michaelis_menten":
                 mm_kinetics = Text2Model(
@@ -70,6 +56,22 @@ def test_text2model():
                     lang=lang,
                 )
                 mapk_cascade.convert()
+                # test thermodynamic restrictions
+                desired = [
+                    {"10", "11", "12", "9"},
+                    {"15", "17", "18", "21"},
+                    {"18", "19", "20", "22"},
+                    {"18", "19", "20", "22"},
+                    {"12", "17", "19", "24"},
+                    {"15", "20", "23", "24"},
+                    {"12", "21", "22", "23"},
+                ]
+                actual = [set(restriction) for restriction in mapk_cascade.restrictions]
+                for l1 in actual:
+                    assert l1 in desired
+                for l2 in desired:
+                    assert l2 in actual
+
     with pytest.raises(DuplicateError):
         Text2Model(
             os.path.join(os.path.dirname(__file__), "text_files", "duplicate_binding.txt")

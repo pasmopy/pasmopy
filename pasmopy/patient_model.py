@@ -1,9 +1,13 @@
 import csv
 import multiprocessing
 import os
-import platform
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Union
+
+try:  # python 3.8+
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 import numpy as np
 import pandas as pd
@@ -42,6 +46,7 @@ class InSilico(object):
         self,
         func: Callable[[str], None],
         n_proc: int,
+        method: Literal["spawn", "fork", "forkserver"],
     ) -> None:
         """
         Execute multiple models in parallel.
@@ -53,20 +58,26 @@ class InSilico(object):
 
         n_proc : int
             The number of worker processes to use.
+
+        method : Literal["spawn", "fork", "forkserver"]
+            Start method in ``multiprocessing``.
         """
 
-        if platform.system() == "Darwin":
-            # fork() has always been unsafe on Mac
-            # spawn* functions should be instead
-            ctx = multiprocessing.get_context("spawn")
-            p = ctx.Pool(processes=n_proc)
-        else:
-            p = multiprocessing.Pool(processes=n_proc)
-
+        ctx = multiprocessing.get_context(method)
+        p = ctx.Pool(processes=n_proc)
         with tqdm(total=len(self.patients)) as t:
             for _ in p.imap_unordered(func, self.patients):
                 t.update(1)
         p.close()
+
+    @staticmethod
+    def _check_ctx(context: str) -> None:
+        """
+        Check whether the context is appropriate.
+        """
+        contexts = ["spawn", "fork", "forkserver"]
+        if context not in contexts:
+            raise ValueError("context must be one of '{}'.".format("', '".join(contexts)))
 
 
 @dataclass
@@ -107,7 +118,11 @@ class PatientModelSimulations(InSilico):
         model = Model(".".join([self.path_to_models, patient.strip()])).create()
         run_simulation(model, **kwargs)
 
-    def run(self, n_proc: Optional[int] = None) -> None:
+    def run(
+        self,
+        n_proc: Optional[int] = None,
+        context: Literal["spawn", "fork", "forkserver"] = "spawn",
+    ) -> None:
         """
         Run simulations of multiple patient-specific models in parallel.
 
@@ -115,10 +130,14 @@ class PatientModelSimulations(InSilico):
         ----------
         n_proc : int, optional
             The number of worker processes to use.
+
+        context : Literal["spawn", "fork", "forkserver"] (default: "spawn")
+            The context used for starting the worker processes.
         """
         if n_proc is None:
             n_proc = multiprocessing.cpu_count() - 1
-        self.parallel_execute(self._run_single_patient, n_proc)
+        self._check_ctx(context)
+        self.parallel_execute(self._run_single_patient, n_proc, context)
 
     @staticmethod
     def _cleanup_csv(dirname: str) -> None:
@@ -293,7 +312,11 @@ class PatientModelAnalyses(InSilico):
         model = Model(".".join([self.path_to_models, patient.strip()])).create()
         run_analysis(model, **kwargs)
 
-    def run(self, n_proc: Optional[int] = None) -> None:
+    def run(
+        self,
+        n_proc: Optional[int] = None,
+        context: Literal["spawn", "fork", "forkserver"] = "spawn",
+    ) -> None:
         """
         Run analyses of multiple patient-specific models in parallel.
 
@@ -301,7 +324,11 @@ class PatientModelAnalyses(InSilico):
         ----------
         n_proc : int, optional
             The number of worker processes to use.
+
+        context : Literal["spawn", "fork", "forkserver"] (default: "spawn")
+            The context used for starting the worker processes.
         """
         if n_proc is None:
             n_proc = multiprocessing.cpu_count() - 1
-        self.parallel_execute(self._run_single_patient, n_proc)
+        self._check_ctx(context)
+        self.parallel_execute(self._run_single_patient, n_proc, context)
