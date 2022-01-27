@@ -865,12 +865,14 @@ class Text2Model(ReactionRules):
         if terminology is None:
             terminology = {}
         for rxn_rule in terminology.keys():
+            assert isinstance(rxn_rule, str)
             if rxn_rule not in self.rule_words.keys():
                 raise ValueError(
                     f"{rxn_rule} is not defined in reaction_rules.\n"
                     f"Choose a reaction rule from {', '.join(map(str, self.rule_words.keys()))}"
                 )
             for my_word in terminology[rxn_rule]:
+                assert isinstance(my_word, str)
                 for rule, words in self.rule_words.items():
                     for registered_word in words:
                         if " " + my_word in registered_word and registered_word in " " + my_word:
