@@ -44,7 +44,7 @@ def test_text2model():
                     ),
                     lang=lang,
                 )
-                mm_kinetics.register_word("dissociate", "releases")
+                mm_kinetics.register_word({"dissociate": ["releases"]})
                 mm_kinetics.convert()
             elif model == "Kholodenko_JBC_1999":
                 mapk_cascade = Text2Model(
@@ -120,7 +120,7 @@ def test_text2markdown():
                     f"{model}.txt",
                 )
             )
-            mm_kinetics.register_word("dissociate", "releases")
+            mm_kinetics.register_word({"dissociate": ["releases"]})
             mm_kinetics.to_markdown(n_reaction=2)
         elif model == "Kholodenko_JBC_1999":
             mapk_cascade = Text2Model(

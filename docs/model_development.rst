@@ -60,7 +60,7 @@ You can also supply your own terminology in a reaction rule via:
 
    # Supply "releases" to the reaction rule: "dissociate"
    mm_kinetics = Text2Model("michaelis_menten.txt")
-   mm_kinetics.register_word("dissociate", "releases")
+   mm_kinetics.register_word({"dissociate": ["releases"]})
    # Now you can use "releases" in your text, e.g., 'ES releases E and P'
    mm_kinetics.convert()
 
@@ -97,11 +97,11 @@ Example:
 
    Two element vector ``[t0, tf]`` specifying the initial and final times.
 
-* **unperturbed:**
+* **unperturbed (optional):**
 
    Description of the untreated condition to find the steady state.
 
-* **condition:**
+* **condition (optional):**
 
    Experimental conditions. Use ``p`` and ``init`` to modify model parameters and initial conditions, respectively.
 

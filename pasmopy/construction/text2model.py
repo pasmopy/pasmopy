@@ -3,7 +3,7 @@ import re
 import shutil
 import warnings
 from dataclasses import dataclass, field
-from typing import List
+from typing import Dict, List, Optional
 
 try:  # python 3.8+
     from typing import Literal
@@ -820,56 +820,64 @@ class Text2Model(ReactionRules):
                     *differential_equations_formatted,
                 ]
             )
-
+    
     def register_word(
         self,
-        rxn_rule: Literal[
-            "dimerize",
-            "bind",
-            "dissociate",
-            "is_phosphorylated",
-            "is_dephosphorylated",
-            "phosphorylate",
-            "dephosphorylate",
-            "transcribe",
-            "is_translated",
-            "synthesize",
-            "is_synthesized",
-            "degrade",
-            "is_degraded",
-            "translocate",
-        ],
-        my_word: str,
+        terminology: Optional[
+            Dict[
+                Literal[
+                    "dimerize",
+                    "bind",
+                    "dissociate",
+                    "is_phosphorylated",
+                    "is_dephosphorylated",
+                    "phosphorylate",
+                    "dephosphorylate",
+                    "transcribe",
+                    "is_translated",
+                    "synthesize",
+                    "is_synthesized",
+                    "degrade",
+                    "is_degraded",
+                    "translocate",
+                ],
+                List[str],
+            ]
+        ] = None,
     ) -> None:
         """
         Register user-defined rule word.
 
         Parameters
         ----------
-        rxn_rule : str
-            Define a rule to which users register a new rule word.
-
-        my_word : str
-            User-defined rule word.
+        terminology : Dict[str, List[str]], optional
+            Rule to which users register a new rule word and list of user-defined rule words.
 
         Examples
         --------
         >>> from pasmopy import Text2Model
         >>> mm_kinetics = Text2Model("michaelis_menten.txt")
-        >>> mm_kinetics.register_word("dissociate", "releases")
+        >>> mm_kinetics.register_word({"dissociate": ["releases"]})
         >>> mm_kinetics.convert()
 
         """
-        if rxn_rule not in self.rule_words.keys():
-            raise ValueError(
-                f"{rxn_rule} is not defined in reaction_rules.\n"
-                f"Choose a reaction rule from {', '.join(map(str, self.rule_words.keys()))}"
-            )
-        for rule, words in self.rule_words.items():
-            for registered_word in words:
-                if " " + my_word in registered_word and registered_word in " " + my_word:
-                    raise NameError(
-                        f"Cannot supply '{my_word}' to '{rxn_rule}'. "
-                        f"Currently, it is used in the rule: {rule}"
-                    )
-        self.rule_words[rxn_rule].append(" " + my_word)
+        if terminology is None:
+            terminology = {}
+        for rxn_rule in terminology.keys():
+            if rxn_rule not in self.rule_words.keys():
+                raise ValueError(
+                    f"{rxn_rule} is not defined in reaction_rules.\n"
+                    f"Choose a reaction rule from {', '.join(map(str, self.rule_words.keys()))}"
+                )
+            for my_word in terminology[rxn_rule]:
+                for rule, words in self.rule_words.items():
+                    for registered_word in words:
+                            if (
+                                " " + my_word in registered_word
+                                and registered_word in " " + my_word
+                            ):
+                                raise NameError(
+                                    f"Cannot supply '{my_word}' to '{rxn_rule}'. "
+                                    f"Currently, it is used in the rule: {rule}"
+                                )
+                self.rule_words[rxn_rule].append(" " + my_word)
