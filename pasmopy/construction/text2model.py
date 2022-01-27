@@ -17,6 +17,7 @@ warnings.simplefilter(action="ignore", category=FutureWarning)  # pasmopy==0.1.0
 
 warnings.simplefilter(action="ignore", category=FutureWarning)  # pasmopy==0.1.0
 
+
 @dataclass
 class Text2Model(ReactionRules):
     """
@@ -820,7 +821,7 @@ class Text2Model(ReactionRules):
                     *differential_equations_formatted,
                 ]
             )
-    
+
     def register_word(
         self,
         terminology: Optional[
@@ -872,12 +873,9 @@ class Text2Model(ReactionRules):
             for my_word in terminology[rxn_rule]:
                 for rule, words in self.rule_words.items():
                     for registered_word in words:
-                            if (
-                                " " + my_word in registered_word
-                                and registered_word in " " + my_word
-                            ):
-                                raise NameError(
-                                    f"Cannot supply '{my_word}' to '{rxn_rule}'. "
-                                    f"Currently, it is used in the rule: {rule}"
-                                )
+                        if " " + my_word in registered_word and registered_word in " " + my_word:
+                            raise NameError(
+                                f"Cannot supply '{my_word}' to '{rxn_rule}'. "
+                                f"Currently, it is used in the rule: {rule}"
+                            )
                 self.rule_words[rxn_rule].append(" " + my_word)
