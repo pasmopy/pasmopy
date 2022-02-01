@@ -13,10 +13,6 @@ except ImportError:
 from . import julia_template as jl
 from .reaction_rules import ReactionRules
 
-warnings.simplefilter(action="ignore", category=FutureWarning)  # pasmopy==0.1.0
-
-warnings.simplefilter(action="ignore", category=FutureWarning)  # pasmopy==0.1.0
-
 
 @dataclass
 class Text2Model(ReactionRules):
