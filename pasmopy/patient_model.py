@@ -239,7 +239,7 @@ class PatientModelSimulations(InSilico):
         --------
         Subtype classification
 
-        >>> with open ("models/breast/sample_names.txt", mode="r") as f:
+        >>> with open("models/breast/sample_names.txt", mode="r") as f:
         ...    TCGA_ID = f.read().splitlines()
         >>> from pasmopy import PatientModelSimulations
         >>> simulations = PatientModelSimulations("models.breast", TCGA_ID)
@@ -255,9 +255,10 @@ class PatientModelSimulations(InSilico):
 
         Add new characteristics
 
-        >>> def droprate(time_course: np.ndarray) -> float:
+        >>> import numpy as np
+        >>> def get_droprate(time_course: np.ndarray) -> float:
         ...     return - (time_course[-1] - np.max(time_course)) / (len(time_course) - np.argmax(time_course))
-        >>> simulations.response_characteristics["droprate"] = droprate
+        >>> simulations.response_characteristics["droprate"] = get_droprate
         """
         # seaborn clustermap
         if clustermap_kws is None:
