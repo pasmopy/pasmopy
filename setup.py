@@ -12,8 +12,8 @@ except ImportError:
 
 def get_version() -> str:
     """Read version from file"""
-    init_filepath = Path(__file__).parent / "pasmopy" / "__init__.py"
-    with open(init_filepath) as f:
+    version_filepath = Path(__file__).parent / "pasmopy" / "version.py"
+    with open(version_filepath) as f:
         for line in f:
             if line.startswith("__version__"):
                 return line.strip().split()[-1][1:-1]
