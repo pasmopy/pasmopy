@@ -24,7 +24,7 @@ class Text2Model(ReactionRules):
     Attributes
     ----------
     input_txt : str
-        Model description file (*.txt), e.g., 'Kholodenko_JBC_1999.txt'
+        Model description file (*.txt), e.g., 'Kholodenko1999.txt'
 
     lang : Literal["python", "julia"] (default: 'python')
         Either 'python' or 'julia'.
@@ -682,7 +682,7 @@ class Text2Model(ReactionRules):
         Examples
         --------
         >>> from pasmopy import Text2Model
-        >>> Text2Model("Kholodenko_JBC_1999.txt").convert()
+        >>> Text2Model("Kholodenko1999.txt").convert()
 
         """
         if overwrite and os.path.isdir(
@@ -741,7 +741,7 @@ class Text2Model(ReactionRules):
         Examples
         --------
         >>> from pasmopy import Text2Model
-        >>> Text2Model("Kholodenko_JBC_1999.txt").to_markdown(25)
+        >>> Text2Model("Kholodenko1999.txt").to_markdown(25)
 
         """
         os.makedirs(os.path.join("markdown", f"{self.name.split(os.sep)[-1]}"), exist_ok=True)

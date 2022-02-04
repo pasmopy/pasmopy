@@ -12,9 +12,9 @@ from pasmopy.construction.thermodynamic_restrictions import DuplicateError
 def test_preprocessing():
     for model in [
         "michaelis_menten",
-        "Kholodenko_JBC_1999",
+        "Kholodenko1999",
         "michaelis_menten_jl",
-        "Kholodenko_JBC_1999_jl",
+        "Kholodenko1999_jl",
     ]:
         if os.path.isdir(
             os.path.join(
@@ -33,7 +33,7 @@ def test_preprocessing():
 
 
 def test_text2model():
-    for model in ["michaelis_menten", "Kholodenko_JBC_1999"]:
+    for model in ["michaelis_menten", "Kholodenko1999"]:
         for lang in ["python", "julia"]:
             if model == "michaelis_menten":
                 mm_kinetics = Text2Model(
@@ -46,7 +46,7 @@ def test_text2model():
                 )
                 mm_kinetics.register_word({"dissociate": ["releases"]})
                 mm_kinetics.convert()
-            elif model == "Kholodenko_JBC_1999":
+            elif model == "Kholodenko1999":
                 mapk_cascade = Text2Model(
                     os.path.join(
                         os.path.dirname(__file__),
@@ -80,12 +80,12 @@ def test_text2model():
 
 def test_run_simulation():
     try:
-        from .text_files import Kholodenko_JBC_1999, michaelis_menten
+        from .text_files import Kholodenko1999, michaelis_menten
 
         _packaging: Callable[[str], str] = lambda model_name: ".".join(
             ["tests.text_files", model_name]
         )
-        for model_name in ["Kholodenko_JBC_1999", "michaelis_menten"]:
+        for model_name in ["Kholodenko1999", "michaelis_menten"]:
             model = Model(_packaging(model_name)).create()
             run_simulation(model)
             simulated_values = np.load(
@@ -98,7 +98,7 @@ def test_run_simulation():
                 )
             )
             assert np.isfinite(simulated_values).all()
-            if model_name == "Kholodenko_JBC_1999":
+            if model_name == "Kholodenko1999":
                 expected = np.load(
                     os.path.join(
                         os.path.dirname(__file__),
@@ -111,7 +111,7 @@ def test_run_simulation():
 
 
 def test_text2markdown():
-    for model in ["michaelis_menten", "Kholodenko_JBC_1999"]:
+    for model in ["michaelis_menten", "Kholodenko1999"]:
         if model == "michaelis_menten":
             mm_kinetics = Text2Model(
                 os.path.join(
@@ -122,7 +122,7 @@ def test_text2markdown():
             )
             mm_kinetics.register_word({"dissociate": ["releases"]})
             mm_kinetics.to_markdown(n_reaction=2)
-        elif model == "Kholodenko_JBC_1999":
+        elif model == "Kholodenko1999":
             mapk_cascade = Text2Model(
                 os.path.join(
                     os.path.dirname(__file__),
@@ -147,7 +147,7 @@ def test_julia_models():
         "set_search_param.jl",
         "fitness.jl",
     ]
-    for model in ["michaelis_menten", "Kholodenko_JBC_1999"]:
+    for model in ["michaelis_menten", "Kholodenko1999"]:
         for file in necessities:
             assert os.path.isfile(
                 os.path.join(
@@ -162,9 +162,9 @@ def test_julia_models():
 def test_cleanup():
     for model in [
         "michaelis_menten",
-        "Kholodenko_JBC_1999",
+        "Kholodenko1999",
         "michaelis_menten_jl",
-        "Kholodenko_JBC_1999_jl",
+        "Kholodenko1999_jl",
         "duplicate_binding",
     ]:
         assert os.path.isdir(
