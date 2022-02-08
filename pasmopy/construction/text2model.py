@@ -361,7 +361,7 @@ class Text2Model(ReactionRules):
         """
         Replace
         - p[xxx] with x[C.xxx]
-        - u[xxx] with Y[:, V.xxx]
+        - u[xxx] with sol.y[V.xxx]
         - init[xxx] with y0[V.xxx]
 
         Parameters
@@ -395,7 +395,7 @@ class Text2Model(ReactionRules):
                 raise NameError(f"{s_name.strip()} is not defined in model species.")
             else:
                 line = (
-                    line.replace(f"u[{s_name.strip()}]", f"sol.y[V.{s_name.strip()}, :]")
+                    line.replace(f"u[{s_name.strip()}]", f"sol.y[V.{s_name.strip()}]")
                     if self.lang == "python"
                     else line.replace(f"u[{s_name.strip()}]", f"sol.u[j][V.{s_name.strip()}]")
                 )
