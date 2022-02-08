@@ -5,6 +5,7 @@ import time
 from typing import Callable, List
 
 import numpy as np
+
 from pasmopy import Model, PatientModelAnalyses, PatientModelSimulations, Text2Model
 from pasmopy.preprocessing import WeightingFactors
 
@@ -42,7 +43,7 @@ def test_model_construction():
         from tests.models import erbb_network
     except ImportError:
         print("can't import erbb_network from tests.models.")
-        
+
     model = Model(erbb_network.__package__).create()
     # add weighting factors
     gene_expression = {
@@ -120,7 +121,7 @@ def test_model_construction():
         pass
     shutil.move(
         os.path.join("tests", "models", "erbb_network"),
-        os.path.join(PATH_TO_MODELS, "TCGA_3C_AALK_01A")
+        os.path.join(PATH_TO_MODELS, "TCGA_3C_AALK_01A"),
     )
     assert os.path.isdir(path_to_patient("TCGA_3C_AALK_01A"))
     try:
@@ -165,9 +166,9 @@ def test_patient_model_simulations():
     elapsed = time.time() - start
     print(f"Computation time for simulating 3 patients: {elapsed/60:.1f} [min]")
     # Add new response characteristics
-    get_droprate: Callable[[np.ndarray], float] = (
-        lambda time_course: -(time_course[-1] - np.max(time_course)) / (len(time_course) - np.argmax(time_course))
-    )
+    get_droprate: Callable[[np.ndarray], float] = lambda time_course: -(
+        time_course[-1] - np.max(time_course)
+    ) / (len(time_course) - np.argmax(time_course))
     simulations.response_characteristics["droprate"] = get_droprate
     # Extract response characteristics and visualize patient classification
     simulations.subtyping(
@@ -192,7 +193,9 @@ def test_patient_model_analyses():
         tests.models.breast.__package__,
         patients,
         biomass_kws={
-            "metric": "maximum", "style": "heatmap", "options": {"excluded_initials": ["PIP2"]}
+            "metric": "maximum",
+            "style": "heatmap",
+            "options": {"excluded_initials": ["PIP2"]},
         },
     )
     assert analyses.run() is None
