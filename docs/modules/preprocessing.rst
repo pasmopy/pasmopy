@@ -1,5 +1,5 @@
-Preprocessing (:py:mod:`pasmopy.preprocessing.weighting_factors`)
------------------------------------------------------------------
+Preprocessing (:py:mod:`pasmopy.preprocessing`)
+-----------------------------------------------
 
 .. autoclass:: pasmopy.preprocessing.weighting_factors.WeightingFactors
    :members:
