@@ -4,16 +4,21 @@ Pasmopy – Patient-Specific Modeling in Python
 
 .. image:: _static/img/overview-hi-res.png
 
-|PyPI version| |Actions Status| |Documentation Status| |License| |Downloads| |Python versions| |Code quality| |Pre commit| |Code style| |Imports|
+|PyPI version| |Actions Status| |Documentation Status| |License| |Downloads| |Python versions| |Code quality| |Pre commit| |Code style| |Imports| |iScience paper|
 
 Pasmopy is an open-source Python package for the development of signaling pathway models that are individualized to patient-specific data.
 It includes modules for model construction, parameterization, *in silico* patient stratification, and more.
 
-:Source code: https://github.com/pasmopy/pasmopy
+**Source code:** https://github.com/pasmopy/pasmopy
+
+The open access publication describing Pasmopy is available here:
+
+* Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. *iScience* (2022). https://doi.org/10.1016/j.isci.2022.103944
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   :hidden:
 
    about
    installation
@@ -60,3 +65,7 @@ It includes modules for model construction, parameterization, *in silico* patien
 .. |Imports| image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
    :target: https://pycqa.github.io/isort/
    :alt: Imports: isort
+
+.. |iScience paper| image:: https://img.shields.io/badge/DOI-10.1016%2Fj.isci.2022.103944-blue
+   :target: https://doi.org/10.1016/j.isci.2022.103944
+   :alt: iScience paper

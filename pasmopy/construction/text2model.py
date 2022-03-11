@@ -1,7 +1,6 @@
 import os
 import re
 import shutil
-import warnings
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
@@ -12,10 +11,6 @@ except ImportError:
 
 from . import julia_template as jl
 from .reaction_rules import ReactionRules
-
-warnings.simplefilter(action="ignore", category=FutureWarning)  # pasmopy==0.1.0
-
-warnings.simplefilter(action="ignore", category=FutureWarning)  # pasmopy==0.1.0
 
 
 @dataclass
@@ -28,7 +23,7 @@ class Text2Model(ReactionRules):
     Attributes
     ----------
     input_txt : str
-        Model description file (*.txt), e.g., 'Kholodenko_JBC_1999.txt'
+        Model description file (*.txt), e.g., 'Kholodenko1999.txt'
 
     lang : Literal["python", "julia"] (default: 'python')
         Either 'python' or 'julia'.
@@ -365,7 +360,7 @@ class Text2Model(ReactionRules):
         """
         Replace
         - p[xxx] with x[C.xxx]
-        - u[xxx] with Y[:, V.xxx]
+        - u[xxx] with sol.y[V.xxx]
         - init[xxx] with y0[V.xxx]
 
         Parameters
@@ -399,7 +394,7 @@ class Text2Model(ReactionRules):
                 raise NameError(f"{s_name.strip()} is not defined in model species.")
             else:
                 line = (
-                    line.replace(f"u[{s_name.strip()}]", f"sol.y[V.{s_name.strip()}, :]")
+                    line.replace(f"u[{s_name.strip()}]", f"sol.y[V.{s_name.strip()}]")
                     if self.lang == "python"
                     else line.replace(f"u[{s_name.strip()}]", f"sol.u[j][V.{s_name.strip()}]")
                 )
@@ -686,7 +681,7 @@ class Text2Model(ReactionRules):
         Examples
         --------
         >>> from pasmopy import Text2Model
-        >>> Text2Model("Kholodenko_JBC_1999.txt").convert()
+        >>> Text2Model("Kholodenko1999.txt").convert()
 
         """
         if overwrite and os.path.isdir(
@@ -745,7 +740,7 @@ class Text2Model(ReactionRules):
         Examples
         --------
         >>> from pasmopy import Text2Model
-        >>> Text2Model("Kholodenko_JBC_1999.txt").to_markdown(25)
+        >>> Text2Model("Kholodenko1999.txt").to_markdown(25)
 
         """
         os.makedirs(os.path.join("markdown", f"{self.name.split(os.sep)[-1]}"), exist_ok=True)

@@ -170,7 +170,7 @@ Reference:
 
    Kholodenko, B. N., Demin, O. V, Moehren, G. & Hoek, J. B. Quantification of short term signaling by the epidermal growth factor receptor. *J. Biol. Chem.* **274**, 30169–30181 (1999). https://doi.org/10.1074/jbc.274.42.30169
 
-#. Prepare a text describing EGF signaling in hepatocytes (``Kholodenko_JBC_1999.txt``)
+#. Prepare a text describing EGF signaling in hepatocytes (``Kholodenko1999.txt``)
 
    .. code-block:: python
       :linenos:

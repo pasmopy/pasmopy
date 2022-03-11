@@ -23,11 +23,18 @@ Author
 
 `Hiroaki Imoto <https://github.com/himoto>`_
 
+Citation
+--------
+
+If you use Pasmopy in a scientific publication, please cite the following paper:
+
+* Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. *iScience* (2022). https://doi.org/10.1016/j.isci.2022.103944
+
 Contact
 -------
 
-If you discovered an error or need help, please contact us via `GitHub Issues <https://github.com/pasmopy/pasmopy/issues>`_.
+If you discovered an error or need help, please contact me via `GitHub Issues <https://github.com/pasmopy/pasmopy/issues>`_.
 Please head over to `GitHub Discussions <https://github.com/pasmopy/pasmopy/discussions>`_ if you have any questions or would like to start a new discussion.
-In either case, you can also always send me an `email <mailto:himoto@protein.osaka-u.ac.jp>`_. 
+In either case, you can also always send me an `email <mailto:himoto@protein.osaka-u.ac.jp>`_.
 
 Any contributions to Pasmopy are more than welcome!
