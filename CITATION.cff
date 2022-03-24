@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use Pasmopy in a scientific publication, please cite the following paper:"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Imoto"
+    given-names: "Hiroaki"
+    orcid: "https://orcid.org/0000-0002-6817-642X"
+  - family-names: "Yamashiro"
+    given-names: "Sawa"
+    orcid: "https://orcid.org/0000-0001-8889-6398"
+  - family-names: "Okada"
+    given-names: "Mariko"
+    orcid: "https://orcid.org/0000-0002-6210-8223"
+  doi: "10.1016/j.isci.2022.103944"
+  journal: "iScience"
+  title: "A text-based computational framework for patient -specific modeling for classification of cancers"
+  issue: 3
+  volume: 25
+  start: 103944
+  end: 103944
+  year: 2022
+  url: "https://www.cell.com/iscience/fulltext/S2589-0042(22)00214-0"
