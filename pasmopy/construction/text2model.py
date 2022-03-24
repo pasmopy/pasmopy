@@ -25,6 +25,9 @@ class Text2Model(ReactionRules):
     input_txt : str
         Model description file (*.txt), e.g., 'Kholodenko1999.txt'
 
+    similarity_threshold : float (default: 0.7)
+        Similarity threshold used in text-to-model conversion. Must lie within (0, 1).
+
     lang : Literal["python", "julia"] (default: 'python')
         Either 'python' or 'julia'.
 
@@ -33,6 +36,7 @@ class Text2Model(ReactionRules):
     """
 
     input_txt: str
+    similarity_threshold: float = 0.7
     lang: Literal["python", "julia"] = "python"
     indentation: str = field(default=4 * " ", init=False)
 

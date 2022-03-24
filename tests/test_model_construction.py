@@ -42,6 +42,7 @@ def test_text2model():
                         "text_files",
                         f"{model}.txt",
                     ),
+                    similarity_threshold=0.7,
                     lang=lang,
                 )
                 mm_kinetics.register_word({"dissociate": ["releases"]})
