@@ -15,4 +15,6 @@ Patient heterogeneity precludes cancer treatment and drug development; hence, de
 Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed *in silico* simulation of the pathway activities on 377 breast cancer patients using `The Cancer Genome Atlas (TCGA) <https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga>`_ transcriptome datasets.
 The temporal dynamics of Akt, extracellular signal-regulated kinase (ERK), and c-Myc in each patient were able to accurately predict the difference in prognosis and sensitivity to kinase inhibitors in triple-negative breast cancer (TNBC).
 
+* **Paper:** https://doi.org/10.1016/j.isci.2022.103944
+
 * **Code:** https://github.com/pasmopy/breast_cancer
