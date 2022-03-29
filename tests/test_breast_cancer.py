@@ -179,6 +179,11 @@ def test_patient_model_simulations():
                 "Phosphorylated_ERK": {"EGF": ["AUC", "droprate"], "HRG": ["AUC", "droprate"]},
                 "Phosphorylated_c-Myc": {"EGF": ["AUC", "droprate"], "HRG": ["AUC", "droprate"]},
             },
+            {
+                "Phosphorylated_Akt": {"timepoint": None, "condition": ["EGF", "HRG"]},
+                "Phosphorylated_ERK": {"timepoint": None, "condition": ["EGF", "HRG"]},
+                "Phosphorylated_c-Myc": {"timepoint": None, "condition": ["EGF", "HRG"]},
+            },
         )
         obs_names = ["Phosphorylated_Akt", "Phosphorylated_ERK", "Phosphorylated_c-Myc"]
         for observable in obs_names:
