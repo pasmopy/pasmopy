@@ -13,6 +13,12 @@ The text file you need to prepare can be divided into three parts:
 #. :ref:`Observable layer`
 #. :ref:`Simulation layer`
 
+.. note::
+
+   To write a comment, simply put the hash mark # before your desired comment.
+
+   `# This is a comment.`
+
 .. _Reaction Layer:
 
 Reaction layer
