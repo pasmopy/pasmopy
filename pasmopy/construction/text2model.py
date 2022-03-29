@@ -25,6 +25,9 @@ class Text2Model(ReactionRules):
     input_txt : str
         Model description file (*.txt), e.g., 'Kholodenko1999.txt'
 
+    similarity_threshold : float (default: 0.7)
+        Similarity threshold used in text-to-model conversion. Must lie within (0, 1).
+
     lang : Literal["python", "julia"] (default: 'python')
         Either 'python' or 'julia'.
 
@@ -33,6 +36,7 @@ class Text2Model(ReactionRules):
     """
 
     input_txt: str
+    similarity_threshold: float = 0.7
     lang: Literal["python", "julia"] = "python"
     indentation: str = field(default=4 * " ", init=False)
 
@@ -353,9 +357,10 @@ class Text2Model(ReactionRules):
     def _convert_names(
         self,
         line: str,
-        p: List[str] = [],
-        u: List[str] = [],
-        init: List[str] = [],
+        *,
+        p: Optional[List[str]] = None,
+        u: Optional[List[str]] = None,
+        init: Optional[List[str]] = None,
     ) -> str:
         """
         Replace
@@ -365,13 +370,13 @@ class Text2Model(ReactionRules):
 
         Parameters
         ----------
-        p : list of strings (default: [])
+        p : list of strings, optional
             Parameters.
 
-        u : list of strings (default: [])
+        u : list of strings, optional
             Species.
 
-        init : list of strings (default: [])
+        init : list of strings, optional
             Initial conditions.
 
         Returns
@@ -380,6 +385,12 @@ class Text2Model(ReactionRules):
             Each line.
 
         """
+        if p is None:
+            p = []
+        if u is None:
+            u = []
+        if init is None:
+            init = []
         for p_name in p:
             if not p_name.strip() in self.parameters:
                 raise NameError(f"{p_name.strip()} is not defined in model parameters.")

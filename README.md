@@ -87,7 +87,7 @@ Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, 
 
 ## Reference
 
-- Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. _iScience_ (2022). https://doi.org/10.1016/j.isci.2022.103944
+- Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. _iScience_ **25**, 103944 (2022). https://doi.org/10.1016/j.isci.2022.103944
 ## Author
 
 [Hiroaki Imoto](https://github.com/himoto)

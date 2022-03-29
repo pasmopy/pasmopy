@@ -28,7 +28,7 @@ Citation
 
 If you use Pasmopy in a scientific publication, please cite the following paper:
 
-* Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. *iScience* (2022). https://doi.org/10.1016/j.isci.2022.103944
+* Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. *iScience* **25**, 103944 (2022). https://doi.org/10.1016/j.isci.2022.103944
 
 Contact
 -------

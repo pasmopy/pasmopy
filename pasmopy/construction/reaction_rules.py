@@ -101,6 +101,8 @@ class ReactionRules(ThermodynamicRestrictions):
     input_txt : str
         Model description file (*.txt), e.g.,
         `Kholodenko1999.txt <https://github.com/pasmopy/pasmopy/blob/master/tests/text_files/Kholodenko1999.txt>`_.
+    similarity_threshold : float
+        If all match_scores are below this value, expected_word will not be returned.
     parameters : list of strings
         ``x`` : model parameters.
     species : list of strings
@@ -135,6 +137,7 @@ class ReactionRules(ThermodynamicRestrictions):
     """
 
     input_txt: str
+    similarity_threshold: float
 
     parameters: List[str] = field(
         default_factory=list,
@@ -248,6 +251,10 @@ class ReactionRules(ThermodynamicRestrictions):
         ),
         init=False,
     )
+
+    def __post_init__(self) -> None:
+        if not 0.0 < self.similarity_threshold < 1.0:
+            raise ValueError("similarity_threshold must lie within (0, 1).")
 
     @staticmethod
     def _isfloat(string: str) -> bool:
@@ -418,21 +425,17 @@ class ReactionRules(ThermodynamicRestrictions):
 
         returns
         -------
-        ratio : list
+        scores : list
             List containing similarity scores.
 
         """
-        ratio = [
+        scores = [
             SequenceMatcher(None, word, sentence[i : i + len(word)]).ratio()
             for i in range(len(sentence) - len(word) + 1)
         ]
-        return ratio
+        return scores
 
-    def _get_partial_similarity(
-        self,
-        line: str,
-        similarity_threshold: float = 0.7,
-    ) -> UnregisteredRule:
+    def _get_partial_similarity(self, line: str) -> UnregisteredRule:
         """
         Suggest similar rule word when user-defined word is not registered
         in rule_words.
@@ -441,10 +444,6 @@ class ReactionRules(ThermodynamicRestrictions):
         ----------
         line : str
             Each line of the input text.
-
-        similarity_threshold : float (default: 0.7)
-            if all match_scores are below this value, expected_word will not
-            be returned.
 
         Returns
         -------
@@ -464,7 +463,7 @@ class ReactionRules(ThermodynamicRestrictions):
                     str_subset.append(line[np.argmax(ratio) : np.argmax(ratio) + len(word)])
         expected_word = (
             None
-            if all([score < similarity_threshold for score in match_scores])
+            if all([score < self.similarity_threshold for score in match_scores])
             else match_words[np.argmax(match_scores)]
         )
         original_word = (
