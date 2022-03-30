@@ -172,7 +172,7 @@ class PatientModelSimulations(InSilico):
                         [
                             patient_specific.problem.conditions.index(c)
                             for c in normalization[obs_name]["condition"]
-                        ]
+                        ],
                     ]
                     if normalization[obs_name]["timepoint"] is None
                     else np.nanmax(
@@ -181,7 +181,7 @@ class PatientModelSimulations(InSilico):
                             [
                                 patient_specific.problem.conditions.index(c)
                                 for c in normalization[obs_name]["condition"]
-                            ]
+                            ],
                         ]
                     )
                 )
@@ -192,7 +192,7 @@ class PatientModelSimulations(InSilico):
                 [
                     patient_specific.problem.conditions.index(c)
                     for c in normalization[obs_name]["condition"]
-                ]
+                ],
             ]
         )
         if normalization[obs_name]["timepoint"] is None and norm_max != 0.0:
