@@ -162,6 +162,25 @@ class PatientModelSimulations(InSilico):
         obs_name: str,
         normalization: dict,
     ) -> np.ndarray:
+        """
+        Return normalized simulation results.
+
+        Parameters
+        ----------
+        data : numpy.ndarray
+            Raw simulation results.
+        patient_specific : biomass.exec_model.ModelObject
+            Patient-specific model object.
+        obs_name : str
+            Observable name.
+        normalization : dict
+            Normalization condition.
+
+        Returns
+        -------
+        data : numpy.ndarray
+            Normalized simulation results.
+        """
         if not normalization[obs_name]["condition"]:
             normalization[obs_name]["condition"] = patient_specific.problem.conditions
         for i in range(data.shape[0]):
