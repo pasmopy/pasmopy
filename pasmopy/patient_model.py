@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from biomass import Model, run_analysis, run_simulation
+from biomass.exec_model import ModelObject
 from scipy.integrate import simpson
 from tqdm import tqdm
 
@@ -154,10 +155,73 @@ class PatientModelSimulations(InSilico):
             if file.endswith(".csv"):
                 os.remove(os.path.join(dirname, f"{file}"))
 
+    @staticmethod
+    def _normalize(
+        data: np.ndarray,
+        patient_specific: ModelObject,
+        obs_name: str,
+        normalization: dict,
+    ) -> np.ndarray:
+        """
+        Return normalized simulation results.
+
+        Parameters
+        ----------
+        data : numpy.ndarray
+            Raw simulation results.
+        patient_specific : biomass.exec_model.ModelObject
+            Patient-specific model object.
+        obs_name : str
+            Observable name.
+        normalization : dict
+            Normalization condition.
+
+        Returns
+        -------
+        data : numpy.ndarray
+            Normalized simulation results.
+        """
+        if not normalization[obs_name]["condition"]:
+            normalization[obs_name]["condition"] = patient_specific.problem.conditions
+        for i in range(data.shape[0]):
+            if not np.isnan(data[i]).all() and not np.all(data[i] == 0.0):
+                data[i] /= (
+                    data[i][
+                        normalization[obs_name]["timepoint"],
+                        [
+                            patient_specific.problem.conditions.index(c)
+                            for c in normalization[obs_name]["condition"]
+                        ],
+                    ]
+                    if normalization[obs_name]["timepoint"] is None
+                    else np.nanmax(
+                        data[i][
+                            :,
+                            [
+                                patient_specific.problem.conditions.index(c)
+                                for c in normalization[obs_name]["condition"]
+                            ],
+                        ]
+                    )
+                )
+        data = np.nanmean(data, axis=0)
+        norm_max: float = np.max(
+            data[
+                :,
+                [
+                    patient_specific.problem.conditions.index(c)
+                    for c in normalization[obs_name]["condition"]
+                ],
+            ]
+        )
+        if normalization[obs_name]["timepoint"] is None and norm_max != 0.0:
+            data /= norm_max
+        return data
+
     def _extract(
         self,
         dynamical_features: Dict[str, Dict[str, List[str]]],
-        normalization: bool,
+        normalization: dict,
     ) -> None:
         """
         Extract response characteristics from patient-specific signaling dynamics.
@@ -189,13 +253,8 @@ class PatientModelSimulations(InSilico):
                         )
                     )
                     data = np.array(all_data[patient_specific.observables.index(obs_name)])
-                    if normalization:
-                        for i in range(data.shape[0]):
-                            if not np.isnan(data[i]).all() and not np.all(data[i] == 0.0):
-                                data[i] /= np.nanmax(data[i])
-                        data = np.nanmean(data, axis=0)
-                        if not np.all(data == 0.0):
-                            data /= np.max(data)
+                    if obs_name in normalization.keys():
+                        data = self._normalize(data, patient_specific, obs_name, normalization)
                     patient_specific_characteristics = [patient]
                     for h in header[1:]:
                         condition, metric = h.split("_")
@@ -213,7 +272,7 @@ class PatientModelSimulations(InSilico):
         self,
         fname: Optional[str],
         dynamical_features: Dict[str, Dict[str, List[str]]],
-        normalization: bool = True,
+        normalization: Optional[dict] = None,
         *,
         clustermap_kws: Optional[dict] = None,
     ):
@@ -229,8 +288,13 @@ class PatientModelSimulations(InSilico):
             ``{"observable": {"condition": ["metric", ...], ...}, ...}``.
             Characteristics in the signaling dynamics used for classification.
 
-        normalization : bool (default: :obj:`True`)
-            Whether to perform max-normalization.
+        normalization : dict, optional (default: :obj:`None`)
+            * 'timepoint' : Optional[int]
+                The time point at which simulated values are normalized.
+                If :obj:`None`, the maximum value will be used for normalization.
+            * 'condition' : list of strings
+                The experimental conditions to use for normalization.
+                If empty, all conditions defined in ``sim.conditions`` will be used.
 
         clustermap_kws : dict, optional
             Keyword arguments to pass to ``seaborn.clustermap()``.
@@ -250,6 +314,11 @@ class PatientModelSimulations(InSilico):
         ...        "Phosphorylated_ERK": {"EGF": ["max"], "HRG": ["max"]},
         ...        "Phosphorylated_c-Myc": {"EGF": ["max"], "HRG": ["max"]},
         ...    },
+        ...    {
+        ...        "Phosphorylated_Akt": {"timepoint": None, "condition": ["EGF", "HRG"]},
+        ...        "Phosphorylated_ERK": {"timepoint": None, "condition": ["EGF", "HRG"]},
+        ...        "Phosphorylated_c-Myc": {"timepoint": None, "condition": ["EGF", "HRG"]},
+        ...    },
         ...    clustermap_kws={"figsize": (9, 12)}
         ... )
 
@@ -260,6 +329,8 @@ class PatientModelSimulations(InSilico):
         ...     return - (time_course[-1] - np.max(time_course)) / (len(time_course) - np.argmax(time_course))
         >>> simulations.response_characteristics["droprate"] = get_droprate
         """
+        if normalization is None:
+            normalization = {}
         # seaborn clustermap
         if clustermap_kws is None:
             clustermap_kws = {}
