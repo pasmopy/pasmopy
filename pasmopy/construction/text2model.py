@@ -161,8 +161,11 @@ class Text2Model(ReactionRules):
             ) as f:
                 f.write("\n".join(lines))
 
-    def _update_set_model(self) -> None:
-        """Update set_model.py
+    def _update_diffeq(self) -> None:
+        """Update differential equations.
+
+        * Set flux vector (v).
+        * Set rhs of ODE.
 
         If you don't write info., all parameter values and initial values are
         initialized to 1.0 and 0.0, respectively.
@@ -183,14 +186,7 @@ class Text2Model(ReactionRules):
                             f"dydt[V.{species}] = 0 # ",
                         )
             for line_num, line in enumerate(lines):
-                if line.startswith(2 * self.indentation + "v = {}\n"):
-                    # Write flux vector: v
-                    lines[line_num + 1] = (
-                        2 * self.indentation
-                        + f"\n{2 * self.indentation}".join(self.reactions)
-                        + "\n\n"
-                    )
-                elif line.startswith(2 * self.indentation + "dydt = [0] * V.NUM\n"):
+                if line.startswith(2 * self.indentation + "dydt = [0] * V.NUM\n"):
                     # Write right-hand side of the differential equation: dydt
                     lines[line_num + 1] = (
                         2 * self.indentation
@@ -225,6 +221,26 @@ class Text2Model(ReactionRules):
                     f"{self.name}",
                     "set_model.py",
                 ),
+                encoding="utf-8",
+                mode="w",
+            ) as f:
+                f.writelines(lines)
+            with open(
+                os.path.join(os.path.dirname(__file__), "template", "reaction_network.py"),
+                encoding="utf-8",
+                mode="r",
+            ) as f:
+                lines = f.readlines()
+            for line_num, line in enumerate(lines):
+                if line.startswith(2 * self.indentation + "v = {}\n"):
+                    # Write flux vector: v
+                    lines[line_num + 1] = (
+                        2 * self.indentation
+                        + f"\n{2 * self.indentation}".join(self.reactions)
+                        + "\n\n"
+                    )
+            with open(
+                os.path.join(f"{self.name}", "reaction_network.py"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -523,7 +539,7 @@ class Text2Model(ReactionRules):
                         lines[line_num + 3] += (
                             "{}".format(4 * self.indentation)
                             + "self.simulations"
-                            + f"[self.obs_names.index('{desc[0].strip()}'), :, i] = (\n"
+                            + f"[self.obs_names.index('{desc[0].strip()}'), i] = (\n"
                             + f"{5 * self.indentation}"
                             + desc[1].strip(" ").strip()
                         )
@@ -714,7 +730,7 @@ class Text2Model(ReactionRules):
         self.find_cyclic_reaction_routes()
         self._update_parameters()
         self._update_species()
-        self._update_set_model()
+        self._update_diffeq()
         self._update_set_search_param()
         self._update_observable()
         if self.lang == "julia":
