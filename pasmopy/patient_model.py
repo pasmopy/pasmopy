@@ -187,16 +187,15 @@ class PatientModelSimulations(InSilico):
             if not np.isnan(data[i]).all() and not np.all(data[i] == 0.0):
                 data[i] /= (
                     data[i][
-                        normalization[obs_name]["timepoint"],
                         [
                             patient_specific.problem.conditions.index(c)
                             for c in normalization[obs_name]["condition"]
                         ],
+                        normalization[obs_name]["timepoint"],
                     ]
                     if normalization[obs_name]["timepoint"] is None
                     else np.nanmax(
                         data[i][
-                            :,
                             [
                                 patient_specific.problem.conditions.index(c)
                                 for c in normalization[obs_name]["condition"]
@@ -207,7 +206,6 @@ class PatientModelSimulations(InSilico):
         data = np.nanmean(data, axis=0)
         norm_max: float = np.max(
             data[
-                :,
                 [
                     patient_specific.problem.conditions.index(c)
                     for c in normalization[obs_name]["condition"]
@@ -261,7 +259,7 @@ class PatientModelSimulations(InSilico):
                         patient_specific_characteristics.append(
                             str(
                                 self.response_characteristics[metric](
-                                    data[:, patient_specific.problem.conditions.index(condition)],
+                                    data[patient_specific.problem.conditions.index(condition)],
                                 )
                             )
                         )
