@@ -12,6 +12,7 @@ class ReactionNetwork(object):
     """
 
     def __init__(self) -> None:
+        super(ReactionNetwork, self).__init__()
         self.reactions: Dict[str, List[int]] = {}
 
     def group(self):
