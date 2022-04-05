@@ -1,15 +1,15 @@
 from .name2idx import C, V
+from .reaction_network import ReactionNetwork
 
 
-class DifferentialEquation(object):
+class DifferentialEquation(ReactionNetwork):
     def __init__(self, perturbation):
         super(DifferentialEquation, self).__init__()
         self.perturbation = perturbation
 
     def diffeq(self, t, y, *x):
         """Kinetic equations"""
-        # v : flux vector
-        v = {}
+        v = self.flux(t, y, x)
 
         if self.perturbation:
             for i, dv in self.perturbation.items():
