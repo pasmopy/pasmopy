@@ -65,10 +65,13 @@ class InSilico(object):
         """
 
         ctx = multiprocessing.get_context(method)
-        with ctx.Pool(processes=n_proc) as p:
+        p = ctx.Pool(processes=n_proc)
+        try:
             with tqdm(total=len(self.patients)) as t:
                 for _ in p.imap_unordered(func, self.patients):
                     t.update(1)
+        finally:
+            p.close()
 
     @staticmethod
     def _check_ctx(context: str) -> None:
