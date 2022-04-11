@@ -195,7 +195,7 @@ class PatientModelSimulations(InSilico):
                         ],
                         normalization[obs_name]["timepoint"],
                     ]
-                    if normalization[obs_name]["timepoint"] is None
+                    if normalization[obs_name]["timepoint"] is not None
                     else np.nanmax(
                         data[i][
                             [
