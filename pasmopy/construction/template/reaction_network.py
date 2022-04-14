@@ -33,5 +33,4 @@ class ReactionNetwork(object):
 
         v = {}
 
-
         return v
