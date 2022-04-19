@@ -2,6 +2,8 @@ from typing import Dict, List
 
 from biomass.analysis.reaction import is_duplicate
 
+from .name2idx import C, V
+
 
 class ReactionNetwork(object):
     """
@@ -10,6 +12,7 @@ class ReactionNetwork(object):
     """
 
     def __init__(self) -> None:
+        super(ReactionNetwork, self).__init__()
         self.reactions: Dict[str, List[int]] = {}
 
     def group(self):
@@ -24,3 +27,10 @@ class ReactionNetwork(object):
 
         if not is_duplicate(self.reactions, biological_processes):
             return biological_processes
+
+    @staticmethod
+    def flux(t, y, x):
+
+        v = {}
+
+        return v

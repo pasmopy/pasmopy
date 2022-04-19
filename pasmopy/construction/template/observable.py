@@ -48,7 +48,7 @@ class Observable(DifferentialEquation):
         self.t: range = range(101)
         self.conditions: list = []
         self.simulations: np.ndarray = np.empty(
-            (len(self.obs_names), len(self.t), len(self.conditions))
+            (len(self.obs_names), len(self.conditions), len(self.t))
         )
         self.normalization: dict = {}
         self.experiments: list = [None] * len(self.obs_names)

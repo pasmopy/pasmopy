@@ -286,7 +286,7 @@ Reference:
             for j, condition in enumerate(['EGF20nM', 'EGF2nM']):
                   plt.plot(
                      model.problem.t,
-                     res[obs_idx, :, j],
+                     res[obs_idx, j],
                      color=color,
                      alpha=0.5 if condition == 'EGF2nM' else None,
                   )
@@ -305,7 +305,7 @@ Reference:
             for j, condition in enumerate(['EGF20nM', 'EGF2nM']):
                   plt.plot(
                      model.problem.t,
-                     res[obs_idx, :, j],
+                     res[obs_idx, j],
                      color=color,
                      alpha=0.5 if condition == 'EGF2nM' else None,
                   )
@@ -320,13 +320,13 @@ Reference:
          for j, condition in enumerate(['EGF20nM', 'EGF2nM']):
             ax1.plot(
                   model.problem.t,
-                  res[model.observables.index('Total_SOS_bound_to_EGFR'), :, j],
+                  res[model.observables.index('Total_SOS_bound_to_EGFR'), j],
                   color='g',
                   alpha=0.5 if condition == 'EGF2nM' else None,
             )
             ax2.plot(
                   model.problem.t,
-                  res[model.observables.index('ShGS_complex'), :, j],
+                  res[model.observables.index('ShGS_complex'), j],
                   color='m',
                   alpha=0.5 if condition == 'EGF2nM' else None,
             )
@@ -343,18 +343,18 @@ Reference:
          obs_idx = model.observables.index('Total_phosphorylated_PLCg')
          ax1.plot(
             model.problem.t,
-            res[obs_idx, :, model.problem.conditions.index('EGF20nM')],
+            res[obs_idx, model.problem.conditions.index('EGF20nM')],
             'g',
          )
          ax1.plot(
             model.problem.t,
-            res[obs_idx, :, model.problem.conditions.index('EGF2nM')],
+            res[obs_idx, model.problem.conditions.index('EGF2nM')],
             'g',
             alpha=0.5,
          )
          ax2.plot(
             model.problem.t,
-            res[obs_idx, :, model.problem.conditions.index('Absence_PLCgP_transloc')],
+            res[obs_idx, model.problem.conditions.index('Absence_PLCgP_transloc')],
             'g--',
          )
          ax1.set_xlim(0, 120)
@@ -372,5 +372,5 @@ Reference:
       if __name__ == '__main__':
          res = np.load(os.path.join(model.path, "simulation_data", "simulations_original.npy"))
          plot_simulation_results(res)
-   
+
    .. image:: _static/img/EGF_signaling_sim.png
