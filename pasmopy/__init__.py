@@ -4,6 +4,7 @@ from biomass.core import *
 
 from .construction import Text2Model
 from .individualization import Individualization
+from .optimizer import ScipyDifferentialEvolution
 from .patient_model import PatientModelAnalyses, PatientModelSimulations
 from .version import __version__
 
