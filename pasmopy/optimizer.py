@@ -77,14 +77,6 @@ class ScipyDifferentialEvolution(object):
             Where to save optimization result
         """
 
-        if os.path.isdir(os.path.join(self.model.path, dirname, f"{x_id:d}")):
-            raise ValueError(
-                f"{dirname}{os.sep}{x_id:d} already exists in {self.model.path}. "
-                "Use another parameter id."
-            )
-        else:
-            os.makedirs(os.path.join(self.model.path, dirname, f"{x_id:d}"))
-
         param_values = self.model.problem.gene2val(res.x)
         best_fitness: float = self._gene2objval(res.x)
         n_iter: int = 0
