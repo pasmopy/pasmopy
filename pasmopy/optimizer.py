@@ -9,15 +9,17 @@ from biomass.exec_model import ModelObject
 from scipy.optimize import differential_evolution, OptimizeResult
 
 
+DIRNAME = "out"
+
 class _Logger(object):
     """
     Duplicate stdout to optimization.log.
     """
 
-    def __init__(self, model_path: str, x_id: int, dirname: str):
+    def __init__(self, model_path: str, x_id: int):
         self.terminal = sys.stdout
         self.log = open(
-            os.path.join(model_path, dirname, f"{x_id}", "optimization.log"),
+            os.path.join(model_path, DIRNAME, f"{x_id}", "optimization.log"),
             mode="w",
             encoding="utf-8",
         )
@@ -61,7 +63,7 @@ class ScipyDifferentialEvolution(object):
 
         return obj_val
 
-    def _import_solution(self, res: OptimizeResult, x_id: int, dirname: str) -> None:
+    def _import_solution(self, res: OptimizeResult, x_id: int) -> None:
         """
         Import the solution of the optimization to the model.
         The solution vector `x` will be saved to `path_to_model`/`dirname`/`x_id`/.
@@ -69,19 +71,17 @@ class ScipyDifferentialEvolution(object):
 
         Parameters
         ----------
-        x : Union[np.ndarray, List[float]]
-            The solution of the optimization.
+        res : OptimizeResult
+            The optimization result.
         x_id : int (default: 0)
             Index of the parameter set.
-        dirname : str
-            Where to save optimization result
         """
 
         param_values = self.model.problem.gene2val(res.x)
         best_fitness: float = self._gene2objval(res.x)
         n_iter: int = 0
         with open(
-            os.path.join(self.model.path, dirname, f"{x_id:d}", "optimization.log"),
+            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", "optimization.log"),
             mode="r",
             encoding="utf-8",
         ) as f:
@@ -90,19 +90,19 @@ class ScipyDifferentialEvolution(object):
             if len(message.strip()) > 0:
                 n_iter += 1
         np.save(
-            os.path.join(self.model.path, dirname, f"{x_id:d}", "best_fitness"),
+            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", "best_fitness"),
             best_fitness,
         )
         np.save(
-            os.path.join(self.model.path, dirname, f"{x_id:d}", "count_num"),
+            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", "count_num"),
             n_iter,
         )
         np.save(
-            os.path.join(self.model.path, dirname, f"{x_id:d}", "generation"),
+            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", "generation"),
             n_iter,
         )
         np.save(
-            os.path.join(self.model.path, dirname, f"{x_id:d}", f"fit_param{n_iter:d}"),
+            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", f"fit_param{n_iter:d}"),
             param_values,
         )
 
@@ -110,7 +110,6 @@ class ScipyDifferentialEvolution(object):
         self,
         x_id: int,
         *,
-        dirname: str = "out",
         optimizer_options: Optional[dict] = None,
     ) -> None:
         """
@@ -121,18 +120,16 @@ class ScipyDifferentialEvolution(object):
         ----------
         x_id: int
             Index  of parameter set to estimate.
-        dirname : str (default: "out")
-            Where to save optimization result.
         optimizer_options : dict, optional
             Keyword arguments to pass to ``scipy.optimize.differential_evolution``.
         """
-        if os.path.isdir(os.path.join(self.model.path, dirname, f"{x_id:d}")):
+        if os.path.isdir(os.path.join(self.model.path, DIRNAME, f"{x_id:d}")):
             raise ValueError(
-                f"{dirname}{os.sep}{x_id:d} already exists in {self.model.path}. "
+                f"{DIRNAME}{os.sep}{x_id:d} already exists in {self.model.path}. "
                 "Use another parameter id."
             )
         else:
-            os.makedirs(os.path.join(self.model.path, dirname, f"{x_id:d}"))
+            os.makedirs(os.path.join(self.model.path, f"{x_id:d}"))
 
         if optimizer_options is None:
             optimizer_options = {}
@@ -147,7 +144,7 @@ class ScipyDifferentialEvolution(object):
         optimizer_options.setdefault("workers", 1)
 
         try:
-            sys.stdout = _Logger(self.model.path, x_id, dirname)
+            sys.stdout = _Logger(self.model.path, x_id)
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 res = differential_evolution(
@@ -155,7 +152,7 @@ class ScipyDifferentialEvolution(object):
                     [(0, 1) for _ in range(len(self.model.problem.bounds))],
                     **optimizer_options,
                 )
-            self._import_solution(res, x_id, dirname)
+            self._import_solution(res, x_id)
         finally:
             sys.stdout = self.default_stdout
 
