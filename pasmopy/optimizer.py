@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 import numpy as np
-from biomass.exec_model import ModelObject
+from biomass.exec_model import ModelObject, ExecModel
 from scipy.optimize import differential_evolution, OptimizeResult
 
 
@@ -18,7 +18,7 @@ class _Logger(object):
 
     def __init__(self, model_path: str, x_id: int):
         self.terminal = sys.stdout
-        self.log = open(
+        self.log_file = open(
             os.path.join(model_path, DIRNAME, f"{x_id}", "optimization.log"),
             mode="w",
             encoding="utf-8",
@@ -26,11 +26,11 @@ class _Logger(object):
 
     def write(self, message: str):
         self.terminal.write(message)
-        self.log.write(message)
+        self.log_file.write(message)
 
 
 @dataclass
-class ScipyDifferentialEvolution(object):
+class ScipyDifferentialEvolution(ExecModel):
     """
     Use ``scipy.optimize.differential_evolution`` to estimate kinetic parameters.
 
@@ -54,15 +54,6 @@ class ScipyDifferentialEvolution(object):
     def __post_init__(self):
         self.default_stdout = sys.stdout
 
-    def _gene2objval(self, genes: np.ndarray) -> float:
-        """
-        Objective function: from gene vector to objective value.
-        """
-        param_values = self.model.problem.gene2val(genes)
-        obj_val = self.model.problem.objective(param_values)
-
-        return obj_val
-
     def _import_solution(self, res: OptimizeResult, x_id: int) -> None:
         """
         Import the solution of the optimization to the model.
@@ -73,12 +64,12 @@ class ScipyDifferentialEvolution(object):
         ----------
         res : OptimizeResult
             The optimization result.
-        x_id : int (default: 0)
+        x_id : int
             Index of the parameter set.
         """
 
         param_values = self.model.problem.gene2val(res.x)
-        best_fitness: float = self._gene2objval(res.x)
+        best_fitness: float = self.get_obj_val(res.x)
         n_iter: int = 0
         with open(
             os.path.join(self.model.path, DIRNAME, f"{x_id:d}", "optimization.log"),
@@ -148,7 +139,7 @@ class ScipyDifferentialEvolution(object):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 res = differential_evolution(
-                    self._gene2objval,
+                    self.get_obj_val,
                     [(0, 1) for _ in range(len(self.model.problem.bounds))],
                     **optimizer_options,
                 )
