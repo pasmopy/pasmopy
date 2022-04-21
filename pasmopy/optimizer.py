@@ -2,7 +2,7 @@ import os
 import sys
 import warnings
 from dataclasses import dataclass
-from typing import Optional
+from typing import Callable, Optional
 
 import numpy as np
 from biomass.exec_model import ModelObject, ExecModel
@@ -38,15 +38,6 @@ class ScipyDifferentialEvolution(ExecModel):
     ----------
     model : :class:`biomass.exec_model.ModelObject`
         BioMASS model object.
-
-    Examples
-    --------
-    >>> from pasmopy import Model, ScipyDifferentialEvolution, run_simulation
-    >>> import your_model
-    >>> model = Model(your_model.__package__).create()
-    >>> optimizer = ScipyDifferentialEvolution(model)
-    >>> optimizer.minimize(1, optimizer_options={"workers", -1})
-    >>> run_simulation(model, viz_type="1")
     """
 
     model: ModelObject
@@ -57,7 +48,7 @@ class ScipyDifferentialEvolution(ExecModel):
     def _import_solution(self, res: OptimizeResult, x_id: int) -> None:
         """
         Import the solution of the optimization to the model.
-        The solution vector `x` will be saved to `path_to_model`/`dirname`/`x_id`/.
+        The solution vector `x` will be saved to `path_to_model`/out/`x_id`/.
         Use ``pasmopy.run_simulation`` to visualize the optimization result.
 
         Parameters
@@ -99,6 +90,7 @@ class ScipyDifferentialEvolution(ExecModel):
 
     def minimize(
         self,
+        objective: Callable[[np.ndarray], float],
         x_id: int,
         *,
         optimizer_options: Optional[dict] = None,
@@ -109,10 +101,25 @@ class ScipyDifferentialEvolution(ExecModel):
 
         Parameters
         ----------
+        objective: Callable
+            An objective function to be minimized. Define it using ``get_obj_val()``.
+            Please see example below.
         x_id: int
             Index  of parameter set to estimate.
         optimizer_options : dict, optional
             Keyword arguments to pass to ``scipy.optimize.differential_evolution``.
+
+        Examples
+        --------
+        >>> from pasmopy import Model, ScipyDifferentialEvolution, run_simulation
+        >>> import your_model
+        >>> model = Model(your_model.__package__).create()
+        >>> optimizer = ScipyDifferentialEvolution(model)
+        >>> def objective(x):
+        ...     '''An objective function to be minimized.'''
+        ...     return optimizer.get_obj_val(x)
+        >>> optimizer.minimize(objective, 1, optimizer_options={"workers", -1})
+        >>> run_simulation(model, viz_type="1")
         """
         if os.path.isdir(os.path.join(self.model.path, DIRNAME, f"{x_id:d}")):
             raise ValueError(
@@ -139,11 +146,10 @@ class ScipyDifferentialEvolution(ExecModel):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 res = differential_evolution(
-                    self.get_obj_val,
+                    objective,
                     [(0, 1) for _ in range(len(self.model.problem.bounds))],
                     **optimizer_options,
                 )
             self._import_solution(res, x_id)
         finally:
             sys.stdout = self.default_stdout
-
