@@ -118,7 +118,7 @@ class ScipyDifferentialEvolution(ExecModel):
         >>> def objective(x):
         ...     '''An objective function to be minimized.'''
         ...     return optimizer.get_obj_val(x)
-        >>> optimizer.minimize(objective, 1, optimizer_options={"workers", -1})
+        >>> optimizer.minimize(objective, 1, optimizer_options={"workers": -1})
         >>> run_simulation(model, viz_type="1")
         """
         if os.path.isdir(os.path.join(self.model.path, DIRNAME, f"{x_id:d}")):
@@ -131,7 +131,7 @@ class ScipyDifferentialEvolution(ExecModel):
 
         if optimizer_options is None:
             optimizer_options = {}
-        optimizer_options.setdefault("strategy", "best2bin")
+        optimizer_options.setdefault("strategy", "best1bin")
         optimizer_options.setdefault("maxiter", 50)
         optimizer_options.setdefault("popsize", 3)
         optimizer_options.setdefault("tol", 1e-4)
