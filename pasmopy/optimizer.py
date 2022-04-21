@@ -127,7 +127,7 @@ class ScipyDifferentialEvolution(ExecModel):
                 "Use another parameter id."
             )
         else:
-            os.makedirs(os.path.join(self.model.path, f"{x_id:d}"))
+            os.makedirs(os.path.join(self.model.path, DIRNAME, f"{x_id:d}"))
 
         if optimizer_options is None:
             optimizer_options = {}
