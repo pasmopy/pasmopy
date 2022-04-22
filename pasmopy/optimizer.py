@@ -16,7 +16,8 @@ class _Logger(object):
     Duplicate stdout to optimization.log.
     """
 
-    def __init__(self, model_path: str, x_id: int):
+    def __init__(self, model_path: str, x_id: int, disp_here: bool):
+        self.disp_here = disp_here
         self.terminal = sys.stdout
         self.log_file = open(
             os.path.join(model_path, DIRNAME, f"{x_id}", "optimization.log"),
@@ -25,7 +26,8 @@ class _Logger(object):
         )
 
     def write(self, message: str):
-        self.terminal.write(message)
+        if self.disp_here:
+            self.terminal.write(message)
         self.log_file.write(message)
 
 
@@ -94,6 +96,7 @@ class ScipyDifferentialEvolution(ExecModel):
         x_id: int,
         *,
         optimizer_options: Optional[dict] = None,
+        disp_here: bool = True,
     ) -> None:
         """
         Run ``scipy.optimize.differential_evolution``.
@@ -108,6 +111,8 @@ class ScipyDifferentialEvolution(ExecModel):
             Index  of parameter set to estimate.
         optimizer_options : dict, optional
             Keyword arguments to pass to ``scipy.optimize.differential_evolution``.
+        disp_here: bool (default: False)
+            Whether to show the evaluated *objective* at every iteration.
 
         Examples
         --------
@@ -141,8 +146,15 @@ class ScipyDifferentialEvolution(ExecModel):
         optimizer_options.setdefault("polish", False)
         optimizer_options.setdefault("workers", 1)
 
+        if not optimizer_options["disp"]:
+            raise ValueError(
+                "Set optimizer_options['disp'] to True. "
+                "If you don't want to see the evaluated objective function at every iteration, "
+                "set the keyword argument `disp_here` to False."
+            )
+
         try:
-            sys.stdout = _Logger(self.model.path, x_id)
+            sys.stdout = _Logger(self.model.path, x_id, disp_here)
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 res = differential_evolution(
