@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import warnings
 from dataclasses import dataclass
 from typing import Callable, Optional
@@ -40,12 +41,41 @@ class ScipyDifferentialEvolution(ExecModel):
     ----------
     model : :class:`biomass.exec_model.ModelObject`
         BioMASS model object.
+
+    Examples
+    --------
+    >>> from pasmopy import Model, ScipyDifferentialEvolution, run_simulation
+    >>> import your_model
+    >>> model = Model(your_model.__package__).create()
+    >>> optimizer = ScipyDifferentialEvolution(model)
+    >>> def objective(x):
+    ...     '''An objective function to be minimized.'''
+    ...     return optimizer.get_obj_val(x)
+    >>> param_idx = 1
+    >>> res = optimizer.minimize(objective, param_idx, optimizer_options={"workers": -1})
+    >>> optimizer.save_param(res, param_idx)
+    >>> run_simulation(model, viz_type=str(param_idx))
     """
 
     model: ModelObject
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.default_stdout = sys.stdout
+
+    def _get_n_iter(self, x_id: int) -> int:
+
+        savedir = os.path.join(self.model.path, DIRNAME, f"{x_id:d}")
+        n_iter = 0
+        with open(
+            os.path.join(savedir, "optimization.log"),
+            mode="r",
+            encoding="utf-8",
+        ) as f:
+            log_file = f.readlines()
+        for message in log_file:
+            if len(message.strip()) > 0:
+                n_iter += 1
+        return n_iter
 
     def _import_solution(self, res: OptimizeResult, x_id: int) -> None:
         """
@@ -63,32 +93,15 @@ class ScipyDifferentialEvolution(ExecModel):
 
         param_values = self.model.problem.gene2val(res.x)
         best_fitness: float = self.get_obj_val(res.x)
-        n_iter: int = 0
-        with open(
-            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", "optimization.log"),
-            mode="r",
-            encoding="utf-8",
-        ) as f:
-            log_file = f.readlines()
-        for message in log_file:
-            if len(message.strip()) > 0:
-                n_iter += 1
-        np.save(
-            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", "best_fitness"),
-            best_fitness,
-        )
-        np.save(
-            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", "count_num"),
-            n_iter,
-        )
-        np.save(
-            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", "generation"),
-            n_iter,
-        )
-        np.save(
-            os.path.join(self.model.path, DIRNAME, f"{x_id:d}", f"fit_param{n_iter:d}"),
-            param_values,
-        )
+        savedir = os.path.join(self.model.path, DIRNAME, f"{x_id:d}")
+        n_iter = 0
+        while n_iter == 0:
+            time.sleep(1)
+            n_iter = self._get_n_iter(x_id)
+        np.save(os.path.join(savedir, "best_fitness"), best_fitness)
+        np.save(os.path.join(savedir, "count_num"), n_iter)
+        np.save(os.path.join(savedir, "generation"), n_iter)
+        np.save(os.path.join(savedir, f"fit_param{n_iter:d}"), param_values)
 
     def minimize(
         self,
@@ -113,18 +126,6 @@ class ScipyDifferentialEvolution(ExecModel):
             Keyword arguments to pass to ``scipy.optimize.differential_evolution``.
         disp_here: bool (default: False)
             Whether to show the evaluated *objective* at every iteration.
-
-        Examples
-        --------
-        >>> from pasmopy import Model, ScipyDifferentialEvolution, run_simulation
-        >>> import your_model
-        >>> model = Model(your_model.__package__).create()
-        >>> optimizer = ScipyDifferentialEvolution(model)
-        >>> def objective(x):
-        ...     '''An objective function to be minimized.'''
-        ...     return optimizer.get_obj_val(x)
-        >>> optimizer.minimize(objective, 1, optimizer_options={"workers": -1})
-        >>> run_simulation(model, viz_type="1")
         """
         if os.path.isdir(os.path.join(self.model.path, DIRNAME, f"{x_id:d}")):
             raise ValueError(
