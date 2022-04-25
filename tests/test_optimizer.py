@@ -29,7 +29,7 @@ def test_parameter_estimation(options: Optional[dict] = None):
         "optimization.log",
     ]
     for i in range(1, 4):
-        res = optimizer.minimize(objective, i, optimizer_options=options)
+        res = optimizer.minimize(objective, optimizer_options=options)
         optimizer.save_param(res, i)
         assert run_simulation(model, viz_type=str(i)) is None
         for fname in files:
