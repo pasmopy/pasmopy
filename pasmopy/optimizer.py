@@ -1,6 +1,6 @@
 import os
+import shutil
 import sys
-import time
 import warnings
 from dataclasses import dataclass
 from typing import Callable, Optional
@@ -10,18 +10,18 @@ from biomass.exec_model import ModelObject, ExecModel
 from scipy.optimize import differential_evolution, OptimizeResult
 
 
-DIRNAME = "out"
+DIRNAME = "_tmp"
 
 class _Logger(object):
     """
     Duplicate stdout to optimization.log.
     """
 
-    def __init__(self, model_path: str, x_id: int, disp_here: bool):
+    def __init__(self, model_path: str, disp_here: bool):
         self.disp_here = disp_here
         self.terminal = sys.stdout
         self.log_file = open(
-            os.path.join(model_path, DIRNAME, f"{x_id}", "optimization.log"),
+            os.path.join(model_path, "out", DIRNAME, "optimization.log"),
             mode="w",
             encoding="utf-8",
         )
@@ -52,7 +52,7 @@ class ScipyDifferentialEvolution(ExecModel):
     ...     '''An objective function to be minimized.'''
     ...     return optimizer.get_obj_val(x)
     >>> param_idx = 1
-    >>> res = optimizer.minimize(objective, param_idx, optimizer_options={"workers": -1})
+    >>> res = optimizer.minimize(objective, optimizer_options={"workers": -1})
     >>> optimizer.save_param(res, param_idx)
     >>> run_simulation(model, viz_type=str(param_idx))
     """
@@ -64,7 +64,7 @@ class ScipyDifferentialEvolution(ExecModel):
 
     def _get_n_iter(self, x_id: int) -> int:
 
-        savedir = os.path.join(self.model.path, DIRNAME, f"{x_id:d}")
+        savedir = os.path.join(self.model.path, "out", f"{x_id:d}")
         n_iter = 0
         with open(
             os.path.join(savedir, "optimization.log"),
@@ -77,7 +77,7 @@ class ScipyDifferentialEvolution(ExecModel):
                 n_iter += 1
         return n_iter
 
-    def _import_solution(self, res: OptimizeResult, x_id: int) -> None:
+    def save_param(self, res: OptimizeResult, x_id: int) -> None:
         """
         Import the solution of the optimization to the model.
         The solution vector `x` will be saved to `path_to_model`/out/`x_id`/.
@@ -90,14 +90,19 @@ class ScipyDifferentialEvolution(ExecModel):
         x_id : int
             Index of the parameter set.
         """
+        if os.path.isdir(os.path.join(self.model.path, "out", f"{x_id:d}")):
+            raise ValueError(
+                f"out{os.sep}{x_id:d} already exists in {self.model.path}. "
+                "Use another parameter id."
+            )
+        else:
+            os.makedirs(os.path.join(self.model.path, "out", f"{x_id:d}"))
+        savedir = os.path.join(self.model.path, "out", f"{x_id:d}")
+        shutil.move(os.path.join(self.model.path, "out", DIRNAME, "optimization.log"), savedir)
 
         param_values = self.model.problem.gene2val(res.x)
         best_fitness: float = self.get_obj_val(res.x)
-        savedir = os.path.join(self.model.path, DIRNAME, f"{x_id:d}")
-        n_iter = 0
-        while n_iter == 0:
-            time.sleep(1)
-            n_iter = self._get_n_iter(x_id)
+        n_iter = self._get_n_iter(x_id)
         np.save(os.path.join(savedir, "best_fitness"), best_fitness)
         np.save(os.path.join(savedir, "count_num"), n_iter)
         np.save(os.path.join(savedir, "generation"), n_iter)
@@ -106,14 +111,13 @@ class ScipyDifferentialEvolution(ExecModel):
     def minimize(
         self,
         objective: Callable[[np.ndarray], float],
-        x_id: int,
         *,
         optimizer_options: Optional[dict] = None,
         disp_here: bool = True,
-    ) -> None:
+    ) -> OptimizeResult:
         """
         Run ``scipy.optimize.differential_evolution``.
-        The optimization result will be saved in ``model.path/dirname/x_id``.
+        The optimization result will be saved in ``model.path/_tmp/x_id``.
 
         Parameters
         ----------
@@ -126,14 +130,13 @@ class ScipyDifferentialEvolution(ExecModel):
             Keyword arguments to pass to ``scipy.optimize.differential_evolution``.
         disp_here: bool (default: False)
             Whether to show the evaluated *objective* at every iteration.
+
+        Returns
+        -------
+        res : OptimizeResult
+            The optimization result.
         """
-        if os.path.isdir(os.path.join(self.model.path, DIRNAME, f"{x_id:d}")):
-            raise ValueError(
-                f"{DIRNAME}{os.sep}{x_id:d} already exists in {self.model.path}. "
-                "Use another parameter id."
-            )
-        else:
-            os.makedirs(os.path.join(self.model.path, DIRNAME, f"{x_id:d}"))
+        os.makedirs(os.path.join(self.model.path, "out", DIRNAME), exist_ok=True)
 
         if optimizer_options is None:
             optimizer_options = {}
@@ -155,7 +158,7 @@ class ScipyDifferentialEvolution(ExecModel):
             )
 
         try:
-            sys.stdout = _Logger(self.model.path, x_id, disp_here)
+            sys.stdout = _Logger(self.model.path, disp_here)
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 res = differential_evolution(
@@ -163,6 +166,6 @@ class ScipyDifferentialEvolution(ExecModel):
                     [(0, 1) for _ in range(len(self.model.problem.bounds))],
                     **optimizer_options,
                 )
-            self._import_solution(res, x_id)
+            return res
         finally:
             sys.stdout = self.default_stdout
