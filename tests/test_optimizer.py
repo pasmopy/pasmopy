@@ -2,7 +2,7 @@ import os
 import shutil
 from typing import Optional
 
-from pasmopy import Model, ScipyDifferentialEvolution, run_simulation
+from pasmopy import Model, OptimizationResults, ScipyDifferentialEvolution, run_simulation
 from .models import Nakakuki_Cell_2010
 
 
@@ -34,6 +34,11 @@ def test_parameter_estimation(options: Optional[dict] = None):
         assert run_simulation(model, viz_type=str(i)) is None
         for fname in files:
             assert os.path.isfile(os.path.join(model.path, "out", str(i), fname))
+    output = OptimizationResults(model)
+    output.savefig(figsize=(16,5), boxplot_kws={"orient": "v"})
+    output.trace_obj()
+    for file in ["optimized_params.csv", "estimated_parameter_sets.pdf", "obj_func_traces.pdf"]:
+        assert os.path.isfile(os.path.join(model.path, "optimization_results", file))
 
 
 def test_cleanup():
