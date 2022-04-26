@@ -1,6 +1,7 @@
 """Patient-Specific Modeling in Python"""
 
 from biomass.core import *
+from biomass.result import OptimizationResults
 
 from .construction import Text2Model
 from .individualization import Individualization
