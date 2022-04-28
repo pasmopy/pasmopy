@@ -6,11 +6,11 @@ from dataclasses import dataclass
 from typing import Callable, Optional
 
 import numpy as np
-from biomass.exec_model import ModelObject, ExecModel
-from scipy.optimize import differential_evolution, OptimizeResult
-
+from biomass.exec_model import ExecModel, ModelObject
+from scipy.optimize import OptimizeResult, differential_evolution
 
 DIRNAME = "_tmp"
+
 
 class _Logger(object):
     """

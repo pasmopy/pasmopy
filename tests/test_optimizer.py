@@ -3,15 +3,17 @@ import shutil
 from typing import Optional
 
 from pasmopy import Model, OptimizationResults, ScipyDifferentialEvolution, run_simulation
-from .models import Nakakuki_Cell_2010
 
+from .models import Nakakuki_Cell_2010
 
 model = Model(Nakakuki_Cell_2010.__package__).create()
 optimizer = ScipyDifferentialEvolution(model)
 
+
 def objective(x):
-    '''An objective function to be minimized.'''
+    """An objective function to be minimized."""
     return optimizer.get_obj_val(x)
+
 
 def test_parameter_estimation(options: Optional[dict] = None):
 
@@ -35,7 +37,7 @@ def test_parameter_estimation(options: Optional[dict] = None):
         for fname in files:
             assert os.path.isfile(os.path.join(model.path, "out", str(i), fname))
     output = OptimizationResults(model)
-    output.savefig(figsize=(16,5), boxplot_kws={"orient": "v"})
+    output.savefig(figsize=(16, 5), boxplot_kws={"orient": "v"})
     output.trace_obj()
     for file in ["optimized_params.csv", "estimated_parameter_sets.pdf", "obj_func_traces.pdf"]:
         assert os.path.isfile(os.path.join(model.path, "optimization_results", file))

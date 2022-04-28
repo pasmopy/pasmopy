@@ -1,7 +1,6 @@
 from typing import List
 
 import numpy as np
-
 from biomass.dynamics.solver import get_steady_state, solve_ode
 
 from .name2idx import C, V

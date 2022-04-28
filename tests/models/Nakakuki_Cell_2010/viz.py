@@ -1,6 +1,5 @@
-from matplotlib import pyplot as plt
-
 from biomass.plotting import *
+from matplotlib import pyplot as plt
 
 from .observable import Observable
 
