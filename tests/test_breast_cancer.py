@@ -2,7 +2,7 @@ import os
 import random
 import shutil
 import time
-from typing import List
+from typing import List, Optional
 
 from pasmopy import Model, PatientModelAnalyses, PatientModelSimulations, Text2Model
 from pasmopy.preprocessing import WeightingFactors
@@ -130,7 +130,10 @@ def test_model_construction():
         assert len(model.problem.idx_params) + len(model.problem.idx_initials) == 221
 
 
-def test_patient_model_simulations(exec_model: bool = False):
+def test_patient_model_simulations(
+    exec_model: bool = False,
+    dynamical_features: Optional[List[str]] = None,
+):
     # Initialization
     for patient in TCGA_ID:
         if patient in os.listdir(PATH_TO_MODELS) and patient != "TCGA_3C_AALK_01A":
@@ -162,12 +165,14 @@ def test_patient_model_simulations(exec_model: bool = False):
         elapsed = time.time() - start
         print(f"Computation time for simulating {len(TNBC_ID)} patients: {elapsed/60:.1f} [min]")
         # Extract response characteristics and visualize patient classification
+        if dynamical_features is None:
+            dynamical_features = ["max"]
         simulations.subtyping(
             "subtype_classification.pdf",
             {
-                "Phosphorylated_Akt": {"EGF": ["maximum"], "HRG": ["maximum"]},
-                "Phosphorylated_ERK": {"EGF": ["maximum"], "HRG": ["maximum"]},
-                "Phosphorylated_c-Myc": {"EGF": ["maximum"], "HRG": ["maximum"]},
+                "Phosphorylated_Akt": {"EGF": dynamical_features, "HRG": dynamical_features},
+                "Phosphorylated_ERK": {"EGF": dynamical_features, "HRG": dynamical_features},
+                "Phosphorylated_c-Myc": {"EGF": dynamical_features, "HRG": dynamical_features},
             },
             {
                 "Phosphorylated_Akt": {"timepoint": None, "condition": ["EGF", "HRG"]},
