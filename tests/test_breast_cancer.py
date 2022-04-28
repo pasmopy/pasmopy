@@ -166,7 +166,7 @@ def test_patient_model_simulations(
         print(f"Computation time for simulating {len(TNBC_ID)} patients: {elapsed/60:.1f} [min]")
         # Extract response characteristics and visualize patient classification
         if dynamical_features is None:
-            dynamical_features = ["max"]
+            dynamical_features = ["AUC"]
         simulations.subtyping(
             "subtype_classification.pdf",
             {
