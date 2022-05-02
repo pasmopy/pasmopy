@@ -106,7 +106,7 @@ def test_run_simulation():
                         "simulations_original_BN.npy",
                     )
                 )
-                assert (np.abs(simulated_values - expected) < 1e-12).all()
+                assert np.allclose(simulated_values, expected)
     except ImportError as e:
         print(e)
 

@@ -2,9 +2,7 @@ import os
 import random
 import shutil
 import time
-from typing import Callable, List
-
-import numpy as np
+from typing import List, Optional
 
 from pasmopy import Model, PatientModelAnalyses, PatientModelSimulations, Text2Model
 from pasmopy.preprocessing import WeightingFactors
@@ -132,7 +130,10 @@ def test_model_construction():
         assert len(model.problem.idx_params) + len(model.problem.idx_initials) == 221
 
 
-def test_patient_model_simulations():
+def test_patient_model_simulations(
+    exec_model: bool = False,
+    dynamical_features: Optional[List[str]] = None,
+):
     # Initialization
     for patient in TCGA_ID:
         if patient in os.listdir(PATH_TO_MODELS) and patient != "TCGA_3C_AALK_01A":
@@ -154,30 +155,24 @@ def test_patient_model_simulations():
             os.path.join(path_to_patient(f"{model}"), "out"),
         )
     # Create patient-specific models
-    for patient in TCGA_ID:
-        if patient != "TCGA_3C_AALK_01A":
-            shutil.copytree(path_to_patient("TCGA_3C_AALK_01A"), path_to_patient(f"{patient}"))
-    # Execute patient-specific models
-    simulations = PatientModelSimulations(
-        tests.models.breast.__package__, random.sample(TCGA_ID, 3)
-    )
-    start = time.time()
-    assert simulations.run() is None
-    elapsed = time.time() - start
-    print(f"Computation time for simulating 3 patients: {elapsed/60:.1f} [min]")
-    # Add new response characteristics
-    get_droprate: Callable[[np.ndarray], float] = lambda time_course: -(
-        time_course[-1] - np.max(time_course)
-    ) / (len(time_course) - np.argmax(time_course))
-    simulations.response_characteristics["droprate"] = get_droprate
-    # Extract response characteristics and visualize patient classification
-    try:
+    for patient in TNBC_ID:
+        shutil.copytree(path_to_patient("TCGA_3C_AALK_01A"), path_to_patient(f"{patient}"))
+    if exec_model:
+        # Execute patient-specific models
+        simulations = PatientModelSimulations(tests.models.breast.__package__, TNBC_ID)
+        start = time.time()
+        assert simulations.run() is None
+        elapsed = time.time() - start
+        print(f"Computation time for simulating {len(TNBC_ID)} patients: {elapsed/60:.1f} [min]")
+        # Extract response characteristics and visualize patient classification
+        if dynamical_features is None:
+            dynamical_features = ["AUC"]
         simulations.subtyping(
             "subtype_classification.pdf",
             {
-                "Phosphorylated_Akt": {"EGF": ["AUC", "droprate"], "HRG": ["AUC", "droprate"]},
-                "Phosphorylated_ERK": {"EGF": ["AUC", "droprate"], "HRG": ["AUC", "droprate"]},
-                "Phosphorylated_c-Myc": {"EGF": ["AUC", "droprate"], "HRG": ["AUC", "droprate"]},
+                "Phosphorylated_Akt": {"EGF": dynamical_features, "HRG": dynamical_features},
+                "Phosphorylated_ERK": {"EGF": dynamical_features, "HRG": dynamical_features},
+                "Phosphorylated_c-Myc": {"EGF": dynamical_features, "HRG": dynamical_features},
             },
             {
                 "Phosphorylated_Akt": {"timepoint": None, "condition": ["EGF", "HRG"]},
@@ -189,34 +184,33 @@ def test_patient_model_simulations():
         for observable in obs_names:
             assert os.path.isfile(os.path.join("classification", f"{observable}.csv"))
         assert os.path.isfile("subtype_classification.pdf")
-    except ValueError:
-        pass
 
 
-def test_patient_model_analyses():
+def test_patient_model_analyses(exec_model: bool = False):
     for patient in TNBC_ID:
         assert os.path.isdir(os.path.join(PATH_TO_MODELS, patient))
-    patients = random.sample(TNBC_ID, 1)
-    analyses = PatientModelAnalyses(
-        tests.models.breast.__package__,
-        patients,
-        biomass_kws={
-            "metric": "maximum",
-            "style": "heatmap",
-            "options": {"excluded_initials": ["PIP2"]},
-        },
-    )
-    assert analyses.run() is None
-    for patient in patients:
-        assert os.path.isfile(
-            os.path.join(
-                PATH_TO_MODELS,
-                patient,
-                "sensitivity_coefficients",
-                "initial_condition",
-                "maximum.npy",
-            )
+    if exec_model:
+        patients = random.sample(TNBC_ID, 1)
+        analyses = PatientModelAnalyses(
+            tests.models.breast.__package__,
+            patients,
+            biomass_kws={
+                "metric": "maximum",
+                "style": "heatmap",
+                "options": {"excluded_initials": ["PIP2"]},
+            },
         )
+        assert analyses.run() is None
+        for patient in patients:
+            assert os.path.isfile(
+                os.path.join(
+                    PATH_TO_MODELS,
+                    patient,
+                    "sensitivity_coefficients",
+                    "initial_condition",
+                    "maximum.npy",
+                )
+            )
 
 
 def test_cleanup_models():
