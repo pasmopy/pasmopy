@@ -401,7 +401,7 @@ class PatientModelAnalyses(InSilico):
         self,
         n_proc: Optional[int] = None,
         context: Literal["spawn", "fork", "forkserver"] = "spawn",
-        progress : bool = True,
+        progress: bool = True,
     ) -> None:
         """
         Run analyses of multiple patient-specific models in parallel.
