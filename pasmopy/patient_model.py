@@ -48,6 +48,7 @@ class InSilico(object):
         func: Callable[[str], None],
         n_proc: int,
         method: Literal["spawn", "fork", "forkserver"],
+        progress: bool,
     ) -> None:
         """
         Execute multiple models in parallel.
@@ -62,12 +63,15 @@ class InSilico(object):
 
         method : Literal["spawn", "fork", "forkserver"]
             Start method in ``multiprocessing``.
+
+        progress : bool
+            Whether the progress bar is animating or not.
         """
 
         ctx = multiprocessing.get_context(method)
         p = ctx.Pool(processes=n_proc)
         try:
-            with tqdm(total=len(self.patients)) as t:
+            with tqdm(total=len(self.patients), disable=not progress) as t:
                 for _ in p.imap_unordered(func, self.patients):
                     t.update(1)
         finally:
@@ -125,6 +129,7 @@ class PatientModelSimulations(InSilico):
         self,
         n_proc: Optional[int] = None,
         context: Literal["spawn", "fork", "forkserver"] = "spawn",
+        progress: bool = True,
     ) -> None:
         """
         Run simulations of multiple patient-specific models in parallel.
@@ -136,11 +141,14 @@ class PatientModelSimulations(InSilico):
 
         context : Literal["spawn", "fork", "forkserver"] (default: "spawn")
             The context used for starting the worker processes.
+
+        progress : bool (default: :obj:`True`)
+            If :obj:`True`, the progress indicator will be shown.
         """
         if n_proc is None:
             n_proc = multiprocessing.cpu_count() - 1
         self._check_ctx(context)
-        self.parallel_execute(self._run_single_patient, n_proc, context)
+        self.parallel_execute(self._run_single_patient, n_proc, context, progress)
 
     @staticmethod
     def _cleanup_csv(dirname: str) -> None:
@@ -222,6 +230,7 @@ class PatientModelSimulations(InSilico):
         self,
         dynamical_features: Dict[str, Dict[str, List[str]]],
         normalization: dict,
+        progress: bool,
     ) -> None:
         """
         Extract response characteristics from patient-specific signaling dynamics.
@@ -241,7 +250,7 @@ class PatientModelSimulations(InSilico):
                         header.append(f"{condition}_{metric}")
                 writer.writerow(header)
 
-                for patient in tqdm(self.patients):
+                for patient in tqdm(self.patients, disable=not progress):
                     patient_specific = Model(
                         ".".join([self.path_to_models, patient.strip()])
                     ).create()
@@ -273,6 +282,7 @@ class PatientModelSimulations(InSilico):
         fname: Optional[str],
         dynamical_features: Dict[str, Dict[str, List[str]]],
         normalization: Optional[dict] = None,
+        progress: bool = True,
         *,
         clustermap_kws: Optional[dict] = None,
     ):
@@ -295,6 +305,9 @@ class PatientModelSimulations(InSilico):
             * 'condition' : list of strings
                 The experimental conditions to use for normalization.
                 If empty, all conditions defined in ``sim.conditions`` will be used.
+
+        progress : bool (default: :obj:`True`)
+            If :obj:`True`, the progress indicator will be shown.
 
         clustermap_kws : dict, optional
             Keyword arguments to pass to ``seaborn.clustermap()``.
@@ -338,7 +351,7 @@ class PatientModelSimulations(InSilico):
         clustermap_kws.setdefault("cmap", "RdBu_r")
         clustermap_kws.setdefault("center", 0)
         # extract response characteristics
-        self._extract(dynamical_features, normalization)
+        self._extract(dynamical_features, normalization, progress)
         if fname is not None:
             characteristics: List[pd.DataFrame] = []
             files = os.listdir("classification")
@@ -388,6 +401,7 @@ class PatientModelAnalyses(InSilico):
         self,
         n_proc: Optional[int] = None,
         context: Literal["spawn", "fork", "forkserver"] = "spawn",
+        progress: bool = True,
     ) -> None:
         """
         Run analyses of multiple patient-specific models in parallel.
@@ -399,8 +413,11 @@ class PatientModelAnalyses(InSilico):
 
         context : Literal["spawn", "fork", "forkserver"] (default: "spawn")
             The context used for starting the worker processes.
+
+        progress : bool (default: :obj:`True`)
+            If :obj:`True`, the progress indicator will be shown.
         """
         if n_proc is None:
             n_proc = multiprocessing.cpu_count() - 1
         self._check_ctx(context)
-        self.parallel_execute(self._run_single_patient, n_proc, context)
+        self.parallel_execute(self._run_single_patient, n_proc, context, progress)
