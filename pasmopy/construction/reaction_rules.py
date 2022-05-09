@@ -202,6 +202,7 @@ class ReactionRules(ThermodynamicRestrictions):
                 " forms dimers",
             ],
             bind=[
+                " +",
                 " binds",
                 " forms complexes with",
             ],
@@ -548,6 +549,7 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         Examples
         --------
+        >>> 'A + B <--> AB'
         >>> 'A binds B <--> AB'
         >>> 'A forms complexes with B <--> AB'
 
@@ -624,8 +626,8 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         Examples
         --------
-        >>> 'AB dissociates to A and B'
-        >>> 'AB is dissociated into A and B'
+        >>> 'AB dissociates to A and(+) B'
+        >>> 'AB is dissociated into A and(+) B'
 
         Notes
         -----
@@ -645,17 +647,20 @@ class ReactionRules(ThermodynamicRestrictions):
                 d[AB]/dt = - v
 
         """
+        join_componets = [" and ", " + "]
         description = self._preprocessing(
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
         complex = description[0].strip(" ")
-        if " and " not in description[1]:
-            raise ValueError(
-                f"Use 'and' in line{line_num:d}:\ne.g., AB is dissociated into A and B"
-            )
+        for word in join_componets:
+            if word in description[1]:
+                component1 = description[1].split(word)[0].strip(" ")
+                component2 = description[1].split(word)[1].strip(" ")
+                break
         else:
-            component1 = description[1].split(" and ")[0].strip(" ")
-            component2 = description[1].split(" and ")[1].strip(" ")
+            raise ValueError(
+                f"Use 'and' or '+' in line{line_num:d}:\ne.g., AB is dissociated into A and(+) B"
+            )
         self._set_species(complex, component1, component2)
         self.complex_formations.append(
             ComplexFormation(line_num, set([component1, component2]), complex, False)

@@ -1,2 +1,2 @@
-A binds B <--> AB
-AB dissociates to A and B
+A + B <--> AB
+AB dissociates to A + B
