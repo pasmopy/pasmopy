@@ -1,2 +1,2 @@
 A + B <--> AB
-AB dissociates to A + B
+AB dissociates to A and B
