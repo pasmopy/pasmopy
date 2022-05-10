@@ -52,13 +52,13 @@ class ReactionRules(ThermodynamicRestrictions):
         * - Rule
           - Example sentence
           - Parameters (optional)
-        * - :func:`~pasmopy.construction.reaction_rules.dimerize`\*
+        * - :func:`~pasmopy.construction.reaction_rules.dimerize`
           - *A* dimerizes <--> *AA*
           - .. math:: kf, kr
-        * - :func:`~pasmopy.construction.reaction_rules.bind`\*
+        * - :func:`~pasmopy.construction.reaction_rules.bind`
           - *A* binds *B* <--> *AB*
           - .. math:: kf, kr
-        * - :func:`~pasmopy.construction.reaction_rules.dissociate`\*
+        * - :func:`~pasmopy.construction.reaction_rules.dissociate`
           - *AB* dissociates to *A* and *B*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.is_phosphorylated`
@@ -95,7 +95,7 @@ class ReactionRules(ThermodynamicRestrictions):
           - *Acyt* translocates from cytoplasm to nucleus (Vcyt, Vnuc) <--> *Anuc*
           - .. math:: kf, kr, (V_{pre}, V_{post})
 
-    \* From v0.2.2, you can specify directionality in binding-dissociation reaction via different arrows:
+    From v0.2.2, you can specify directionality in binding-dissociation reaction via different arrows:
 
     .. code-block:: python
 
