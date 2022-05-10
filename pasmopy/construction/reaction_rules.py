@@ -258,17 +258,36 @@ class ReactionRules(ThermodynamicRestrictions):
     )
     fwd_arrows: List[str] = field(
         default_factory=lambda: [
-            " → ", " ↣ ", " ↦ ", " ⇾ ", " ⟶ ", " ⟼ ", " ⥟ ", " ⥟ ", " ⇀ ", " ⇁ ", " ⇒ ", " ⟾ ", " --> ",
+            " → ",
+            " ↣ ",
+            " ↦ ",
+            " ⇾ ",
+            " ⟶ ",
+            " ⟼ ",
+            " ⥟ ",
+            " ⥟ ",
+            " ⇀ ",
+            " ⇁ ",
+            " ⇒ ",
+            " ⟾ ",
+            " --> ",
         ],
         init=False,
     )
     double_arrows: List[str] = field(
         default_factory=lambda: [
-            " ↔ ", " ⟷ ", " ⇄ ", " ⇆ ", " ⇌ ", " ⇋ ", " ⇔ ", " ⟺ ", " <--> ",
+            " ↔ ",
+            " ⟷ ",
+            " ⇄ ",
+            " ⇆ ",
+            " ⇌ ",
+            " ⇋ ",
+            " ⇔ ",
+            " ⟺ ",
+            " <--> ",
         ],
         init=False,
     )
-
 
     def __post_init__(self) -> None:
         if not 0.0 < self.similarity_threshold < 1.0:
@@ -507,7 +526,6 @@ class ReactionRules(ThermodynamicRestrictions):
                 return sentence[: -len(preposition) - 1]
         return sentence
 
-
     def _bind_and_dissociate(self, line_num: int, line: str) -> None:
         """
         Examples
@@ -551,45 +569,50 @@ class ReactionRules(ThermodynamicRestrictions):
             self.reactions.append(
                 f"v[{line_num:d}] = "
                 f"x[C.kf{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
-                + (
-                    f" - x[C.kr{line_num:d}] * y[V.{complex}]" if not is_unidirectional else ""
-                )
-                if is_binding else
-                f"v[{line_num:d}] = "
+                + (f" - x[C.kr{line_num:d}] * y[V.{complex}]" if not is_unidirectional else "")
+                if is_binding
+                else f"v[{line_num:d}] = "
                 f"x[C.kf{line_num:d}] * y[V.{complex}]"
                 + (
                     f" - x[C.kr{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
-                    if not is_unidirectional else ""
+                    if not is_unidirectional
+                    else ""
                 )
             )
             counter_component1, counter_component2, counter_complex = (0, 0, 0)
             for i, eq in enumerate(self.differential_equations):
                 if f"dydt[V.{component1}]" in eq:
                     counter_component1 += 1
-                    self.differential_equations[i] = eq + (" - " if is_binding else " + ") + f"v[{line_num:d}]"
+                    self.differential_equations[i] = (
+                        eq + (" - " if is_binding else " + ") + f"v[{line_num:d}]"
+                    )
                 elif f"dydt[V.{component2}]" in eq:
                     counter_component2 += 1
-                    self.differential_equations[i] = eq + (" - " if is_binding else " + ") + f"v[{line_num:d}]"
+                    self.differential_equations[i] = (
+                        eq + (" - " if is_binding else " + ") + f"v[{line_num:d}]"
+                    )
                 elif f"dydt[V.{complex}]" in eq:
                     counter_complex += 1
-                    self.differential_equations[i] = eq + (" + " if is_binding else " - ") + f"v[{line_num:d}]"
+                    self.differential_equations[i] = (
+                        eq + (" + " if is_binding else " - ") + f"v[{line_num:d}]"
+                    )
             if counter_component1 == 0:
                 self.differential_equations.append(
                     f"dydt[V.{component1}] = - v[{line_num:d}]"
-                    if is_binding else
-                    f"dydt[V.{component1}] = + v[{line_num:d}]"
+                    if is_binding
+                    else f"dydt[V.{component1}] = + v[{line_num:d}]"
                 )
             if counter_component2 == 0:
                 self.differential_equations.append(
                     f"dydt[V.{component2}] = - v[{line_num:d}]"
-                    if is_binding else
-                    f"dydt[V.{component2}] = + v[{line_num:d}]"
+                    if is_binding
+                    else f"dydt[V.{component2}] = + v[{line_num:d}]"
                 )
             if counter_complex == 0:
                 self.differential_equations.append(
                     f"dydt[V.{complex}] = + v[{line_num:d}]"
-                    if is_binding else
-                    f"dydt[V.{complex}] = - v[{line_num:d}]"
+                    if is_binding
+                    else f"dydt[V.{complex}] = - v[{line_num:d}]"
                 )
 
     def dimerize(self, line_num: int, line: str) -> None:
@@ -840,7 +863,9 @@ class ReactionRules(ThermodynamicRestrictions):
             f"v[{line_num:d}] = "
             f"x[C.kf{line_num:d}] * y[V.{unphosphorylated_form}]"
             + (
-                f" - x[C.kr{line_num:d}] * y[V.{phosphorylated_form}]" if not is_unidirectional else ""
+                f" - x[C.kr{line_num:d}] * y[V.{phosphorylated_form}]"
+                if not is_unidirectional
+                else ""
             )
         )
         counter_unphosphorylated_form, counter_phosphorylated_form = (0, 0)
