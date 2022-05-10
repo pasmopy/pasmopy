@@ -131,8 +131,10 @@ class ReactionRules(ThermodynamicRestrictions):
         Untreated conditions to get steady state.
     rule_words : dict
         Words to identify reaction rules.
-    complex_formations : list
-        List of ComplexFormation to detect duplicate binding-dissociation.
+    fwd_arrows : List[str]
+        Available arrows for unidirectional reactions.
+    double_arrows : List[str]
+        Available arrows for bi-directional reactions.
 
     """
 
@@ -254,6 +256,19 @@ class ReactionRules(ThermodynamicRestrictions):
         ),
         init=False,
     )
+    fwd_arrows: List[str] = field(
+        default_factory=lambda: [
+            " → ", " ↣ ", " ↦ ", " ⇾ ", " ⟶ ", " ⟼ ", " ⥟ ", " ⥟ ", " ⇀ ", " ⇁ ", " ⇒ ", " ⟾ ", " --> ",
+        ],
+        init=False,
+    )
+    double_arrows: List[str] = field(
+        default_factory=lambda: [
+            " ↔ ", " ⟷ ", " ⇄ ", " ⇆ ", " ⇌ ", " ⇋ ", " ⇔ ", " ⟺ ", " <--> ",
+        ],
+        init=False,
+    )
+
 
     def __post_init__(self) -> None:
         if not 0.0 < self.similarity_threshold < 1.0:
@@ -278,6 +293,12 @@ class ReactionRules(ThermodynamicRestrictions):
         if text.startswith(prefix):
             return text[len(prefix) :]
         assert False
+
+    def _available_arrows(self) -> List[str]:
+        """
+        Return all available arrow types.
+        """
+        return self.fwd_arrows + self.double_arrows
 
     def _set_params(self, line_num: int, *args: str) -> None:
         """
@@ -486,13 +507,6 @@ class ReactionRules(ThermodynamicRestrictions):
                 return sentence[: -len(preposition) - 1]
         return sentence
 
-    @staticmethod
-    def _is_unidirectional(arrow: str) -> bool:
-        """
-        Check if a reaction is unidirectional or not.
-        """
-        return True if arrow.strip().startswith("<") and arrow.strip().endswith(">") else False
-
 
     def _bind_and_dissociate(self, line_num: int, line: str) -> None:
         """
@@ -506,26 +520,26 @@ class ReactionRules(ThermodynamicRestrictions):
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
         is_binding: bool
-        unidirectional: bool
-        arrows = [" <--> ", " --> "]
-        for arrow in arrows:
+        is_unidirectional: bool
+        for arrow in self._available_arrows():
             if arrow in description[1]:
                 is_binding = True
-                unidirectional = self._is_unidirectional(arrow)
+                is_unidirectional = True if arrow in self.fwd_arrows else False
                 component1 = description[0].strip(" ")
                 component2 = description[1].split(arrow)[0].strip(" ")
                 complex = description[1].split(arrow)[1].strip(" ")
                 break
             elif arrow in description[0]:
                 is_binding = False
-                unidirectional = self._is_unidirectional(arrow)
+                is_unidirectional = True if arrow in self.fwd_arrows else False
                 component1 = description[0].split(arrow)[1].strip(" ")
                 component2 = description[1].strip(arrow)
                 complex = description[0].split(arrow)[0].strip(" ")
                 break
         else:
             raise ValueError(
-                f"line{line_num:d}: Use '<-->' or '-->'."
+                f"line{line_num}: Use one of ({', '.join(self.fwd_arrows)}) for unidirectional"
+                f" reaction or ({', '.join(self.double_arrows)}) for bi-directional reaction."
             )
         if component1 == complex or component2 == complex:
             raise ValueError(f"line{line_num:d}: {complex} <- Use a different name.")
@@ -538,14 +552,14 @@ class ReactionRules(ThermodynamicRestrictions):
                 f"v[{line_num:d}] = "
                 f"x[C.kf{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
                 + (
-                    f" - x[C.kr{line_num:d}] * y[V.{complex}]" if not unidirectional else ""
+                    f" - x[C.kr{line_num:d}] * y[V.{complex}]" if not is_unidirectional else ""
                 )
                 if is_binding else
                 f"v[{line_num:d}] = "
                 f"x[C.kf{line_num:d}] * y[V.{complex}]"
                 + (
                     f" - x[C.kr{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
-                    if not unidirectional else ""
+                    if not is_unidirectional else ""
                 )
             )
             counter_component1, counter_component2, counter_complex = (0, 0, 0)
