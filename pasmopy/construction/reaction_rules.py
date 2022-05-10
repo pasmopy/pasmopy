@@ -195,6 +195,9 @@ class ReactionRules(ThermodynamicRestrictions):
     # Words to identify reaction rules
     rule_words: Dict[str, List[str]] = field(
         default_factory=lambda: dict(
+            _bind_and_dissociate=[
+                " +",
+            ],
             dimerize=[
                 " dimerizes",
                 " homodimerizes",
@@ -202,7 +205,6 @@ class ReactionRules(ThermodynamicRestrictions):
                 " forms dimers",
             ],
             bind=[
-                " +",
                 " binds",
                 " forms complexes with",
             ],
@@ -484,6 +486,74 @@ class ReactionRules(ThermodynamicRestrictions):
                 return sentence[: -len(preposition) - 1]
         return sentence
 
+    def _bind_and_dissociate(self, line_num: int, line: str) -> None:
+        """
+        See examples in :func:`bind` and :func:`dissociate`.
+        """
+        description = self._preprocessing(
+            sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
+        )
+        is_bind: bool
+        if " <--> " in description[1]:
+            is_bind = True
+            component1 = description[0].strip(" ")
+            component2 = description[1].split(" <--> ")[0].strip(" ")
+            complex = description[1].split(" <--> ")[1].strip(" ")
+        elif " <--> " in description[0]:
+            is_bind = False
+            component1 = description[0].split(" <--> ")[1].strip(" ")
+            component2 = description[1].strip(" ")
+            complex = description[0].split(" <--> ")[0].strip(" ")
+        else:
+            raise ValueError(
+                f"line{line_num:d}: Use '<-->' for reversible reaction rules."
+            )
+        if component1 == complex or component2 == complex:
+            raise ValueError(f"line{line_num:d}: {complex} <- Use a different name.")
+        else:
+            self._set_species(component1, component2, complex)
+            self.complex_formations.append(
+                ComplexFormation(line_num, set([component1, component2]), complex, True)
+            )
+            self.reactions.append(
+                f"v[{line_num:d}] = "
+                f"x[C.kf{line_num:d}] * y[V.{component1}] * y[V.{component2}] - "
+                f"x[C.kr{line_num:d}] * y[V.{complex}]"
+                if is_bind else
+                f"v[{line_num:d}] = "
+                f"x[C.kf{line_num:d}] * y[V.{complex}] - "
+                f"x[C.kr{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
+            )
+            counter_component1, counter_component2, counter_complex = (0, 0, 0)
+            for i, eq in enumerate(self.differential_equations):
+                if f"dydt[V.{component1}]" in eq:
+                    counter_component1 += 1
+                    self.differential_equations[i] = eq + (" - " if is_bind else " + ") + f"v[{line_num:d}]"
+                elif f"dydt[V.{component2}]" in eq:
+                    counter_component2 += 1
+                    self.differential_equations[i] = eq + (" - " if is_bind else " + ") + f"v[{line_num:d}]"
+                elif f"dydt[V.{complex}]" in eq:
+                    counter_complex += 1
+                    self.differential_equations[i] = eq + (" + " if is_bind else " - ") + f"v[{line_num:d}]"
+            if counter_component1 == 0:
+                self.differential_equations.append(
+                    f"dydt[V.{component1}] = - v[{line_num:d}]"
+                    if is_bind else
+                    f"dydt[V.{component1}] = + v[{line_num:d}]"
+                )
+            if counter_component2 == 0:
+                self.differential_equations.append(
+                    f"dydt[V.{component2}] = - v[{line_num:d}]"
+                    if is_bind else
+                    f"dydt[V.{component2}] = + v[{line_num:d}]"
+                )
+            if counter_complex == 0:
+                self.differential_equations.append(
+                    f"dydt[V.{complex}] = + v[{line_num:d}]"
+                    if is_bind else
+                    f"dydt[V.{complex}] = - v[{line_num:d}]"
+                )
+
     def dimerize(self, line_num: int, line: str) -> None:
         """
         Examples
@@ -549,7 +619,6 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         Examples
         --------
-        >>> 'A + B <--> AB'
         >>> 'A binds B <--> AB'
         >>> 'A forms complexes with B <--> AB'
 
