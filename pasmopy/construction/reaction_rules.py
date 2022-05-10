@@ -1,5 +1,4 @@
 import sys
-import warnings
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
 from typing import Dict, List, NamedTuple, Optional
@@ -53,13 +52,13 @@ class ReactionRules(ThermodynamicRestrictions):
         * - Rule
           - Example sentence
           - Parameters (optional)
-        * - :func:`~pasmopy.construction.reaction_rules.dimerize`
+        * - :func:`~pasmopy.construction.reaction_rules.dimerize`\*
           - *A* dimerizes <--> *AA*
           - .. math:: kf, kr
-        * - :func:`~pasmopy.construction.reaction_rules.bind`
+        * - :func:`~pasmopy.construction.reaction_rules.bind`\*
           - *A* binds *B* <--> *AB*
           - .. math:: kf, kr
-        * - :func:`~pasmopy.construction.reaction_rules.dissociate`
+        * - :func:`~pasmopy.construction.reaction_rules.dissociate`\*
           - *AB* dissociates to *A* and *B*
           - .. math:: kf, kr
         * - :func:`~pasmopy.construction.reaction_rules.is_phosphorylated`
@@ -95,6 +94,13 @@ class ReactionRules(ThermodynamicRestrictions):
         * - :func:`~pasmopy.construction.reaction_rules.translocate`
           - *Acyt* translocates from cytoplasm to nucleus (Vcyt, Vnuc) <--> *Anuc*
           - .. math:: kf, kr, (V_{pre}, V_{post})
+
+    \* From v0.2.2, you can specify directionality in binding-dissociation reaction via different arrows:
+
+    .. code-block:: python
+
+        E + S ⇄ ES | kf=0.003, kr=0.001 | E=100, S=50  # bi-directional
+        ES → E + P | kf=0.002  # unidirectional
 
     Attributes
     ----------
