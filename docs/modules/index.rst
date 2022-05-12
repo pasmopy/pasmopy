@@ -7,4 +7,5 @@ Pasmopy modules reference
    patient_model
    preprocessing
    individualization
+   optimizer
    construction
