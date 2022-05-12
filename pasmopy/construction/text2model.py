@@ -849,6 +849,7 @@ class Text2Model(ReactionRules):
         terminology: Optional[
             Dict[
                 Literal[
+                    "_bind_and_dissociate",
                     "dimerize",
                     "bind",
                     "dissociate",

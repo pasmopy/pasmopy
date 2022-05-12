@@ -1,5 +1,4 @@
 import sys
-import warnings
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
 from typing import Dict, List, NamedTuple, Optional
@@ -96,6 +95,13 @@ class ReactionRules(ThermodynamicRestrictions):
           - *Acyt* translocates from cytoplasm to nucleus (Vcyt, Vnuc) <--> *Anuc*
           - .. math:: kf, kr, (V_{pre}, V_{post})
 
+    From v0.2.2, you can specify directionality in binding-dissociation reaction via different arrows:
+
+    .. code-block:: python
+
+        E + S ⇄ ES | kf=0.003, kr=0.001 | E=100, S=50  # bi-directional
+        ES → E + P | kf=0.002  # unidirectional
+
     Attributes
     ----------
     input_txt : str
@@ -131,8 +137,10 @@ class ReactionRules(ThermodynamicRestrictions):
         Untreated conditions to get steady state.
     rule_words : dict
         Words to identify reaction rules.
-    complex_formations : list
-        List of ComplexFormation to detect duplicate binding-dissociation.
+    fwd_arrows : List[str]
+        Available arrows for unidirectional reactions.
+    double_arrows : List[str]
+        Available arrows for bi-directional reactions.
 
     """
 
@@ -195,6 +203,9 @@ class ReactionRules(ThermodynamicRestrictions):
     # Words to identify reaction rules
     rule_words: Dict[str, List[str]] = field(
         default_factory=lambda: dict(
+            _bind_and_dissociate=[
+                " +",
+            ],
             dimerize=[
                 " dimerizes",
                 " homodimerizes",
@@ -251,6 +262,38 @@ class ReactionRules(ThermodynamicRestrictions):
         ),
         init=False,
     )
+    fwd_arrows: List[str] = field(
+        default_factory=lambda: [
+            " → ",
+            " ↣ ",
+            " ↦ ",
+            " ⇾ ",
+            " ⟶ ",
+            " ⟼ ",
+            " ⥟ ",
+            " ⥟ ",
+            " ⇀ ",
+            " ⇁ ",
+            " ⇒ ",
+            " ⟾ ",
+            " --> ",
+        ],
+        init=False,
+    )
+    double_arrows: List[str] = field(
+        default_factory=lambda: [
+            " ↔ ",
+            " ⟷ ",
+            " ⇄ ",
+            " ⇆ ",
+            " ⇌ ",
+            " ⇋ ",
+            " ⇔ ",
+            " ⟺ ",
+            " <--> ",
+        ],
+        init=False,
+    )
 
     def __post_init__(self) -> None:
         if not 0.0 < self.similarity_threshold < 1.0:
@@ -275,6 +318,12 @@ class ReactionRules(ThermodynamicRestrictions):
         if text.startswith(prefix):
             return text[len(prefix) :]
         assert False
+
+    def _available_arrows(self) -> List[str]:
+        """
+        Return all available arrow types.
+        """
+        return self.fwd_arrows + self.double_arrows
 
     def _set_params(self, line_num: int, *args: str) -> None:
         """
@@ -483,6 +532,95 @@ class ReactionRules(ThermodynamicRestrictions):
                 return sentence[: -len(preposition) - 1]
         return sentence
 
+    def _bind_and_dissociate(self, line_num: int, line: str) -> None:
+        """
+        Examples
+        --------
+        >>> 'A + B --> AB'  # bind, unidirectional
+        >>> 'AB --> A + B'  # dissociate, unidirectional
+        >>> 'A + B <--> AB' # bind and dissociate, bidirectional
+        """
+        description = self._preprocessing(
+            sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
+        )
+        is_binding: bool
+        is_unidirectional: bool
+        for arrow in self._available_arrows():
+            if arrow in description[1]:
+                is_binding = True
+                is_unidirectional = True if arrow in self.fwd_arrows else False
+                component1 = description[0].strip(" ")
+                component2 = description[1].split(arrow)[0].strip(" ")
+                complex = description[1].split(arrow)[1].strip(" ")
+                break
+            elif arrow in description[0]:
+                is_binding = False
+                is_unidirectional = True if arrow in self.fwd_arrows else False
+                component1 = description[0].split(arrow)[1].strip(" ")
+                component2 = description[1].strip(arrow)
+                complex = description[0].split(arrow)[0].strip(" ")
+                break
+        else:
+            raise ValueError(
+                f"line{line_num}: Use one of ({', '.join(self.fwd_arrows)}) for unidirectional "
+                f"reaction or ({', '.join(self.double_arrows)}) for bi-directional reaction."
+            )
+        if component1 == complex or component2 == complex:
+            raise ValueError(f"line{line_num:d}: {complex} <- Use a different name.")
+        else:
+            self._set_species(component1, component2, complex)
+            self.complex_formations.append(
+                ComplexFormation(line_num, set([component1, component2]), complex, is_binding)
+            )
+            self.reactions.append(
+                f"v[{line_num:d}] = "
+                f"x[C.kf{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
+                + (f" - x[C.kr{line_num:d}] * y[V.{complex}]" if not is_unidirectional else "")
+                if is_binding
+                else f"v[{line_num:d}] = "
+                f"x[C.kf{line_num:d}] * y[V.{complex}]"
+                + (
+                    f" - x[C.kr{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
+                    if not is_unidirectional
+                    else ""
+                )
+            )
+            counter_component1, counter_component2, counter_complex = (0, 0, 0)
+            for i, eq in enumerate(self.differential_equations):
+                if f"dydt[V.{component1}]" in eq:
+                    counter_component1 += 1
+                    self.differential_equations[i] = (
+                        eq + (" - " if is_binding else " + ") + f"v[{line_num:d}]"
+                    )
+                elif f"dydt[V.{component2}]" in eq:
+                    counter_component2 += 1
+                    self.differential_equations[i] = (
+                        eq + (" - " if is_binding else " + ") + f"v[{line_num:d}]"
+                    )
+                elif f"dydt[V.{complex}]" in eq:
+                    counter_complex += 1
+                    self.differential_equations[i] = (
+                        eq + (" + " if is_binding else " - ") + f"v[{line_num:d}]"
+                    )
+            if counter_component1 == 0:
+                self.differential_equations.append(
+                    f"dydt[V.{component1}] = - v[{line_num:d}]"
+                    if is_binding
+                    else f"dydt[V.{component1}] = + v[{line_num:d}]"
+                )
+            if counter_component2 == 0:
+                self.differential_equations.append(
+                    f"dydt[V.{component2}] = - v[{line_num:d}]"
+                    if is_binding
+                    else f"dydt[V.{component2}] = + v[{line_num:d}]"
+                )
+            if counter_complex == 0:
+                self.differential_equations.append(
+                    f"dydt[V.{complex}] = + v[{line_num:d}]"
+                    if is_binding
+                    else f"dydt[V.{complex}] = - v[{line_num:d}]"
+                )
+
     def dimerize(self, line_num: int, line: str) -> None:
         """
         Examples
@@ -511,25 +649,27 @@ class ReactionRules(ThermodynamicRestrictions):
         description = self._preprocessing(
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
+        is_unidirectional: bool
         monomer = description[0].strip(" ")
-        if " <--> " in description[1]:
-            dimer = description[1].split(" <--> ")[1].strip(" ")
-        elif " --> " in description[1]:
-            warnings.warn(
-                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
-                FutureWarning,
-            )
-            dimer = description[1].split(" --> ")[1].strip(" ")
+        for arrow in self._available_arrows():
+            if arrow in description[1]:
+                is_unidirectional = True if arrow in self.fwd_arrows else False
+                dimer = description[1].split(arrow)[1].strip(" ")
+                break
         else:
-            raise ValueError(f"line{line_num:d}: Use '<-->' to specify the name of the dimer.")
+            raise ValueError(
+                f"line{line_num}: Use one of ({', '.join(self.fwd_arrows)}) for unidirectional "
+                f"reaction or ({', '.join(self.double_arrows)}) for bi-directional reaction "
+                "to specify the name of the dimer."
+            )
         if monomer == dimer:
             raise ValueError(f"{dimer} <- Use a different name.")
         self._set_species(monomer, dimer)
         self.complex_formations.append(ComplexFormation(line_num, set(monomer), dimer, True))
         self.reactions.append(
             f"v[{line_num:d}] = "
-            f"x[C.kf{line_num:d}] * y[V.{monomer}] * y[V.{monomer}] - "
-            f"x[C.kr{line_num:d}] * y[V.{dimer}]"
+            f"x[C.kf{line_num:d}] * y[V.{monomer}] * y[V.{monomer}]"
+            + (f" - x[C.kr{line_num:d}] * y[V.{dimer}]" if not is_unidirectional else "")
         )
         counter_monomer, counter_dimer = (0, 0)
         for i, eq in enumerate(self.differential_equations):
@@ -572,21 +712,19 @@ class ReactionRules(ThermodynamicRestrictions):
         description = self._preprocessing(
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
+        is_unidirectional: bool
         component1 = description[0].strip(" ")
-        if " <--> " in description[1]:
-            # Specify name of the complex
-            component2 = description[1].split(" <--> ")[0].strip(" ")
-            complex = description[1].split(" <--> ")[1].strip(" ")
-        elif " --> " in description[1]:
-            warnings.warn(
-                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
-                FutureWarning,
-            )
-            component2 = description[1].split(" --> ")[0].strip(" ")
-            complex = description[1].split(" --> ")[1].strip(" ")
+        for arrow in self._available_arrows():
+            if arrow in description[1]:
+                is_unidirectional = True if arrow in self.fwd_arrows else False
+                component2 = description[1].split(arrow)[0].strip(" ")
+                complex = description[1].split(arrow)[1].strip(" ")
+                break
         else:
             raise ValueError(
-                f"line{line_num:d}: Use '<-->' to specify the name of the protein complex."
+                f"line{line_num}: Use one of ({', '.join(self.fwd_arrows)}) for unidirectional "
+                f"reaction or ({', '.join(self.double_arrows)}) for bi-directional reaction "
+                "to specify the name of the protein complex."
             )
         if component1 == complex or component2 == complex:
             raise ValueError(f"line{line_num:d}: {complex} <- Use a different name.")
@@ -599,8 +737,8 @@ class ReactionRules(ThermodynamicRestrictions):
             )
             self.reactions.append(
                 f"v[{line_num:d}] = "
-                f"x[C.kf{line_num:d}] * y[V.{component1}] * y[V.{component2}] - "
-                f"x[C.kr{line_num:d}] * y[V.{complex}]"
+                f"x[C.kf{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
+                + (f" - x[C.kr{line_num:d}] * y[V.{complex}]" if not is_unidirectional else "")
             )
             counter_component1, counter_component2, counter_complex = (0, 0, 0)
             for i, eq in enumerate(self.differential_equations):
@@ -662,8 +800,8 @@ class ReactionRules(ThermodynamicRestrictions):
         )
         self.reactions.append(
             f"v[{line_num:d}] = "
-            f"x[C.kf{line_num:d}] * y[V.{complex}] - "
-            f"x[C.kr{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
+            f"x[C.kf{line_num:d}] * y[V.{complex}]"
+            f" - x[C.kr{line_num:d}] * y[V.{component1}] * y[V.{component2}]"
         )
         counter_complex, counter_component1, counter_component2 = (0, 0, 0)
         for i, eq in enumerate(self.differential_equations):
@@ -712,26 +850,29 @@ class ReactionRules(ThermodynamicRestrictions):
         description = self._preprocessing(
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
+        is_unidirectional: bool
         unphosphorylated_form = description[0].strip(" ")
-        if " <--> " in description[1]:
-            phosphorylated_form = description[1].split(" <--> ")[1].strip(" ")
-        elif " --> " in description[1]:
-            warnings.warn(
-                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
-                FutureWarning,
-            )
-            phosphorylated_form = description[1].split(" --> ")[1].strip(" ")
+        for arrow in self._available_arrows():
+            if arrow in description[1]:
+                is_unidirectional = True if arrow in self.fwd_arrows else False
+                phosphorylated_form = description[1].split(arrow)[1].strip(" ")
+                break
         else:
             raise ValueError(
-                f"line{line_num:d}: "
-                "Use '<-->' to specify the name of the phosphorylated protein."
+                f"line{line_num}: Use one of ({', '.join(self.fwd_arrows)}) for unidirectional "
+                f"reaction or ({', '.join(self.double_arrows)}) for bi-directional reaction "
+                "to specify the name of the phosphorylated protein."
             )
         self._set_species(unphosphorylated_form, phosphorylated_form)
 
         self.reactions.append(
             f"v[{line_num:d}] = "
-            f"x[C.kf{line_num:d}] * y[V.{unphosphorylated_form}] - "
-            f"x[C.kr{line_num:d}] * y[V.{phosphorylated_form}]"
+            f"x[C.kf{line_num:d}] * y[V.{unphosphorylated_form}]"
+            + (
+                f" - x[C.kr{line_num:d}] * y[V.{phosphorylated_form}]"
+                if not is_unidirectional
+                else ""
+            )
         )
         counter_unphosphorylated_form, counter_phosphorylated_form = (0, 0)
         for i, eq in enumerate(self.differential_equations):
@@ -774,12 +915,14 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
         phosphorylated_form = description[0].strip(" ")
-        if " --> " in description[1]:
-            unphosphorylated_form = description[1].split(" --> ")[1].strip(" ")
+        for arrow in self.fwd_arrows:
+            if arrow in description[1]:
+                unphosphorylated_form = description[1].split(arrow)[1].strip(" ")
+                break
         else:
             raise ValueError(
-                f"line{line_num:d}: "
-                "Use '-->' to specify the name of the dephosphorylated protein."
+                f"line{line_num:d}: Use one of ({', '.join(self.fwd_arrows)}) "
+                "to specify the name of the dephosphorylated protein."
             )
         self._set_species(phosphorylated_form, unphosphorylated_form)
 
@@ -829,14 +972,16 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
         kinase = description[0].strip(" ")
-        if " --> " in description[1]:
-            unphosphorylated_form = description[1].split(" --> ")[0].strip(" ")
-            phosphorylated_form = description[1].split(" --> ")[1].strip(" ")
+        for arrow in self.fwd_arrows:
+            if arrow in description[1]:
+                unphosphorylated_form = description[1].split(arrow)[0].strip(" ")
+                phosphorylated_form = description[1].split(arrow)[1].strip(" ")
+                break
         else:
             raise ValueError(
                 f"line{line_num:d}: "
-                "Use '-->' to specify the name of the phosphorylated "
-                "(or activated) protein."
+                f"Use one of {', '.join(self.fwd_arrows)} to specify "
+                "the name of the phosphorylated (or activated) protein."
             )
         if unphosphorylated_form == phosphorylated_form:
             raise ValueError(f"line{line_num:d}: {phosphorylated_form} <- Use a different name.")
@@ -888,14 +1033,16 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "V", "K")
         phosphatase = description[0].strip(" ")
-        if " --> " in description[1]:
-            phosphorylated_form = description[1].split(" --> ")[0].strip(" ")
-            unphosphorylated_form = description[1].split(" --> ")[1].strip(" ")
+        for arrow in self.fwd_arrows:
+            if arrow in description[1]:
+                phosphorylated_form = description[1].split(arrow)[0].strip(" ")
+                unphosphorylated_form = description[1].split(arrow)[1].strip(" ")
+                break
         else:
             raise ValueError(
                 f"line{line_num:d}: "
-                "Use '-->' to specify the name of the dephosphorylated "
-                "(or deactivated) protein."
+                f"Use one of {', '.join(self.fwd_arrows)} to specify "
+                "the name of the dephosphorylated (or deactivated) protein."
             )
         if phosphorylated_form == unphosphorylated_form:
             raise ValueError(f"line{line_num:d}: {unphosphorylated_form} <- Use a different name.")
@@ -1189,18 +1336,15 @@ class ReactionRules(ThermodynamicRestrictions):
             sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
         )
         pre_translocation = description[0].strip(" ")
-        if " <--> " in description[1]:
-            post_translocation = description[1].split(" <--> ")[1].strip(" ")
-        elif " --> " in description[1]:
-            warnings.warn(
-                f"line{line_num:d}: Use '<-->' instead of '-->' for reversible reaction rules.",
-                FutureWarning,
-            )
-            post_translocation = description[1].split(" --> ")[1].strip(" ")
+        for arrow in self.double_arrows:
+            if arrow in description[1]:
+                post_translocation = description[1].split(arrow)[1].strip(" ")
+                break
         else:
             raise ValueError(
                 f"line{line_num:d}: "
-                "Use '<-->' to specify the name of the species after translocation."
+                f"Use one of ({', '.join(self.double_arrows)}) to specify "
+                "the name of the species after translocation."
             )
         if pre_translocation == post_translocation:
             raise ValueError(f"line{line_num:d}: {post_translocation} <- Use a different name.")
@@ -1215,14 +1359,14 @@ class ReactionRules(ThermodynamicRestrictions):
             [pre_volume, post_volume] = ["1", "1"]
         self._set_species(pre_translocation, post_translocation)
         self.reactions.append(
-            f"v[{line_num:d}] = x[C.kf{line_num:d}] * y[V.{pre_translocation}] - "
-            f"x[C.kr{line_num:d}] * y[V.{post_translocation}]"
+            f"v[{line_num:d}] = x[C.kf{line_num:d}] * y[V.{pre_translocation}]"
+            f" - x[C.kr{line_num:d}] * y[V.{post_translocation}]"
         )
         if float(pre_volume.strip(" ")) != float(post_volume.strip(" ")):
             self.reactions[-1] = (
                 f"v[{line_num:d}] = "
-                f"x[C.kf{line_num:d}] * y[V.{pre_translocation}] - "
-                f"x[C.kr{line_num:d}] * "
+                f"x[C.kf{line_num:d}] * y[V.{pre_translocation}]"
+                f" - x[C.kr{line_num:d}] * "
                 f"({post_volume.strip()} / {pre_volume.strip()}) * "
                 f"y[V.{post_translocation}]"
             )
