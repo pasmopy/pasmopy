@@ -2,11 +2,17 @@ import os
 import shutil
 from typing import Optional
 
+from biomass.exec_model import ExecModel
 from pasmopy import Model, OptimizationResults, ScipyDifferentialEvolution, run_simulation
 
 from .models import Nakakuki_Cell_2010
 
 model = Model(Nakakuki_Cell_2010.__package__).create()
+_util = ExecModel(model)
+
+def _objective(x):
+    """An objective function to be minimized."""
+    return _util.get_obj_val(x)
 
 
 def test_parameter_estimation(options: Optional[dict] = None):
@@ -26,10 +32,7 @@ def test_parameter_estimation(options: Optional[dict] = None):
     ]
     for i in range(1, 4):
         optimizer = ScipyDifferentialEvolution(model, i)
-        def objective(x):
-            """An objective function to be minimized."""
-            return optimizer.get_obj_val(x)
-        res = optimizer.minimize(objective, optimizer_options=options)
+        res = optimizer.minimize(_objective, optimizer_options=options)
         optimizer.save_param(res)
         assert run_simulation(model, viz_type=str(i)) is None
         for fname in files:
