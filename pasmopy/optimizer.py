@@ -64,7 +64,7 @@ class ScipyDifferentialEvolution(ExecModel):
 
     def __post_init__(self) -> None:
         self.default_stdout = sys.stdout
-        self.savedir = os.path.join(self.model.path, "out", f"{self.x_id:d}")
+        self.savedir = os.path.join(self.model.path, "out", f"{self.x_id}")
 
     def _get_n_iter(self) -> int:
 
@@ -93,13 +93,13 @@ class ScipyDifferentialEvolution(ExecModel):
         cleanup : bool (default: :obj:`True`)
             If True (default), delete the temporary folder after the optimization is finished.
         """
-        if os.path.isdir(os.path.join(self.model.path, "out", f"{self.x_id:d}")):
+        if os.path.isdir(os.path.join(self.model.path, "out", f"{self.x_id}")):
             raise ValueError(
-                f"out{os.sep}{self.x_id:d} already exists in {self.model.path}. "
+                f"out{os.sep}{self.x_id} already exists in {self.model.path}. "
                 "Use another parameter id."
             )
         else:
-            os.makedirs(os.path.join(self.model.path, "out", f"{self.x_id:d}"))
+            os.makedirs(os.path.join(self.model.path, "out", f"{self.x_id}"))
         shutil.move(
             os.path.join(self.model.path, "out", DIRNAME + str(self.x_id), "optimization.log"),
             self.savedir
