@@ -276,7 +276,8 @@ class ReactionRules(ThermodynamicRestrictions):
             " ⇁ ",
             " ⇒ ",
             " ⟾ ",
-            " --> ",
+        ] + [
+            " {}> ".format("-" * i) for i in range(3)
         ],
         init=False,
     )
@@ -290,7 +291,8 @@ class ReactionRules(ThermodynamicRestrictions):
             " ⇋ ",
             " ⇔ ",
             " ⟺ ",
-            " <--> ",
+        ] + [
+            " <{}> ".format("-" * i) for i in range(3)
         ],
         init=False,
     )
