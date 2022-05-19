@@ -1,7 +1,7 @@
 import sys
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
-from typing import Dict, List, NamedTuple, Optional
+from typing import Dict, List, NamedTuple, NoReturn, Optional
 
 import numpy as np
 
@@ -11,6 +11,10 @@ from .thermodynamic_restrictions import ComplexFormation, DuplicateError, Thermo
 class UnregisteredRule(NamedTuple):
     expected: Optional[str]
     original: Optional[str]
+
+
+class DetectionError(Exception):
+    pass
 
 
 PREPOSITIONS: List[str] = [
@@ -341,6 +345,20 @@ class ReactionRules(ThermodynamicRestrictions):
             if s_name not in self.species:
                 self.species.append(s_name)
 
+    def _raise_detection_error(self, line_num: int, line: str) -> NoReturn:
+        """
+        Raise `DetectionError` when a keyword is invalid.
+        """
+        unregistered_rule = self._get_partial_similarity(line)
+        raise DetectionError(
+            f"Unregistered words in line{line_num:d}: {line}"
+            + (
+                f"\nMaybe: '{unregistered_rule.expected.lstrip()}'."
+                if unregistered_rule.expected is not None
+                else ""
+            )
+        )
+
     def _preprocessing(
         self,
         func_name: str,
@@ -457,8 +475,10 @@ class ReactionRules(ThermodynamicRestrictions):
             # Choose longer word
             if word in line:
                 hit_words.append(word)
-
-        return line.strip().split(max(hit_words, key=len))
+        description = line.strip().split(max(hit_words, key=len))
+        if description[1] and not description[1].startswith(" "):
+            self._raise_detection_error(line_num, line)
+        return description
 
     @staticmethod
     def _word2scores(word: str, sentence: str) -> List[float]:
@@ -1465,12 +1485,4 @@ class ReactionRules(ThermodynamicRestrictions):
                         exec("self." + reaction_rule + "(line_num, line)")
                         break
                 else:
-                    unregistered_rule = self._get_partial_similarity(line)
-                    raise ValueError(
-                        f"Unregistered words in line{line_num:d}: {line}"
-                        + (
-                            f"\nMaybe: '{unregistered_rule.expected}'."
-                            if unregistered_rule.expected is not None
-                            else ""
-                        )
-                    )
+                    self._raise_detection_error(line_num, line)
