@@ -1,9 +1,5 @@
 import os
 import shutil
-from typing import Callable
-
-import numpy as np
-import pytest
 
 from pasmopy import Text2Model
 
