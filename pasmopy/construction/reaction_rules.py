@@ -276,8 +276,8 @@ class ReactionRules(ThermodynamicRestrictions):
             " ⇁ ",
             " ⇒ ",
             " ⟾ ",
-            " --> ",
-        ],
+        ]
+        + [" {}> ".format("-" * i) for i in range(3)],
         init=False,
     )
     double_arrows: List[str] = field(
@@ -290,8 +290,8 @@ class ReactionRules(ThermodynamicRestrictions):
             " ⇋ ",
             " ⇔ ",
             " ⟺ ",
-            " <--> ",
-        ],
+        ]
+        + [" <{}> ".format("-" * i) for i in range(3)],
         init=False,
     )
 
