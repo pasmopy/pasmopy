@@ -1,8 +1,9 @@
-from nis import match
 import os
 import shutil
+from nis import match
 
 import pytest
+
 from pasmopy import Text2Model
 from pasmopy.construction.reaction_rules import DetectionError
 
