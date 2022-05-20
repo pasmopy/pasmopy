@@ -1,6 +1,5 @@
 import os
 import shutil
-from nis import match
 
 import pytest
 
