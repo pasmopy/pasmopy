@@ -557,8 +557,10 @@ class ReactionRules(ThermodynamicRestrictions):
         return sentence
 
     def _get_arrow_error_message(self, line_num: int) -> str:
-        message = f"line{line_num}: Use one of ({', '.join(self.fwd_arrows)}) for unidirectional "\
-        f"reaction or ({', '.join(self.double_arrows)}) for bi-directional reaction"
+        message = (
+            f"line{line_num}: Use one of ({', '.join(self.fwd_arrows)}) for unidirectional "
+            f"reaction or ({', '.join(self.double_arrows)}) for bi-directional reaction"
+        )
         return message
 
     def _bind_and_dissociate(self, line_num: int, line: str) -> None:
@@ -746,7 +748,8 @@ class ReactionRules(ThermodynamicRestrictions):
                 break
         else:
             raise ArrowError(
-                self._get_arrow_error_message(line_num) + " to specify the name of the protein complex."
+                self._get_arrow_error_message(line_num)
+                + " to specify the name of the protein complex."
             )
         if component1 == complex or component2 == complex:
             raise ValueError(f"line{line_num:d}: {complex} <- Use a different name.")
@@ -881,7 +884,8 @@ class ReactionRules(ThermodynamicRestrictions):
                 break
         else:
             raise ArrowError(
-                self._get_arrow_error_message(line_num) + " to specify the name of the phosphorylated protein."
+                self._get_arrow_error_message(line_num)
+                + " to specify the name of the phosphorylated protein."
             )
         self._set_species(unphosphorylated_form, phosphorylated_form)
 
