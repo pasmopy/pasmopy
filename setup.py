@@ -49,7 +49,7 @@ def setup_package():
         ],
         extras_require={
             "dev": [
-                "black==22.1.0",
+                "black==22.3.0",
                 "flake8==4.0.1",
                 "isort==5.10.1",
                 "pre-commit",
@@ -84,6 +84,7 @@ def setup_package():
             "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
             "Topic :: Scientific/Engineering",
             "Topic :: Scientific/Engineering :: Bio-Informatics",
             "Topic :: Scientific/Engineering :: Medical Science Apps.",
