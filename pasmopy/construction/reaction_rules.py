@@ -1284,7 +1284,7 @@ class ReactionRules(ThermodynamicRestrictions):
             .. math:: kf
 
         * Rate equation
-            .. math:: v = kf * [B]
+            .. math:: v = kf * [B] * [A]
 
         * Differential equation
             .. math:: d[A]/dt = - v
@@ -1294,7 +1294,9 @@ class ReactionRules(ThermodynamicRestrictions):
         protease = description[0].strip(" ")
         protein = description[1].strip(" ")
         self._set_species(protease, protein)
-        self.reactions.append(f"v[{line_num:d}] = x[C.kf{line_num:d}] * y[V.{protease}]")
+        self.reactions.append(
+            f"v[{line_num:d}] = x[C.kf{line_num:d}] * y[V.{protease}] * y[V.{protein}]"
+        )
         counter_protein = 0
         for i, eq in enumerate(self.differential_equations):
             if f"dydt[V.{protein}]" in eq:
