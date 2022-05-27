@@ -85,9 +85,6 @@ class ReactionRules(ThermodynamicRestrictions):
         * - :func:`~pasmopy.construction.reaction_rules.transcribe`
           - *B* transcribes *a*
           - .. math:: V, K, n, (KF, nF)
-        * - :func:`~pasmopy.construction.reaction_rules.is_translated`
-          - *a* is translated into *A*
-          - .. math:: kf
         * - :func:`~pasmopy.construction.reaction_rules.synthesize`
           - *B* synthesizes *A*
           - .. math:: kf
@@ -103,6 +100,9 @@ class ReactionRules(ThermodynamicRestrictions):
         * - :func:`~pasmopy.construction.reaction_rules.translocate`
           - *Acyt* translocates from cytoplasm to nucleus (Vcyt, Vnuc) <--> *Anuc*
           - .. math:: kf, kr, (V_{pre}, V_{post})
+        * - :func:`~pasmopy.construction.reaction_rules.user_defined`
+          - @rxn Reactant --> Product: *define rate equation here*
+          - -
 
     From v0.2.2, you can specify directionality in binding-dissociation reaction via different arrows:
 
@@ -245,13 +245,11 @@ class ReactionRules(ThermodynamicRestrictions):
                 " transcribe",
                 " transcribes",
             ],
-            is_translated=[
-                " is translated into",
-            ],
             synthesize=[
                 " synthesizes",
                 " promotes synthesis of",
                 " increases",
+                " is translated into",
             ],
             is_synthesized=[
                 " is synthesized",
@@ -1190,37 +1188,6 @@ class ReactionRules(ThermodynamicRestrictions):
         if counter_mRNA == 0:
             self.differential_equations.append(f"dydt[V.{mRNA}] = + v[{line_num:d}]")
 
-    def is_translated(self, line_num: int, line: str) -> None:
-        """
-        Examples
-        --------
-        >>> 'a is translated into A'
-
-        Notes
-        -----
-        * Parameters
-            .. math:: kf
-
-        * Rate equation
-            .. math:: v = kf * [a]
-
-        * Differential equation
-            .. math:: d[A]/dt = + v
-
-        """
-        description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
-        mRNA = description[0].strip(" ")
-        protein = description[1].strip(" ")
-        self._set_species(mRNA, protein)
-        self.reactions.append(f"v[{line_num:d}] = x[C.kf{line_num:d}] * y[V.{mRNA}]")
-        counter_protein = 0
-        for i, eq in enumerate(self.differential_equations):
-            if f"dydt[V.{protein}]" in eq:
-                counter_protein += 1
-                self.differential_equations[i] = eq + f" + v[{line_num:d}]"
-        if counter_protein == 0:
-            self.differential_equations.append(f"dydt[V.{protein}] = + v[{line_num:d}]")
-
     def synthesize(self, line_num: int, line: str) -> None:
         """
         Examples
@@ -1429,9 +1396,20 @@ class ReactionRules(ThermodynamicRestrictions):
 
     def user_defined(self, line_num: int, line: str) -> None:
         """
+        Examples
+        --------
+        >>> 'Reactant --> Product: define rate equation here'
+
         Notes
         -----
         Use p[xxx] and u[xxx] for describing parameters and species, respectively.
+
+        * Differential equation
+            .. math::
+
+                d[Reactant]/dt = - v
+
+                d[Product]/dt = + v
         """
         all_params = re.findall("p\[(.*?)\]", line)
         description = self._preprocessing(
