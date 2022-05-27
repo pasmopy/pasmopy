@@ -1,3 +1,4 @@
+import re
 import sys
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
@@ -339,7 +340,9 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         for p_name in args:
             if p_name + f"{line_num:d}" not in self.parameters:
-                self.parameters.append(p_name + f"{line_num:d}")
+                self.parameters.append(
+                    p_name + (f"{line_num:d}" if not p_name[-1].isdecimal() else "")
+                )
 
     def _set_species(self, *args: str) -> None:
         """
@@ -414,7 +417,10 @@ class ReactionRules(ThermodynamicRestrictions):
                                 # If a parameter value is initialized to 0.0 or fixed,
                                 # then add it to param_excluded.
                                 if float(pval.split("=")[1].strip(" ")) == 0.0 or fixed:
-                                    self.param_excluded.append(base_param + f"{line_num:d}")
+                                    self.param_excluded.append(
+                                        base_param + (f"{line_num:d}"
+                                        if not base_param[-1].isdecimal() else "")
+                                    )
                             else:
                                 raise ValueError(
                                     f"line{line_num:d}: Parameter value must be int or float."
@@ -474,14 +480,17 @@ class ReactionRules(ThermodynamicRestrictions):
                             f"Name'{ival.split('=')[0].strip(' ')}' is not defined."
                         )
             line = line.split("|")[0]
-        hit_words: List[str] = []
-        for word in self.rule_words[func_name]:
-            # Choose longer word
-            if word in line:
-                hit_words.append(word)
-        description = line.strip().split(max(hit_words, key=len))
-        if description[1] and not description[1].startswith(" "):
-            self._raise_detection_error(line_num, line)
+        if func_name != "user_defined":
+            hit_words: List[str] = []
+            for word in self.rule_words[func_name]:
+                # Choose longer word
+                if word in line:
+                    hit_words.append(word)
+            description = line.strip().split(max(hit_words, key=len))
+            if description[1] and not description[1].startswith(" "):
+                self._raise_detection_error(line_num, line)
+        else:
+            description = line.strip().split(":")
         return description
 
     @staticmethod
@@ -944,7 +953,7 @@ class ReactionRules(ThermodynamicRestrictions):
                 unphosphorylated_form = description[1].split(arrow)[1].strip(" ")
                 break
         else:
-            raise ValueError(
+            raise ArrowError(
                 f"line{line_num:d}: Use one of ({', '.join(self.fwd_arrows)}) "
                 "to specify the name of the dephosphorylated protein."
             )
@@ -1417,6 +1426,41 @@ class ReactionRules(ThermodynamicRestrictions):
                     -1
                 ] += f" * ({pre_volume.strip()} / {post_volume.strip()})"
 
+    def user_defined(self, line_num: int, line: str) -> None:
+        """
+        Notes
+        -----
+        Use p[xxx] and u[xxx] for describing parameters and species, respectively.
+        """
+        all_params = re.findall("p\[(.*?)\]", line)
+        description = self._preprocessing(
+            sys._getframe().f_code.co_name, line_num, line, *all_params
+        )
+        balance = description[0].strip()
+        rate_equation = description[1].strip()
+        for arrow in self.fwd_arrows:
+            if arrow in balance:
+                reactant, product = balance.split(arrow)
+                self._set_species(reactant.strip(), product.strip())
+                break
+        else:
+            raise ArrowError(f"line{line_num:d}: Use one of {', '.join(self.fwd_arrows)}.")
+        rate_equation = rate_equation.replace("p[", "x[C.").replace("u[", "y[V.").replace("**", "^")
+        self.reactions.append(f"v[{line_num:d}] = " + rate_equation.strip())
+        counter_reactant = 0
+        counter_product = 0
+        for i, eq in enumerate(self.differential_equations):
+            if f"dydt[V.{reactant}]" in eq:
+                counter_reactant += 1
+                self.differential_equations[i] = eq + f" - v[{line_num:d}]"
+            elif f"dydt[V.{product}]" in eq:
+                counter_product += 1
+                self.differential_equations[i] = eq + f" + v[{line_num:d}]"
+        if counter_reactant == 0:
+            self.differential_equations.append(f"dydt[V.{reactant}] = - v[{line_num:d}]")
+        if counter_product == 0:
+            self.differential_equations.append(f"dydt[V.{product}] = + v[{line_num:d}]")
+
     def create_ode(self) -> None:
         """
         Find a keyword in each line to identify the reaction rule and
@@ -1443,6 +1487,13 @@ class ReactionRules(ThermodynamicRestrictions):
                     f"Reaction '{line}' is duplicated in lines "
                     + ", ".join([str(i + 1) for i, rxn in enumerate(lines) if rxn == line])
                 )
+            # About biochemical event
+            elif line.startswith("@rxn "):
+                line = self._remove_prefix(line, "@rxn ")
+                if line.count(":") != 1:
+                    raise SyntaxError(f"line{line_num:d}: Missing colon")
+                else:
+                    self.user_defined(line_num, line)
             # About observables
             elif line.startswith("@obs "):
                 line = self._remove_prefix(line, "@obs ")
