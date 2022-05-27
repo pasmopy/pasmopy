@@ -146,6 +146,8 @@ class ReactionRules(ThermodynamicRestrictions):
         Untreated conditions to get steady state.
     rule_words : dict
         Words to identify reaction rules.
+    nothing : List[str]
+        Available symbol for degradation/creation to/from nothing.
     fwd_arrows : List[str]
         Available arrows for unidirectional reactions.
     double_arrows : List[str]
@@ -267,6 +269,10 @@ class ReactionRules(ThermodynamicRestrictions):
                 " is translocated",
             ],
         ),
+        init=False,
+    )
+    nothing: List[str] = field(
+        default_factory=lambda: ["∅", "0"],
         init=False,
     )
     fwd_arrows: List[str] = field(
@@ -1402,7 +1408,9 @@ class ReactionRules(ThermodynamicRestrictions):
 
         Notes
         -----
-        Use p[xxx] and u[xxx] for describing parameters and species, respectively.
+        * Use p[xxx] and u[xxx] for describing parameters and species, respectively.
+
+        * Use 0 or ∅ for creation from nothing.
 
         * Differential equation
             .. math::
@@ -1429,13 +1437,13 @@ class ReactionRules(ThermodynamicRestrictions):
         counter_reactant = 0
         counter_product = 0
         for i, eq in enumerate(self.differential_equations):
-            if f"dydt[V.{reactant}]" in eq:
+            if f"dydt[V.{reactant}]" in eq and reactant not in self.nothing:
                 counter_reactant += 1
                 self.differential_equations[i] = eq + f" - v[{line_num:d}]"
             elif f"dydt[V.{product}]" in eq:
                 counter_product += 1
                 self.differential_equations[i] = eq + f" + v[{line_num:d}]"
-        if counter_reactant == 0:
+        if counter_reactant == 0 and reactant not in self.nothing:
             self.differential_equations.append(f"dydt[V.{reactant}] = - v[{line_num:d}]")
         if counter_product == 0:
             self.differential_equations.append(f"dydt[V.{product}] = + v[{line_num:d}]")
