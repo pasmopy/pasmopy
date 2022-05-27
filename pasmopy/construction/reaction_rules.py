@@ -334,15 +334,16 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         return self.fwd_arrows + self.double_arrows
 
-    def _set_params(self, line_num: int, *args: str) -> None:
+    def _set_params(self, line_num: Optional[int], *args: str) -> None:
         """
         Set model parameters.
         """
         for p_name in args:
-            if p_name + f"{line_num:d}" not in self.parameters:
-                self.parameters.append(
-                    p_name + (f"{line_num:d}" if not p_name[-1].isdecimal() else "")
-                )
+            p_name_used = p_name + (
+                f"{line_num:d}" if not p_name[-1].isdecimal() and isinstance(line_num, int) else ""
+            )
+            if p_name_used not in self.parameters:
+                self.parameters.append(p_name_used)
 
     def _set_species(self, *args: str) -> None:
         """
@@ -1487,54 +1488,76 @@ class ReactionRules(ThermodynamicRestrictions):
                     f"Reaction '{line}' is duplicated in lines "
                     + ", ".join([str(i + 1) for i, rxn in enumerate(lines) if rxn == line])
                 )
-            # About biochemical event
-            elif line.startswith("@rxn "):
-                line = self._remove_prefix(line, "@rxn ")
-                if line.count(":") != 1:
-                    raise SyntaxError(f"line{line_num:d}: Missing colon")
-                else:
-                    self.user_defined(line_num, line)
-            # About observables
-            elif line.startswith("@obs "):
-                line = self._remove_prefix(line, "@obs ")
-                if line.count(":") != 1:
-                    raise SyntaxError(
-                        f"line{line_num:d}: Missing colon\n"
-                        "Should be `@obs <observable name>: <expression>`."
-                    )
-                else:
-                    self.obs_desc.append(line.split(":"))
-            # About simulation info.
-            elif line.startswith("@sim "):
-                line = self._remove_prefix(line, "@sim ")
-                if line.count(":") != 1:
-                    raise SyntaxError(f"line{line_num:d}: Missing colon")
-                else:
-                    if line.startswith("tspan"):
-                        t_info = line.split(":")[-1].strip()
-                        if "[" in t_info and "]" in t_info:
-                            [t0, tf] = t_info.split("[")[-1].split("]")[0].split(",")
-                            if t0.strip(" ").isdecimal() and tf.strip(" ").isdecimal():
-                                self.sim_tspan.append(t0)
-                                self.sim_tspan.append(tf)
-                            else:
-                                raise TypeError("@sim tspan: [t0, tf] must be a list of integers.")
-                        else:
-                            raise ValueError(
-                                "`tspan` must be a two element vector [t0, tf] "
-                                "specifying the initial and final times."
-                            )
-                    elif line.startswith("unperturbed"):
-                        self.sim_unperturbed += line.split(":")[-1].strip()
-                    elif line.startswith("condition "):
-                        self.sim_conditions.append(
-                            self._remove_prefix(line, "condition ").split(":")
+            elif line.startswith("@"):
+                # About biochemical event
+                if line.startswith("@rxn "):
+                    line = self._remove_prefix(line, "@rxn ")
+                    if line.count(":") != 1:
+                        raise SyntaxError(f"line{line_num:d}: Missing colon")
+                    else:
+                        self.user_defined(line_num, line)
+                # About observables
+                elif line.startswith("@obs "):
+                    line = self._remove_prefix(line, "@obs ")
+                    if line.count(":") != 1:
+                        raise SyntaxError(
+                            f"line{line_num:d}: Missing colon\n"
+                            "Should be `@obs <observable name>: <expression>`."
                         )
                     else:
-                        raise ValueError(
-                            f"(line{line_num:d}) Available options are: "
-                            "'@sim tspan:', '@sim unperturbed:', or '@sim condition XXX:'."
-                        )
+                        self.obs_desc.append(line.split(":"))
+                # About simulation info.
+                elif line.startswith("@sim "):
+                    line = self._remove_prefix(line, "@sim ")
+                    if line.count(":") != 1:
+                        raise SyntaxError(f"line{line_num:d}: Missing colon")
+                    else:
+                        if line.startswith("tspan"):
+                            t_info = line.split(":")[-1].strip()
+                            if "[" in t_info and "]" in t_info:
+                                [t0, tf] = t_info.split("[")[-1].split("]")[0].split(",")
+                                if t0.strip(" ").isdecimal() and tf.strip(" ").isdecimal():
+                                    self.sim_tspan.append(t0)
+                                    self.sim_tspan.append(tf)
+                                else:
+                                    raise TypeError("@sim tspan: [t0, tf] must be a list of integers.")
+                            else:
+                                raise ValueError(
+                                    "`tspan` must be a two element vector [t0, tf] "
+                                    "specifying the initial and final times."
+                                )
+                        elif line.startswith("unperturbed"):
+                            self.sim_unperturbed += line.split(":")[-1].strip()
+                        elif line.startswith("condition "):
+                            self.sim_conditions.append(
+                                self._remove_prefix(line, "condition ").split(":")
+                            )
+                        else:
+                            raise ValueError(
+                                f"(line{line_num:d}) Available options are: "
+                                "'@sim tspan:', '@sim unperturbed:', or '@sim condition XXX:'."
+                            )
+                # Additional species
+                elif line.startswith("@add "):
+                    line = self._remove_prefix(line, "@add ")
+                    if line.startswith("species "):
+                        line = self._remove_prefix(line, "species ")
+                        new_species = line.strip()
+                        if new_species not in self.species:
+                            self._set_species(new_species)
+                        else:
+                            raise NameError(f"{new_species} is already defined.")
+                    elif line.startswith("param "):
+                        line = self._remove_prefix(line, "param ")
+                        new_param =line.strip()
+                        if new_param not in self.parameters:
+                            self._set_params(None, new_param)
+                        else:
+                            raise NameError(f"{new_param} is already defined.")
+                else:
+                    raise ValueError(
+                        "Available symbols are: @rxn, @add, @obs, @sim."
+                    )
             # Detect reaction rule
             else:
                 for reaction_rule, words in self.rule_words.items():
