@@ -338,13 +338,17 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         return self.fwd_arrows + self.double_arrows
 
-    def _set_params(self, line_num: Optional[int], *args: str) -> None:
+    def _set_params(self, line_num: Optional[int], func_name: Optional[str], *args: str) -> None:
         """
         Set model parameters.
         """
         for p_name in args:
             p_name_used = p_name + (
-                f"{line_num:d}" if not p_name[-1].isdecimal() and isinstance(line_num, int) else ""
+                f"{line_num:d}"
+                if not p_name[-1].isdecimal()
+                and isinstance(line_num, int)
+                and func_name != "user_defined"
+                else ""
             )
             if p_name_used not in self.parameters:
                 self.parameters.append(p_name_used)
@@ -370,6 +374,12 @@ class ReactionRules(ThermodynamicRestrictions):
                 else ""
             )
         )
+
+    @staticmethod
+    def _get_base_pname(param_name: str) -> str:
+        while param_name[-1].isdecimal():
+            param_name = param_name[:-1]
+        return param_name
 
     def _preprocessing(
         self,
@@ -398,7 +408,7 @@ class ReactionRules(ThermodynamicRestrictions):
         description : list of strings
 
         """
-        self._set_params(line_num, *args)
+        self._set_params(line_num, func_name, *args)
         if "|" in line:
             if line.split("|")[1].strip():
                 param_values = line.split("|")[1].strip().split(",")
@@ -416,15 +426,17 @@ class ReactionRules(ThermodynamicRestrictions):
                                 self.param_info.append(
                                     "x[C."
                                     + base_param
-                                    + f"{line_num:d}] = "
+                                    + (f"{line_num:d}]" if func_name != "user_defined" else "]")
+                                    + " = "
                                     + pval.split("=")[1].strip(" ")
                                 )
                                 # If a parameter value is initialized to 0.0 or fixed,
                                 # then add it to param_excluded.
                                 if float(pval.split("=")[1].strip(" ")) == 0.0 or fixed:
                                     self.param_excluded.append(
-                                        base_param + (f"{line_num:d}"
-                                        if not base_param[-1].isdecimal() else "")
+                                        base_param + (
+                                            f"{line_num:d}" if func_name != "user_defined" else ""
+                                        )
                                     )
                             else:
                                 raise ValueError(
@@ -438,25 +450,39 @@ class ReactionRules(ThermodynamicRestrictions):
                 elif param_values[0].strip(" ").isdecimal():
                     # Parameter constraints
                     for param_name in args:
-                        if f"{param_name}{int(param_values[0]):d}" not in self.parameters:
+                        # base_pname = self._get_base_pname(param_name)
+                        if (
+                            f"{self._get_base_pname(param_name)}{int(param_values[0]):d}"
+                        ) not in self.parameters:
                             raise ValueError(
                                 f"Line {line_num:d} and {int(param_values[0]):d} : "
                                 "Different reaction rules in parameter constraints."
                             )
                         else:
-                            self.param_excluded.append(f"{param_name}{line_num:d}")
-                            self.param_info.append(
-                                f"x[C.{param_name}"
-                                f"{line_num:d}] = "
-                                f"x[C.{param_name}"
-                                f"{int(param_values[0]):d}]"
-                            )
-                            self.param_constraints.append(
-                                f"x[C.{param_name}"
-                                f"{line_num:d}] = "
-                                f"x[C.{param_name}"
-                                f"{int(param_values[0]):d}]"
-                            )
+                            if f"x[C.{param_name}" + (
+                                f"{line_num:d}]" if func_name != "user_defined" else "]"
+                            ) != (
+                                f"x[C.{self._get_base_pname(param_name)}"
+                                + f"{int(param_values[0]):d}]"
+                            ):
+                                self.param_excluded.append(
+                                    f"{param_name}"
+                                    + (f"{line_num:d}" if func_name != "user_defined" else "")
+                                )
+                                self.param_info.append(
+                                    f"x[C.{param_name}"
+                                    + (f"{line_num:d}]" if func_name != "user_defined" else "]")
+                                    + " = "
+                                    + f"x[C.{self._get_base_pname(param_name)}"
+                                    + f"{int(param_values[0]):d}]"
+                                )
+                                self.param_constraints.append(
+                                    f"x[C.{param_name}"
+                                    + (f"{line_num:d}]" if func_name != "user_defined" else "]")
+                                    + " = "
+                                    + f"x[C.{self._get_base_pname(param_name)}"
+                                    + f"{int(param_values[0]):d}]"
+                                )
                 else:
                     raise ValueError(
                         f"line{line_num:d}: {line}\nInvalid expression in the input parameter."
@@ -585,8 +611,14 @@ class ReactionRules(ThermodynamicRestrictions):
         >>> 'AB --> A + B'  # dissociate, unidirectional
         >>> 'A + B <--> AB' # bind and dissociate, bidirectional
         """
+        for arrow in self._available_arrows():
+            if arrow in line:
+                params_used = ["kf"] if arrow in self.fwd_arrows else ["kf", "kr"]
+                break
+        else:
+            raise ArrowError(self._get_arrow_error_message(line_num) + ".")
         description = self._preprocessing(
-            sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
+            sys._getframe().f_code.co_name, line_num, line, *params_used
         )
         is_binding: bool
         is_unidirectional: bool
@@ -1419,7 +1451,7 @@ class ReactionRules(ThermodynamicRestrictions):
 
                 d[Product]/dt = + v
         """
-        all_params = re.findall("p\[(.*?)\]", line)
+        all_params = re.findall(r"p\[(.*?)\]", line)
         description = self._preprocessing(
             sys._getframe().f_code.co_name, line_num, line, *all_params
         )
@@ -1511,7 +1543,8 @@ class ReactionRules(ThermodynamicRestrictions):
                 line = self._remove_prefix(line, "param ")
                 new_param =line.strip()
                 if new_param not in self.parameters:
-                    self._set_params(None, new_param)
+                    self._set_params(None, None, new_param)
+                    self.param_excluded.append(new_param)
                 else:
                     raise NameError(f"{new_param} is already defined.")
         else:
