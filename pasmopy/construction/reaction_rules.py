@@ -1410,7 +1410,7 @@ class ReactionRules(ThermodynamicRestrictions):
         -----
         * Use p[xxx] and u[xxx] for describing parameters and species, respectively.
 
-        * Use 0 or ∅ for creation from nothing.
+        * Use '0' or '∅' for degradation/creation to/from nothing.
 
         * Differential equation
             .. math::
@@ -1432,7 +1432,7 @@ class ReactionRules(ThermodynamicRestrictions):
                 break
         else:
             raise ArrowError(f"line{line_num:d}: Use one of {', '.join(self.fwd_arrows)}.")
-        rate_equation = rate_equation.replace("p[", "x[C.").replace("u[", "y[V.").replace("**", "^")
+        rate_equation = rate_equation.replace("p[", "x[C.").replace("u[", "y[V.").replace("^", "**")
         self.reactions.append(f"v[{line_num:d}] = " + rate_equation.strip())
         counter_reactant = 0
         counter_product = 0
@@ -1440,13 +1440,84 @@ class ReactionRules(ThermodynamicRestrictions):
             if f"dydt[V.{reactant}]" in eq and reactant not in self.nothing:
                 counter_reactant += 1
                 self.differential_equations[i] = eq + f" - v[{line_num:d}]"
-            elif f"dydt[V.{product}]" in eq:
+            elif f"dydt[V.{product}]" in eq and product not in self.nothing:
                 counter_product += 1
                 self.differential_equations[i] = eq + f" + v[{line_num:d}]"
         if counter_reactant == 0 and reactant not in self.nothing:
             self.differential_equations.append(f"dydt[V.{reactant}] = - v[{line_num:d}]")
-        if counter_product == 0:
+        if counter_product == 0 and product not in self.nothing:
             self.differential_equations.append(f"dydt[V.{product}] = + v[{line_num:d}]")
+
+    def _extract_event(self, line_num: int, line: str):
+        # About biochemical event
+        if line.startswith("@rxn "):
+            line = self._remove_prefix(line, "@rxn ")
+            if line.count(":") != 1:
+                raise SyntaxError(f"line{line_num:d}: Missing colon")
+            else:
+                self.user_defined(line_num, line)
+        # About observables
+        elif line.startswith("@obs "):
+            line = self._remove_prefix(line, "@obs ")
+            if line.count(":") != 1:
+                raise SyntaxError(
+                    f"line{line_num:d}: Missing colon\n"
+                    "Should be `@obs <observable name>: <expression>`."
+                )
+            else:
+                self.obs_desc.append(line.split(":"))
+        # About simulation info.
+        elif line.startswith("@sim "):
+            line = self._remove_prefix(line, "@sim ")
+            if line.count(":") != 1:
+                raise SyntaxError(f"line{line_num:d}: Missing colon")
+            else:
+                if line.startswith("tspan"):
+                    t_info = line.split(":")[-1].strip()
+                    if "[" in t_info and "]" in t_info:
+                        [t0, tf] = t_info.split("[")[-1].split("]")[0].split(",")
+                        if t0.strip(" ").isdecimal() and tf.strip(" ").isdecimal():
+                            self.sim_tspan.append(t0)
+                            self.sim_tspan.append(tf)
+                        else:
+                            raise TypeError("@sim tspan: [t0, tf] must be a list of integers.")
+                    else:
+                        raise ValueError(
+                            "`tspan` must be a two element vector [t0, tf] "
+                            "specifying the initial and final times."
+                        )
+                elif line.startswith("unperturbed"):
+                    self.sim_unperturbed += line.split(":")[-1].strip()
+                elif line.startswith("condition "):
+                    self.sim_conditions.append(
+                        self._remove_prefix(line, "condition ").split(":")
+                    )
+                else:
+                    raise ValueError(
+                        f"(line{line_num:d}) Available options are: "
+                        "'@sim tspan:', '@sim unperturbed:', or '@sim condition XXX:'."
+                    )
+        # Additional species
+        elif line.startswith("@add "):
+            line = self._remove_prefix(line, "@add ")
+            if line.startswith("species "):
+                line = self._remove_prefix(line, "species ")
+                new_species = line.strip()
+                if new_species not in self.species:
+                    self._set_species(new_species)
+                else:
+                    raise NameError(f"{new_species} is already defined.")
+            elif line.startswith("param "):
+                line = self._remove_prefix(line, "param ")
+                new_param =line.strip()
+                if new_param not in self.parameters:
+                    self._set_params(None, new_param)
+                else:
+                    raise NameError(f"{new_param} is already defined.")
+        else:
+            raise ValueError(
+                "Available symbols are: @rxn, @add, @obs, @sim."
+            )
 
     def create_ode(self) -> None:
         """
@@ -1475,75 +1546,7 @@ class ReactionRules(ThermodynamicRestrictions):
                     + ", ".join([str(i + 1) for i, rxn in enumerate(lines) if rxn == line])
                 )
             elif line.startswith("@"):
-                # About biochemical event
-                if line.startswith("@rxn "):
-                    line = self._remove_prefix(line, "@rxn ")
-                    if line.count(":") != 1:
-                        raise SyntaxError(f"line{line_num:d}: Missing colon")
-                    else:
-                        self.user_defined(line_num, line)
-                # About observables
-                elif line.startswith("@obs "):
-                    line = self._remove_prefix(line, "@obs ")
-                    if line.count(":") != 1:
-                        raise SyntaxError(
-                            f"line{line_num:d}: Missing colon\n"
-                            "Should be `@obs <observable name>: <expression>`."
-                        )
-                    else:
-                        self.obs_desc.append(line.split(":"))
-                # About simulation info.
-                elif line.startswith("@sim "):
-                    line = self._remove_prefix(line, "@sim ")
-                    if line.count(":") != 1:
-                        raise SyntaxError(f"line{line_num:d}: Missing colon")
-                    else:
-                        if line.startswith("tspan"):
-                            t_info = line.split(":")[-1].strip()
-                            if "[" in t_info and "]" in t_info:
-                                [t0, tf] = t_info.split("[")[-1].split("]")[0].split(",")
-                                if t0.strip(" ").isdecimal() and tf.strip(" ").isdecimal():
-                                    self.sim_tspan.append(t0)
-                                    self.sim_tspan.append(tf)
-                                else:
-                                    raise TypeError("@sim tspan: [t0, tf] must be a list of integers.")
-                            else:
-                                raise ValueError(
-                                    "`tspan` must be a two element vector [t0, tf] "
-                                    "specifying the initial and final times."
-                                )
-                        elif line.startswith("unperturbed"):
-                            self.sim_unperturbed += line.split(":")[-1].strip()
-                        elif line.startswith("condition "):
-                            self.sim_conditions.append(
-                                self._remove_prefix(line, "condition ").split(":")
-                            )
-                        else:
-                            raise ValueError(
-                                f"(line{line_num:d}) Available options are: "
-                                "'@sim tspan:', '@sim unperturbed:', or '@sim condition XXX:'."
-                            )
-                # Additional species
-                elif line.startswith("@add "):
-                    line = self._remove_prefix(line, "@add ")
-                    if line.startswith("species "):
-                        line = self._remove_prefix(line, "species ")
-                        new_species = line.strip()
-                        if new_species not in self.species:
-                            self._set_species(new_species)
-                        else:
-                            raise NameError(f"{new_species} is already defined.")
-                    elif line.startswith("param "):
-                        line = self._remove_prefix(line, "param ")
-                        new_param =line.strip()
-                        if new_param not in self.parameters:
-                            self._set_params(None, new_param)
-                        else:
-                            raise NameError(f"{new_param} is already defined.")
-                else:
-                    raise ValueError(
-                        "Available symbols are: @rxn, @add, @obs, @sim."
-                    )
+                self._extract_event(line_num, line)
             # Detect reaction rule
             else:
                 for reaction_rule, words in self.rule_words.items():
