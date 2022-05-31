@@ -434,9 +434,8 @@ class ReactionRules(ThermodynamicRestrictions):
                                 # then add it to param_excluded.
                                 if float(pval.split("=")[1].strip(" ")) == 0.0 or fixed:
                                     self.param_excluded.append(
-                                        base_param + (
-                                            f"{line_num:d}" if func_name != "user_defined" else ""
-                                        )
+                                        base_param
+                                        + (f"{line_num:d}" if func_name != "user_defined" else "")
                                     )
                             else:
                                 raise ValueError(
@@ -1464,7 +1463,9 @@ class ReactionRules(ThermodynamicRestrictions):
                 break
         else:
             raise ArrowError(f"line{line_num:d}: Use one of {', '.join(self.fwd_arrows)}.")
-        rate_equation = rate_equation.replace("p[", "x[C.").replace("u[", "y[V.").replace("^", "**")
+        rate_equation = (
+            rate_equation.replace("p[", "x[C.").replace("u[", "y[V.").replace("^", "**")
+        )
         self.reactions.append(f"v[{line_num:d}] = " + rate_equation.strip())
         counter_reactant = 0
         counter_product = 0
@@ -1521,9 +1522,7 @@ class ReactionRules(ThermodynamicRestrictions):
                 elif line.startswith("unperturbed"):
                     self.sim_unperturbed += line.split(":")[-1].strip()
                 elif line.startswith("condition "):
-                    self.sim_conditions.append(
-                        self._remove_prefix(line, "condition ").split(":")
-                    )
+                    self.sim_conditions.append(self._remove_prefix(line, "condition ").split(":"))
                 else:
                     raise ValueError(
                         f"(line{line_num:d}) Available options are: "
@@ -1541,7 +1540,7 @@ class ReactionRules(ThermodynamicRestrictions):
                     raise NameError(f"{new_species} is already defined.")
             elif line.startswith("param "):
                 line = self._remove_prefix(line, "param ")
-                new_param =line.strip()
+                new_param = line.strip()
                 if new_param not in self.parameters:
                     self._set_params(None, None, new_param)
                     self.param_excluded.append(new_param)
@@ -1550,9 +1549,7 @@ class ReactionRules(ThermodynamicRestrictions):
             else:
                 raise ValueError(f"(line{line_num:d}) Must be either @add param or @add species.")
         else:
-            raise ValueError(
-                "Available symbols are: @rxn, @add, @obs, @sim."
-            )
+            raise ValueError("Available symbols are: @rxn, @add, @obs, @sim.")
 
     def create_ode(self) -> None:
         """

@@ -2,10 +2,10 @@ import os
 import shutil
 
 import numpy as np
-from pasmopy import Text2Model, Model, optimize, run_simulation
 
-from .C import INDENT, PPMEK, CONDITIONS, BOUNDS, NORMALIZATION, EXPERIMENTAL_DATA
+from pasmopy import Model, Text2Model, optimize, run_simulation
 
+from .C import BOUNDS, CONDITIONS, EXPERIMENTAL_DATA, INDENT, NORMALIZATION, PPMEK
 
 PATH_TO_MODEL = os.path.join(
     os.path.dirname(__file__),
@@ -70,7 +70,7 @@ def test_model_construction():
                 "sol = solve_ode(self.diffeq, y0, self.t, tuple(x), method='BDF')",
             )
         elif line.startswith(f"{INDENT}def set_data(self)"):
-            lines = lines[:line_num + 1]
+            lines = lines[: line_num + 1]
             lines[line_num] = EXPERIMENTAL_DATA
             break
     else:
@@ -95,6 +95,7 @@ def test_parameter_estimation(workers: int = -1):
         assert os.path.isfile(
             os.path.join(model.path, "figure", "simulation", "1", f"{obs_name}.png")
         )
+
 
 def test_cleanup():
     assert os.path.isdir(PATH_TO_MODEL)
