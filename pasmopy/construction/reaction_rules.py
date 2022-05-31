@@ -1370,20 +1370,23 @@ class ReactionRules(ThermodynamicRestrictions):
                 d[A\_at\_post]/dt = + v * (V_{pre} / V_{post})
 
         """
+        for arrow in self._available_arrows():
+            if arrow in line:
+                is_unidirectional = True if arrow in self.fwd_arrows else False
+                params_used = ["kf"] if is_unidirectional else ["kf", "kr"]
+                break
+        else:
+            raise ArrowError(self._get_arrow_error_message(line_num))
         description = self._preprocessing(
-            sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
+            sys._getframe().f_code.co_name, line_num, line, *params_used
         )
         pre_translocation = description[0].strip(" ")
-        for arrow in self.double_arrows:
+        for arrow in self._available_arrows():
             if arrow in description[1]:
                 post_translocation = description[1].split(arrow)[1].strip(" ")
                 break
         else:
-            raise ArrowError(
-                f"line{line_num:d}: "
-                f"Use one of ({', '.join(self.double_arrows)}) to specify "
-                "the name of the species after translocation."
-            )
+            assert False
         if pre_translocation == post_translocation:
             raise ValueError(f"line{line_num:d}: {post_translocation} <- Use a different name.")
         # Information about compartment volumes
@@ -1398,15 +1401,21 @@ class ReactionRules(ThermodynamicRestrictions):
         self._set_species(pre_translocation, post_translocation)
         self.reactions.append(
             f"v[{line_num:d}] = x[C.kf{line_num:d}] * y[V.{pre_translocation}]"
-            f" - x[C.kr{line_num:d}] * y[V.{post_translocation}]"
+            + (
+                f" - x[C.kr{line_num:d}] * y[V.{post_translocation}]"
+                if not is_unidirectional else ""
+            )
         )
         if float(pre_volume.strip(" ")) != float(post_volume.strip(" ")):
             self.reactions[-1] = (
                 f"v[{line_num:d}] = "
                 f"x[C.kf{line_num:d}] * y[V.{pre_translocation}]"
-                f" - x[C.kr{line_num:d}] * "
-                f"({post_volume.strip()} / {pre_volume.strip()}) * "
-                f"y[V.{post_translocation}]"
+                + (
+                    f" - x[C.kr{line_num:d}] * "
+                    f"({post_volume.strip()} / {pre_volume.strip()}) * "
+                    f"y[V.{post_translocation}]"
+                    if not is_unidirectional else ""
+                )
             )
         counter_pre_translocation, counter_post_translocation = (0, 0)
         for i, eq in enumerate(self.differential_equations):
