@@ -1547,6 +1547,8 @@ class ReactionRules(ThermodynamicRestrictions):
                     self.param_excluded.append(new_param)
                 else:
                     raise NameError(f"{new_param} is already defined.")
+            else:
+                raise ValueError(f"(line{line_num:d}) Must be either @add param or @add species.")
         else:
             raise ValueError(
                 "Available symbols are: @rxn, @add, @obs, @sim."
