@@ -375,19 +375,116 @@ class ReactionRules(ThermodynamicRestrictions):
             )
         )
 
+    def _process_pval_section(self, func_name: str, line_num: int, line: str, *args: str) -> None:
+
+        param_values = line.split("|")[1].strip().split(",")
+        if all("=" in pval for pval in param_values):
+            for pval in param_values:
+                base_param = pval.split("=")[0].strip(" ")
+                if base_param.startswith("const "):
+                    # Parameter names with 'const' will be added to param_excluded.
+                    base_param = base_param.split("const ")[-1]
+                    fixed = True
+                else:
+                    fixed = False
+                if base_param in args:
+                    if self._isfloat(pval.split("=")[1].strip(" ")):
+                        self.param_info.append(
+                            "x[C."
+                            + base_param
+                            + (f"{line_num:d}]" if func_name != "user_defined" else "]")
+                            + " = "
+                            + pval.split("=")[1].strip(" ")
+                        )
+                        # If a parameter value is initialized to 0.0 or fixed,
+                        # then add it to param_excluded.
+                        if float(pval.split("=")[1].strip(" ")) == 0.0 or fixed:
+                            self.param_excluded.append(
+                                base_param
+                                + (f"{line_num:d}" if func_name != "user_defined" else "")
+                            )
+                    else:
+                        raise ValueError(
+                            f"line{line_num:d}: Parameter value must be int or float."
+                        )
+                else:
+                    raise ValueError(
+                        f"line{line_num:d}: '{pval.split('=')[0].strip(' ')}'\n"
+                        f"Available parameters are: {', '.join(args)}."
+                    )
+        elif param_values[0].strip(" ").isdecimal():
+            # Parameter constraints
+            for param_name in args:
+                # base_pname = self._get_base_pname(param_name)
+                if (
+                    f"{self._get_base_pname(param_name)}{int(param_values[0]):d}"
+                ) not in self.parameters:
+                    raise ValueError(
+                        f"Line {line_num:d} and {int(param_values[0]):d} : "
+                        "Different reaction rules in parameter constraints."
+                    )
+                else:
+                    if f"x[C.{param_name}" + (
+                        f"{line_num:d}]" if func_name != "user_defined" else "]"
+                    ) != (
+                        f"x[C.{self._get_base_pname(param_name)}"
+                        + f"{int(param_values[0]):d}]"
+                    ):
+                        self.param_excluded.append(
+                            f"{param_name}"
+                            + (f"{line_num:d}" if func_name != "user_defined" else "")
+                        )
+                        self.param_info.append(
+                            f"x[C.{param_name}"
+                            + (f"{line_num:d}]" if func_name != "user_defined" else "]")
+                            + " = "
+                            + f"x[C.{self._get_base_pname(param_name)}"
+                            + f"{int(param_values[0]):d}]"
+                        )
+                        self.param_constraints.append(
+                            f"x[C.{param_name}"
+                            + (f"{line_num:d}]" if func_name != "user_defined" else "]")
+                            + " = "
+                            + f"x[C.{self._get_base_pname(param_name)}"
+                            + f"{int(param_values[0]):d}]"
+                        )
+        else:
+            raise ValueError(
+                f"line{line_num:d}: {line}\nInvalid expression in the input parameter."
+            )
+
+    def _process_ival_section(self, line_num: int, line: str) -> None:
+
+        initial_values = line.split("|")[2].strip().split(",")
+        for ival in initial_values:
+            if ival.startswith("fixed "):
+                ival = ival.split("fixed ")[-1]
+                self.fixed_species.append(ival.split("=")[0].strip(" "))
+            if ival.split("=")[0].strip(" ") in line.split("|")[0]:
+                if self._isfloat(ival.split("=")[1].strip(" ")):
+                    self.init_info.append(
+                        "y0[V."
+                        + ival.split("=")[0].strip(" ")
+                        + "] = "
+                        + ival.split("=")[1].strip(" ")
+                    )
+                else:
+                    raise ValueError(
+                        f"line{line_num:d}: Initial value must be int or float."
+                    )
+            else:
+                raise NameError(
+                    f"line{line_num:d}: "
+                    f"Name'{ival.split('=')[0].strip(' ')}' is not defined."
+                )
+
     @staticmethod
     def _get_base_pname(param_name: str) -> str:
         while param_name[-1].isdecimal():
             param_name = param_name[:-1]
         return param_name
 
-    def _preprocessing(
-        self,
-        func_name: str,
-        line_num: int,
-        line: str,
-        *args: str,
-    ) -> List[str]:
+    def _preprocessing(self, func_name: str, line_num: int, line: str, *args: str) -> List[str]:
         """
         Extract the information about parameter and/or initial values
         if '|' in the line and find a keyword to identify reaction rules.
@@ -411,104 +508,9 @@ class ReactionRules(ThermodynamicRestrictions):
         self._set_params(line_num, func_name, *args)
         if "|" in line:
             if line.split("|")[1].strip():
-                param_values = line.split("|")[1].strip().split(",")
-                if all("=" in pval for pval in param_values):
-                    for pval in param_values:
-                        base_param = pval.split("=")[0].strip(" ")
-                        if base_param.startswith("const "):
-                            # Parameter names with 'const' will be added to param_excluded.
-                            base_param = base_param.split("const ")[-1]
-                            fixed = True
-                        else:
-                            fixed = False
-                        if base_param in args:
-                            if self._isfloat(pval.split("=")[1].strip(" ")):
-                                self.param_info.append(
-                                    "x[C."
-                                    + base_param
-                                    + (f"{line_num:d}]" if func_name != "user_defined" else "]")
-                                    + " = "
-                                    + pval.split("=")[1].strip(" ")
-                                )
-                                # If a parameter value is initialized to 0.0 or fixed,
-                                # then add it to param_excluded.
-                                if float(pval.split("=")[1].strip(" ")) == 0.0 or fixed:
-                                    self.param_excluded.append(
-                                        base_param
-                                        + (f"{line_num:d}" if func_name != "user_defined" else "")
-                                    )
-                            else:
-                                raise ValueError(
-                                    f"line{line_num:d}: Parameter value must be int or float."
-                                )
-                        else:
-                            raise ValueError(
-                                f"line{line_num:d}: '{pval.split('=')[0].strip(' ')}'\n"
-                                f"Available parameters are: {', '.join(args)}."
-                            )
-                elif param_values[0].strip(" ").isdecimal():
-                    # Parameter constraints
-                    for param_name in args:
-                        # base_pname = self._get_base_pname(param_name)
-                        if (
-                            f"{self._get_base_pname(param_name)}{int(param_values[0]):d}"
-                        ) not in self.parameters:
-                            raise ValueError(
-                                f"Line {line_num:d} and {int(param_values[0]):d} : "
-                                "Different reaction rules in parameter constraints."
-                            )
-                        else:
-                            if f"x[C.{param_name}" + (
-                                f"{line_num:d}]" if func_name != "user_defined" else "]"
-                            ) != (
-                                f"x[C.{self._get_base_pname(param_name)}"
-                                + f"{int(param_values[0]):d}]"
-                            ):
-                                self.param_excluded.append(
-                                    f"{param_name}"
-                                    + (f"{line_num:d}" if func_name != "user_defined" else "")
-                                )
-                                self.param_info.append(
-                                    f"x[C.{param_name}"
-                                    + (f"{line_num:d}]" if func_name != "user_defined" else "]")
-                                    + " = "
-                                    + f"x[C.{self._get_base_pname(param_name)}"
-                                    + f"{int(param_values[0]):d}]"
-                                )
-                                self.param_constraints.append(
-                                    f"x[C.{param_name}"
-                                    + (f"{line_num:d}]" if func_name != "user_defined" else "]")
-                                    + " = "
-                                    + f"x[C.{self._get_base_pname(param_name)}"
-                                    + f"{int(param_values[0]):d}]"
-                                )
-                else:
-                    raise ValueError(
-                        f"line{line_num:d}: {line}\nInvalid expression in the input parameter."
-                    )
+                self._process_pval_section(func_name, line_num, line, *args)
             if line.count("|") > 1 and line.split("|")[2].strip():
-                initial_values = line.split("|")[2].strip().split(",")
-                for ival in initial_values:
-                    if ival.startswith("fixed "):
-                        ival = ival.split("fixed ")[-1]
-                        self.fixed_species.append(ival.split("=")[0].strip(" "))
-                    if ival.split("=")[0].strip(" ") in line.split("|")[0]:
-                        if self._isfloat(ival.split("=")[1].strip(" ")):
-                            self.init_info.append(
-                                "y0[V."
-                                + ival.split("=")[0].strip(" ")
-                                + "] = "
-                                + ival.split("=")[1].strip(" ")
-                            )
-                        else:
-                            raise ValueError(
-                                f"line{line_num:d}: Initial value must be int or float."
-                            )
-                    else:
-                        raise NameError(
-                            f"line{line_num:d}: "
-                            f"Name'{ival.split('=')[0].strip(' ')}' is not defined."
-                        )
+                self._process_ival_section(line_num, line)
             line = line.split("|")[0]
         if func_name != "user_defined":
             hit_words: List[str] = []
