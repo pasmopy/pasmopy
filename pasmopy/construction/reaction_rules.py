@@ -427,8 +427,7 @@ class ReactionRules(ThermodynamicRestrictions):
                     if f"x[C.{param_name}" + (
                         f"{line_num:d}]" if func_name != "user_defined" else "]"
                     ) != (
-                        f"x[C.{self._get_base_pname(param_name)}"
-                        + f"{int(param_values[0]):d}]"
+                        f"x[C.{self._get_base_pname(param_name)}" + f"{int(param_values[0]):d}]"
                     ):
                         self.param_excluded.append(
                             f"{param_name}"
@@ -469,13 +468,10 @@ class ReactionRules(ThermodynamicRestrictions):
                         + ival.split("=")[1].strip(" ")
                     )
                 else:
-                    raise ValueError(
-                        f"line{line_num:d}: Initial value must be int or float."
-                    )
+                    raise ValueError(f"line{line_num:d}: Initial value must be int or float.")
             else:
                 raise NameError(
-                    f"line{line_num:d}: "
-                    f"Name'{ival.split('=')[0].strip(' ')}' is not defined."
+                    f"line{line_num:d}: " f"Name'{ival.split('=')[0].strip(' ')}' is not defined."
                 )
 
     @staticmethod
