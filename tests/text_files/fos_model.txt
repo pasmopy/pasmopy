@@ -8,7 +8,7 @@ ERKc translocates to nucleus (0.94, 0.22) <--> ERKn | const kf=1.20e-02, const k
 pERKc translocates to nucleus (0.94, 0.22) <--> pERKn | const kf=1.20e-02, const kr=1.80e-02
 ppERKc translocates to nucleus (0.94, 0.22) <--> ppERKn | const kf=1.10e-02, const kr=1.30e-02
 ppERKn transcribes PreduspmRNAn
-PreduspmRNAn synthesizes duspmRNAc
+PreduspmRNAn translocates to cytoplasm --> duspmRNAc
 duspmRNAc is degraded
 duspmRNAc is translated into DUSPc
 ppERKc phosphorylates DUSPc --> pDUSPc
@@ -29,7 +29,7 @@ pCREBn is dephosphorylated --> CREBn
 ppERKn phosphorylates Elk1n --> pElk1n || Elk1n=1.51e03
 pElk1n is dephosphorylated --> Elk1n
 pCREBn & pElk1n transcribes PrecfosmRNAn, repressed by Fn
-PrecfosmRNAn synthesizes cfosmRNAc
+PrecfosmRNAn translocates to cytoplasm --> cfosmRNAc
 cfosmRNAc is degraded
 cfosmRNAc is translated into cFOSc
 ppERKc phosphorylates cFOSc --> pcFOSc
@@ -55,7 +55,7 @@ pDUSPn + pERKn <--> pDUSPn_pERKn |49|
 pDUSPn_pERKn --> pDUSPn + ERKn |50|
 pDUSPn + ERKn <--> pDUSPn_ERKn |51|
 pcFOSn transcribes PreFmRNAn
-PreFmRNAn synthesizes FmRNAc
+PreFmRNAn translocates to cytoplasm --> FmRNAc
 FmRNAc is degraded
 FmRNAc is translated into Fc
 Fc is degraded
