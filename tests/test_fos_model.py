@@ -30,7 +30,7 @@ def test_model_construction():
     cfos.convert()
     assert os.path.isdir(PATH_TO_MODEL)
 
-    with open(os.path.join(PATH_TO_MODEL, "set_model.py"), mode="r") as f1:
+    with open(os.path.join(PATH_TO_MODEL, "ode.py"), mode="r") as f1:
         lines = f1.readlines()
     for line_num, line in enumerate(lines):
         if line.startswith(f"{INDENT}def diffeq(self, t, y, *x):"):
@@ -40,10 +40,10 @@ def test_model_construction():
             break
     else:
         assert False
-    with open(os.path.join(PATH_TO_MODEL, "set_model.py"), mode="w") as f1:
+    with open(os.path.join(PATH_TO_MODEL, "ode.py"), mode="w") as f1:
         f1.writelines(lines)
 
-    with open(os.path.join(PATH_TO_MODEL, "set_search_param.py"), mode="r") as f2:
+    with open(os.path.join(PATH_TO_MODEL, "search_param.py"), mode="r") as f2:
         lines = f2.readlines()
     for line_num, line in enumerate(lines):
         if line.startswith(f"{2*INDENT}search_rgn = convert_scale("):
@@ -51,7 +51,7 @@ def test_model_construction():
             break
     else:
         assert False
-    with open(os.path.join(PATH_TO_MODEL, "set_search_param.py"), mode="w") as f2:
+    with open(os.path.join(PATH_TO_MODEL, "search_param.py"), mode="w") as f2:
         f2.writelines(lines)
 
     with open(os.path.join(PATH_TO_MODEL, "observable.py"), mode="r") as f3:

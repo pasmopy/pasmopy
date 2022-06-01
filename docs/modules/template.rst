@@ -1,16 +1,16 @@
 Template for BioMASS model construction (:py:mod:`pasmopy.construction.template`)
 ---------------------------------------------------------------------------------
 
-.. automodule:: pasmopy.construction.template.set_model
+.. automodule:: pasmopy.construction.template.ode
    :members:
 
 .. automodule:: pasmopy.construction.template.observable
    :members:
    
-.. automodule:: pasmopy.construction.template.set_search_param
+.. automodule:: pasmopy.construction.template.search_param
    :members:
 
-.. automodule:: pasmopy.construction.template.fitness
+.. automodule:: pasmopy.construction.template.problem
    :members:
 
 .. automodule:: pasmopy.construction.template.viz

@@ -73,6 +73,6 @@ class Visualization(Observable):
     @staticmethod
     def convert_species_name(name: str) -> str:
         """figure/sensitivity/initial_condition
-        - Sensitivity for species with nonzero initial conditions
+        - Sensitivity for species with nonzero initial conditions.
         """
         return name

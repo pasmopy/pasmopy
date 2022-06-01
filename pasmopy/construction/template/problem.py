@@ -2,7 +2,7 @@ import numpy as np
 from scipy.spatial.distance import cosine
 
 from .observable import Observable
-from .set_search_param import SearchParam
+from .search_param import SearchParam
 
 
 class OptimizationProblem(Observable, SearchParam):
@@ -42,7 +42,7 @@ class OptimizationProblem(Observable, SearchParam):
         return np.array(sim_val) / sim_norm_max, np.array(exp_val)
 
     def objective(self, indiv, *args):
-        """Define an objective function to be minimized"""
+        """Define an objective function to be minimized."""
         if len(args) == 0:
             (x, y0) = self.update(indiv)
         elif len(args) == 1:

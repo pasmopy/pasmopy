@@ -2,11 +2,11 @@ import numpy as np
 from biomass.estimation import convert_scale, initialize_search_param
 
 from .name2idx import C, V
-from .set_model import initial_values, param_values
+from .ode import initial_values, param_values
 
 
 class SearchParam(object):
-    """Specify model parameters and/or initial values to optimize"""
+    """Specify model parameters and/or initial values to optimize."""
 
     def __init__(self):
         # parameters

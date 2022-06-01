@@ -4,7 +4,7 @@ import numpy as np
 from biomass.dynamics.solver import *
 
 from .name2idx import C, V
-from .set_model import DifferentialEquation
+from .ode import DifferentialEquation
 
 
 class Observable(DifferentialEquation):

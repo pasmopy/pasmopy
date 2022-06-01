@@ -172,7 +172,7 @@ class Text2Model(ReactionRules):
         """
         if self.lang == "python":
             with open(
-                os.path.join(os.path.dirname(__file__), "template", "set_model.py"),
+                os.path.join(os.path.dirname(__file__), "template", "ode.py"),
                 encoding="utf-8",
                 mode="r",
             ) as f:
@@ -219,7 +219,7 @@ class Text2Model(ReactionRules):
             with open(
                 os.path.join(
                     f"{self.name}",
-                    "set_model.py",
+                    "ode.py",
                 ),
                 encoding="utf-8",
                 mode="w",
@@ -300,11 +300,11 @@ class Text2Model(ReactionRules):
 
     def _update_set_search_param(self) -> None:
         """
-        Update set_search_param.py
+        Update search_param.py
         """
         if self.lang == "python":
             with open(
-                os.path.join(os.path.dirname(__file__), "template", "set_search_param.py"),
+                os.path.join(os.path.dirname(__file__), "template", "search_param.py"),
                 encoding="utf-8",
                 mode="r",
             ) as f:
@@ -332,7 +332,7 @@ class Text2Model(ReactionRules):
                         + "\n\n"
                     )
             with open(
-                os.path.join(f"{self.name}", "set_search_param.py"),
+                os.path.join(f"{self.name}", "search_param.py"),
                 encoding="utf-8",
                 mode="w",
             ) as f:

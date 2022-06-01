@@ -42,7 +42,7 @@ class Individualization(object):
 
     Examples
     --------
-    ``set_search_param.py``
+    ``search_param.py``
 
     .. code-block:: python
 
@@ -51,7 +51,7 @@ class Individualization(object):
         from pasmopy import Individualization
         from . import __path__
         from .name2idx import C, V
-        from .set_model import initial_values, param_values
+        from .ode import initial_values, param_values
 
         incorporating_gene_expression_levels = Individualization(
             parameters=C.NAMES,
