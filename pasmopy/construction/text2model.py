@@ -492,7 +492,7 @@ class Text2Model(ReactionRules):
                         )
                         lines[line_num + 1] += (
                             2 * self.indentation
-                            + "y0 = self._get_steady_state(self.diffeq, y0, tuple(x))\n"
+                            + "y0 = get_steady_state(self.diffeq, y0, tuple(x))\n"
                             + 2 * self.indentation
                             + f"if not y0:\n{3 * self.indentation}return False\n"
                         )
