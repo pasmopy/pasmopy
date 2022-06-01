@@ -7,7 +7,7 @@ from typing import List, Optional
 from pasmopy import Model, PatientModelAnalyses, PatientModelSimulations, Text2Model
 from pasmopy.preprocessing import WeightingFactors
 
-from .C import REQUIREMENTS, INDIVIDUALIZATION, INCORPORATION
+from .C import INCORPORATION, INDIVIDUALIZATION, REQUIREMENTS
 
 try:
     import tests.models.breast
