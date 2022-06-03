@@ -75,6 +75,7 @@ def setup_package():
             "oncology",
         ],
         classifiers=[
+            "Development Status :: 4 - Beta",
             "Intended Audience :: Science/Research",
             "Intended Audience :: Healthcare Industry",
             "License :: OSI Approved :: Apache Software License",
