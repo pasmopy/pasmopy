@@ -1,3 +1,4 @@
+import re
 import sys
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
@@ -84,9 +85,6 @@ class ReactionRules(ThermodynamicRestrictions):
         * - :func:`~pasmopy.construction.reaction_rules.transcribe`
           - *B* transcribes *a*
           - .. math:: V, K, n, (KF, nF)
-        * - :func:`~pasmopy.construction.reaction_rules.is_translated`
-          - *a* is translated into *A*
-          - .. math:: kf
         * - :func:`~pasmopy.construction.reaction_rules.synthesize`
           - *B* synthesizes *A*
           - .. math:: kf
@@ -102,6 +100,9 @@ class ReactionRules(ThermodynamicRestrictions):
         * - :func:`~pasmopy.construction.reaction_rules.translocate`
           - *Acyt* translocates from cytoplasm to nucleus (Vcyt, Vnuc) <--> *Anuc*
           - .. math:: kf, kr, (V_{pre}, V_{post})
+        * - :func:`~pasmopy.construction.reaction_rules.user_defined`
+          - @rxn Reactant --> Product: *define rate equation here*
+          - -
 
     From v0.2.2, you can specify directionality in binding-dissociation reaction via different arrows:
 
@@ -145,6 +146,8 @@ class ReactionRules(ThermodynamicRestrictions):
         Untreated conditions to get steady state.
     rule_words : dict
         Words to identify reaction rules.
+    nothing : List[str]
+        Available symbol for degradation/creation to/from nothing.
     fwd_arrows : List[str]
         Available arrows for unidirectional reactions.
     double_arrows : List[str]
@@ -244,13 +247,11 @@ class ReactionRules(ThermodynamicRestrictions):
                 " transcribe",
                 " transcribes",
             ],
-            is_translated=[
-                " is translated into",
-            ],
             synthesize=[
                 " synthesizes",
                 " promotes synthesis of",
                 " increases",
+                " is translated into",
             ],
             is_synthesized=[
                 " is synthesized",
@@ -268,6 +269,10 @@ class ReactionRules(ThermodynamicRestrictions):
                 " is translocated",
             ],
         ),
+        init=False,
+    )
+    nothing: List[str] = field(
+        default_factory=lambda: ["∅", "0"],
         init=False,
     )
     fwd_arrows: List[str] = field(
@@ -333,13 +338,20 @@ class ReactionRules(ThermodynamicRestrictions):
         """
         return self.fwd_arrows + self.double_arrows
 
-    def _set_params(self, line_num: int, *args: str) -> None:
+    def _set_params(self, line_num: Optional[int], func_name: Optional[str], *args: str) -> None:
         """
         Set model parameters.
         """
         for p_name in args:
-            if p_name + f"{line_num:d}" not in self.parameters:
-                self.parameters.append(p_name + f"{line_num:d}")
+            p_name_used = p_name + (
+                f"{line_num:d}"
+                if not p_name[-1].isdecimal()
+                and isinstance(line_num, int)
+                and func_name != "user_defined"
+                else ""
+            )
+            if p_name_used not in self.parameters:
+                self.parameters.append(p_name_used)
 
     def _set_species(self, *args: str) -> None:
         """
@@ -363,13 +375,112 @@ class ReactionRules(ThermodynamicRestrictions):
             )
         )
 
-    def _preprocessing(
-        self,
-        func_name: str,
-        line_num: int,
-        line: str,
-        *args: str,
-    ) -> List[str]:
+    def _process_pval_section(self, func_name: str, line_num: int, line: str, *args: str) -> None:
+
+        param_values = line.split("|")[1].strip().split(",")
+        if all("=" in pval for pval in param_values):
+            for pval in param_values:
+                base_param = pval.split("=")[0].strip(" ")
+                if base_param.startswith("const "):
+                    # Parameter names with 'const' will be added to param_excluded.
+                    base_param = base_param.split("const ")[-1]
+                    fixed = True
+                else:
+                    fixed = False
+                if base_param in args:
+                    if self._isfloat(pval.split("=")[1].strip(" ")):
+                        self.param_info.append(
+                            "x[C."
+                            + base_param
+                            + (f"{line_num:d}]" if func_name != "user_defined" else "]")
+                            + " = "
+                            + pval.split("=")[1].strip(" ")
+                        )
+                        # If a parameter value is initialized to 0.0 or fixed,
+                        # then add it to param_excluded.
+                        if float(pval.split("=")[1].strip(" ")) == 0.0 or fixed:
+                            self.param_excluded.append(
+                                base_param
+                                + (f"{line_num:d}" if func_name != "user_defined" else "")
+                            )
+                    else:
+                        raise ValueError(
+                            f"line{line_num:d}: Parameter value must be int or float."
+                        )
+                else:
+                    raise ValueError(
+                        f"line{line_num:d}: '{pval.split('=')[0].strip(' ')}'\n"
+                        f"Available parameters are: {', '.join(args)}."
+                    )
+        elif param_values[0].strip(" ").isdecimal():
+            # Parameter constraints
+            for param_name in args:
+                # base_pname = self._get_base_pname(param_name)
+                if (
+                    f"{self._get_base_pname(param_name)}{int(param_values[0]):d}"
+                ) not in self.parameters:
+                    raise ValueError(
+                        f"Line {line_num:d} and {int(param_values[0]):d} : "
+                        "Different reaction rules in parameter constraints."
+                    )
+                else:
+                    if f"x[C.{param_name}" + (
+                        f"{line_num:d}]" if func_name != "user_defined" else "]"
+                    ) != (
+                        f"x[C.{self._get_base_pname(param_name)}" + f"{int(param_values[0]):d}]"
+                    ):
+                        self.param_excluded.append(
+                            f"{param_name}"
+                            + (f"{line_num:d}" if func_name != "user_defined" else "")
+                        )
+                        self.param_info.append(
+                            f"x[C.{param_name}"
+                            + (f"{line_num:d}]" if func_name != "user_defined" else "]")
+                            + " = "
+                            + f"x[C.{self._get_base_pname(param_name)}"
+                            + f"{int(param_values[0]):d}]"
+                        )
+                        self.param_constraints.append(
+                            f"x[C.{param_name}"
+                            + (f"{line_num:d}]" if func_name != "user_defined" else "]")
+                            + " = "
+                            + f"x[C.{self._get_base_pname(param_name)}"
+                            + f"{int(param_values[0]):d}]"
+                        )
+        else:
+            raise ValueError(
+                f"line{line_num:d}: {line}\nInvalid expression in the input parameter."
+            )
+
+    def _process_ival_section(self, line_num: int, line: str) -> None:
+
+        initial_values = line.split("|")[2].strip().split(",")
+        for ival in initial_values:
+            if ival.startswith("fixed "):
+                ival = ival.split("fixed ")[-1]
+                self.fixed_species.append(ival.split("=")[0].strip(" "))
+            if ival.split("=")[0].strip(" ") in line.split("|")[0]:
+                if self._isfloat(ival.split("=")[1].strip(" ")):
+                    self.init_info.append(
+                        "y0[V."
+                        + ival.split("=")[0].strip(" ")
+                        + "] = "
+                        + ival.split("=")[1].strip(" ")
+                    )
+                else:
+                    raise ValueError(f"line{line_num:d}: Initial value must be int or float.")
+            else:
+                raise NameError(
+                    f"line{line_num:d}: " f"Name'{ival.split('=')[0].strip(' ')}' is not defined."
+                )
+
+    @staticmethod
+    def _get_base_pname(param_name: str) -> str:
+        while param_name[-1].isdecimal():
+            param_name = param_name[:-1]
+        return param_name
+
+    def _preprocessing(self, func_name: str, line_num: int, line: str, *args: str) -> List[str]:
         """
         Extract the information about parameter and/or initial values
         if '|' in the line and find a keyword to identify reaction rules.
@@ -390,98 +501,24 @@ class ReactionRules(ThermodynamicRestrictions):
         description : list of strings
 
         """
-        self._set_params(line_num, *args)
+        self._set_params(line_num, func_name, *args)
         if "|" in line:
             if line.split("|")[1].strip():
-                param_values = line.split("|")[1].strip().split(",")
-                if all("=" in pval for pval in param_values):
-                    for pval in param_values:
-                        base_param = pval.split("=")[0].strip(" ")
-                        if base_param.startswith("const "):
-                            # Parameter names with 'const' will be added to param_excluded.
-                            base_param = base_param.split("const ")[-1]
-                            fixed = True
-                        else:
-                            fixed = False
-                        if base_param in args:
-                            if self._isfloat(pval.split("=")[1].strip(" ")):
-                                self.param_info.append(
-                                    "x[C."
-                                    + base_param
-                                    + f"{line_num:d}] = "
-                                    + pval.split("=")[1].strip(" ")
-                                )
-                                # If a parameter value is initialized to 0.0 or fixed,
-                                # then add it to param_excluded.
-                                if float(pval.split("=")[1].strip(" ")) == 0.0 or fixed:
-                                    self.param_excluded.append(base_param + f"{line_num:d}")
-                            else:
-                                raise ValueError(
-                                    f"line{line_num:d}: Parameter value must be int or float."
-                                )
-                        else:
-                            raise ValueError(
-                                f"line{line_num:d}: '{pval.split('=')[0].strip(' ')}'\n"
-                                f"Available parameters are: {', '.join(args)}."
-                            )
-                elif param_values[0].strip(" ").isdecimal():
-                    # Parameter constraints
-                    for param_name in args:
-                        if f"{param_name}{int(param_values[0]):d}" not in self.parameters:
-                            raise ValueError(
-                                f"Line {line_num:d} and {int(param_values[0]):d} : "
-                                "Different reaction rules in parameter constraints."
-                            )
-                        else:
-                            self.param_excluded.append(f"{param_name}{line_num:d}")
-                            self.param_info.append(
-                                f"x[C.{param_name}"
-                                f"{line_num:d}] = "
-                                f"x[C.{param_name}"
-                                f"{int(param_values[0]):d}]"
-                            )
-                            self.param_constraints.append(
-                                f"x[C.{param_name}"
-                                f"{line_num:d}] = "
-                                f"x[C.{param_name}"
-                                f"{int(param_values[0]):d}]"
-                            )
-                else:
-                    raise ValueError(
-                        f"line{line_num:d}: {line}\nInvalid expression in the input parameter."
-                    )
+                self._process_pval_section(func_name, line_num, line, *args)
             if line.count("|") > 1 and line.split("|")[2].strip():
-                initial_values = line.split("|")[2].strip().split(",")
-                for ival in initial_values:
-                    if ival.startswith("fixed "):
-                        ival = ival.split("fixed ")[-1]
-                        self.fixed_species.append(ival.split("=")[0].strip(" "))
-                    if ival.split("=")[0].strip(" ") in line.split("|")[0]:
-                        if self._isfloat(ival.split("=")[1].strip(" ")):
-                            self.init_info.append(
-                                "y0[V."
-                                + ival.split("=")[0].strip(" ")
-                                + "] = "
-                                + ival.split("=")[1].strip(" ")
-                            )
-                        else:
-                            raise ValueError(
-                                f"line{line_num:d}: Initial value must be int or float."
-                            )
-                    else:
-                        raise NameError(
-                            f"line{line_num:d}: "
-                            f"Name'{ival.split('=')[0].strip(' ')}' is not defined."
-                        )
+                self._process_ival_section(line_num, line)
             line = line.split("|")[0]
-        hit_words: List[str] = []
-        for word in self.rule_words[func_name]:
-            # Choose longer word
-            if word in line:
-                hit_words.append(word)
-        description = line.strip().split(max(hit_words, key=len))
-        if description[1] and not description[1].startswith(" "):
-            self._raise_detection_error(line_num, line)
+        if func_name != "user_defined":
+            hit_words: List[str] = []
+            for word in self.rule_words[func_name]:
+                # Choose longer word
+                if word in line:
+                    hit_words.append(word)
+            description = line.strip().split(max(hit_words, key=len))
+            if description[1] and not description[1].startswith(" "):
+                self._raise_detection_error(line_num, line)
+        else:
+            description = line.strip().split(":")
         return description
 
     @staticmethod
@@ -571,8 +608,14 @@ class ReactionRules(ThermodynamicRestrictions):
         >>> 'AB --> A + B'  # dissociate, unidirectional
         >>> 'A + B <--> AB' # bind and dissociate, bidirectional
         """
+        for arrow in self._available_arrows():
+            if arrow in line:
+                params_used = ["kf"] if arrow in self.fwd_arrows else ["kf", "kr"]
+                break
+        else:
+            raise ArrowError(self._get_arrow_error_message(line_num) + ".")
         description = self._preprocessing(
-            sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
+            sys._getframe().f_code.co_name, line_num, line, *params_used
         )
         is_binding: bool
         is_unidirectional: bool
@@ -944,7 +987,7 @@ class ReactionRules(ThermodynamicRestrictions):
                 unphosphorylated_form = description[1].split(arrow)[1].strip(" ")
                 break
         else:
-            raise ValueError(
+            raise ArrowError(
                 f"line{line_num:d}: Use one of ({', '.join(self.fwd_arrows)}) "
                 "to specify the name of the dephosphorylated protein."
             )
@@ -1180,37 +1223,6 @@ class ReactionRules(ThermodynamicRestrictions):
         if counter_mRNA == 0:
             self.differential_equations.append(f"dydt[V.{mRNA}] = + v[{line_num:d}]")
 
-    def is_translated(self, line_num: int, line: str) -> None:
-        """
-        Examples
-        --------
-        >>> 'a is translated into A'
-
-        Notes
-        -----
-        * Parameters
-            .. math:: kf
-
-        * Rate equation
-            .. math:: v = kf * [a]
-
-        * Differential equation
-            .. math:: d[A]/dt = + v
-
-        """
-        description = self._preprocessing(sys._getframe().f_code.co_name, line_num, line, "kf")
-        mRNA = description[0].strip(" ")
-        protein = description[1].strip(" ")
-        self._set_species(mRNA, protein)
-        self.reactions.append(f"v[{line_num:d}] = x[C.kf{line_num:d}] * y[V.{mRNA}]")
-        counter_protein = 0
-        for i, eq in enumerate(self.differential_equations):
-            if f"dydt[V.{protein}]" in eq:
-                counter_protein += 1
-                self.differential_equations[i] = eq + f" + v[{line_num:d}]"
-        if counter_protein == 0:
-            self.differential_equations.append(f"dydt[V.{protein}] = + v[{line_num:d}]")
-
     def synthesize(self, line_num: int, line: str) -> None:
         """
         Examples
@@ -1358,20 +1370,23 @@ class ReactionRules(ThermodynamicRestrictions):
                 d[A\_at\_post]/dt = + v * (V_{pre} / V_{post})
 
         """
+        for arrow in self._available_arrows():
+            if arrow in line:
+                is_unidirectional = True if arrow in self.fwd_arrows else False
+                params_used = ["kf"] if is_unidirectional else ["kf", "kr"]
+                break
+        else:
+            raise ArrowError(self._get_arrow_error_message(line_num))
         description = self._preprocessing(
-            sys._getframe().f_code.co_name, line_num, line, "kf", "kr"
+            sys._getframe().f_code.co_name, line_num, line, *params_used
         )
         pre_translocation = description[0].strip(" ")
-        for arrow in self.double_arrows:
+        for arrow in self._available_arrows():
             if arrow in description[1]:
                 post_translocation = description[1].split(arrow)[1].strip(" ")
                 break
         else:
-            raise ArrowError(
-                f"line{line_num:d}: "
-                f"Use one of ({', '.join(self.double_arrows)}) to specify "
-                "the name of the species after translocation."
-            )
+            assert False
         if pre_translocation == post_translocation:
             raise ValueError(f"line{line_num:d}: {post_translocation} <- Use a different name.")
         # Information about compartment volumes
@@ -1386,15 +1401,21 @@ class ReactionRules(ThermodynamicRestrictions):
         self._set_species(pre_translocation, post_translocation)
         self.reactions.append(
             f"v[{line_num:d}] = x[C.kf{line_num:d}] * y[V.{pre_translocation}]"
-            f" - x[C.kr{line_num:d}] * y[V.{post_translocation}]"
+            + (
+                f" - x[C.kr{line_num:d}] * y[V.{post_translocation}]"
+                if not is_unidirectional
+                else ""
+            )
         )
         if float(pre_volume.strip(" ")) != float(post_volume.strip(" ")):
-            self.reactions[-1] = (
-                f"v[{line_num:d}] = "
-                f"x[C.kf{line_num:d}] * y[V.{pre_translocation}]"
+            self.reactions[
+                -1
+            ] = f"v[{line_num:d}] = " f"x[C.kf{line_num:d}] * y[V.{pre_translocation}]" + (
                 f" - x[C.kr{line_num:d}] * "
                 f"({post_volume.strip()} / {pre_volume.strip()}) * "
                 f"y[V.{post_translocation}]"
+                if not is_unidirectional
+                else ""
             )
         counter_pre_translocation, counter_post_translocation = (0, 0)
         for i, eq in enumerate(self.differential_equations):
@@ -1416,6 +1437,126 @@ class ReactionRules(ThermodynamicRestrictions):
                 self.differential_equations[
                     -1
                 ] += f" * ({pre_volume.strip()} / {post_volume.strip()})"
+
+    def user_defined(self, line_num: int, line: str) -> None:
+        """
+        Examples
+        --------
+        >>> 'Reactant --> Product: define rate equation here'
+
+        Notes
+        -----
+        * Use p[xxx] and u[xxx] for describing parameters and species, respectively.
+
+        * Use '0' or '∅' for degradation/creation to/from nothing.
+
+        * Differential equation
+            .. math::
+
+                d[Reactant]/dt = - v
+
+                d[Product]/dt = + v
+        """
+        all_params = re.findall(r"p\[(.*?)\]", line)
+        description = self._preprocessing(
+            sys._getframe().f_code.co_name, line_num, line, *all_params
+        )
+        balance = description[0].strip()
+        rate_equation = description[1].strip()
+        for arrow in self.fwd_arrows:
+            if arrow in balance:
+                reactant, product = balance.split(arrow)
+                self._set_species(reactant.strip(), product.strip())
+                break
+        else:
+            raise ArrowError(f"line{line_num:d}: Use one of {', '.join(self.fwd_arrows)}.")
+        rate_equation = (
+            rate_equation.replace("p[", "x[C.").replace("u[", "y[V.").replace("^", "**")
+        )
+        self.reactions.append(f"v[{line_num:d}] = " + rate_equation.strip())
+        counter_reactant = 0
+        counter_product = 0
+        for i, eq in enumerate(self.differential_equations):
+            if f"dydt[V.{reactant}]" in eq and reactant not in self.nothing:
+                counter_reactant += 1
+                self.differential_equations[i] = eq + f" - v[{line_num:d}]"
+            elif f"dydt[V.{product}]" in eq and product not in self.nothing:
+                counter_product += 1
+                self.differential_equations[i] = eq + f" + v[{line_num:d}]"
+        if counter_reactant == 0 and reactant not in self.nothing:
+            self.differential_equations.append(f"dydt[V.{reactant}] = - v[{line_num:d}]")
+        if counter_product == 0 and product not in self.nothing:
+            self.differential_equations.append(f"dydt[V.{product}] = + v[{line_num:d}]")
+
+    def _extract_event(self, line_num: int, line: str):
+        # About biochemical event
+        if line.startswith("@rxn "):
+            line = self._remove_prefix(line, "@rxn ")
+            if line.count(":") != 1:
+                raise SyntaxError(f"line{line_num:d}: Missing colon")
+            else:
+                self.user_defined(line_num, line)
+        # About observables
+        elif line.startswith("@obs "):
+            line = self._remove_prefix(line, "@obs ")
+            if line.count(":") != 1:
+                raise SyntaxError(
+                    f"line{line_num:d}: Missing colon\n"
+                    "Should be `@obs <observable name>: <expression>`."
+                )
+            else:
+                self.obs_desc.append(line.split(":"))
+        # About simulation info.
+        elif line.startswith("@sim "):
+            line = self._remove_prefix(line, "@sim ")
+            if line.count(":") != 1:
+                raise SyntaxError(f"line{line_num:d}: Missing colon")
+            else:
+                if line.startswith("tspan"):
+                    t_info = line.split(":")[-1].strip()
+                    if "[" in t_info and "]" in t_info:
+                        [t0, tf] = t_info.split("[")[-1].split("]")[0].split(",")
+                        if t0.strip(" ").isdecimal() and tf.strip(" ").isdecimal():
+                            self.sim_tspan.append(t0)
+                            self.sim_tspan.append(tf)
+                        else:
+                            raise TypeError("@sim tspan: [t0, tf] must be a list of integers.")
+                    else:
+                        raise ValueError(
+                            "`tspan` must be a two element vector [t0, tf] "
+                            "specifying the initial and final times."
+                        )
+                elif line.startswith("unperturbed"):
+                    self.sim_unperturbed += line.split(":")[-1].strip()
+                elif line.startswith("condition "):
+                    self.sim_conditions.append(self._remove_prefix(line, "condition ").split(":"))
+                else:
+                    raise ValueError(
+                        f"(line{line_num:d}) Available options are: "
+                        "'@sim tspan:', '@sim unperturbed:', or '@sim condition XXX:'."
+                    )
+        # Additional species
+        elif line.startswith("@add "):
+            line = self._remove_prefix(line, "@add ")
+            if line.startswith("species "):
+                line = self._remove_prefix(line, "species ")
+                new_species = line.strip()
+                if new_species not in self.species:
+                    self._set_species(new_species)
+                else:
+                    raise NameError(f"{new_species} is already defined.")
+            elif line.startswith("param "):
+                line = self._remove_prefix(line, "param ")
+                new_param = line.strip()
+                if new_param not in self.parameters:
+                    self._set_params(None, None, new_param)
+                    self.param_excluded.append(new_param)
+                else:
+                    raise NameError(f"{new_param} is already defined.")
+            else:
+                raise ValueError(f"(line{line_num:d}) Must be either @add param or @add species.")
+        else:
+            raise ValueError("Available symbols are: @rxn, @add, @obs, @sim.")
 
     def create_ode(self) -> None:
         """
@@ -1443,47 +1584,8 @@ class ReactionRules(ThermodynamicRestrictions):
                     f"Reaction '{line}' is duplicated in lines "
                     + ", ".join([str(i + 1) for i, rxn in enumerate(lines) if rxn == line])
                 )
-            # About observables
-            elif line.startswith("@obs "):
-                line = self._remove_prefix(line, "@obs ")
-                if line.count(":") != 1:
-                    raise SyntaxError(
-                        f"line{line_num:d}: Missing colon\n"
-                        "Should be `@obs <observable name>: <expression>`."
-                    )
-                else:
-                    self.obs_desc.append(line.split(":"))
-            # About simulation info.
-            elif line.startswith("@sim "):
-                line = self._remove_prefix(line, "@sim ")
-                if line.count(":") != 1:
-                    raise SyntaxError(f"line{line_num:d}: Missing colon")
-                else:
-                    if line.startswith("tspan"):
-                        t_info = line.split(":")[-1].strip()
-                        if "[" in t_info and "]" in t_info:
-                            [t0, tf] = t_info.split("[")[-1].split("]")[0].split(",")
-                            if t0.strip(" ").isdecimal() and tf.strip(" ").isdecimal():
-                                self.sim_tspan.append(t0)
-                                self.sim_tspan.append(tf)
-                            else:
-                                raise TypeError("@sim tspan: [t0, tf] must be a list of integers.")
-                        else:
-                            raise ValueError(
-                                "`tspan` must be a two element vector [t0, tf] "
-                                "specifying the initial and final times."
-                            )
-                    elif line.startswith("unperturbed"):
-                        self.sim_unperturbed += line.split(":")[-1].strip()
-                    elif line.startswith("condition "):
-                        self.sim_conditions.append(
-                            self._remove_prefix(line, "condition ").split(":")
-                        )
-                    else:
-                        raise ValueError(
-                            f"(line{line_num:d}) Available options are: "
-                            "'@sim tspan:', '@sim unperturbed:', or '@sim condition XXX:'."
-                        )
+            elif line.startswith("@"):
+                self._extract_event(line_num, line)
             # Detect reaction rule
             else:
                 for reaction_rule, words in self.rule_words.items():

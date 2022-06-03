@@ -108,7 +108,7 @@ class WeightingFactors(object):
                 f"search_rgn[:, C.{wf}] = [{lb}, {ub}]" for wf in self.weighting_factors
             ]
             with open(
-                os.path.join(self.model.path, "set_search_param.py"),
+                os.path.join(self.model.path, "search_param.py"),
                 mode="r",
                 encoding="utf-8",
             ) as f:
@@ -130,7 +130,7 @@ class WeightingFactors(object):
                     )
                     lines[line_num] += f"\n\n{2 * self.indentation}search_rgn = convert_scale(\n"
             with open(
-                os.path.join(self.model.path, "set_search_param.py"),
+                os.path.join(self.model.path, "search_param.py"),
                 mode="w",
                 encoding="utf-8",
             ) as f:

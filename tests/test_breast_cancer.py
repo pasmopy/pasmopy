@@ -7,7 +7,7 @@ from typing import List, Optional
 from pasmopy import Model, PatientModelAnalyses, PatientModelSimulations, Text2Model
 from pasmopy.preprocessing import WeightingFactors
 
-from .C import *
+from .C import INCORPORATION, INDIVIDUALIZATION, REQUIREMENTS
 
 try:
     import tests.models.breast
@@ -37,12 +37,8 @@ def test_model_construction():
     except FileNotFoundError:
         pass
     Text2Model(os.path.join("tests", "models", "erbb_network.txt")).convert()
-    try:
-        from tests.models import erbb_network
-    except ImportError:
-        print("can't import erbb_network from tests.models.")
 
-    model = Model(erbb_network.__package__).create()
+    model = Model("tests.models.erbb_network").create()
     # add weighting factors
     gene_expression = {
         "ErbB1": ["EGFR"],
@@ -91,9 +87,9 @@ def test_model_construction():
         encoding="utf-8",
     ) as f:
         f.writelines(lines)
-    # Edit set_search_param.py
+    # Edit search_param.py
     with open(
-        os.path.join("tests", "models", "erbb_network", "set_search_param.py"),
+        os.path.join("tests", "models", "erbb_network", "search_param.py"),
         mode="r",
         encoding="utf-8",
     ) as f:
@@ -108,7 +104,7 @@ def test_model_construction():
         elif line.startswith(f"{' ' * 8}# parameter constraints"):
             lines[line_num - 1] = f"\n{INCORPORATION}\n"
     with open(
-        os.path.join("tests", "models", "erbb_network", "set_search_param.py"),
+        os.path.join("tests", "models", "erbb_network", "search_param.py"),
         mode="w",
         encoding="utf-8",
     ) as f:

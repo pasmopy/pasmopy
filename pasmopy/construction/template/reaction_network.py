@@ -17,7 +17,7 @@ class ReactionNetwork(object):
 
     def group(self):
         """
-        Group reactions according to biological processes
+        Group reactions according to biological processes.
         """
         biological_processes = []
         for process, indices in self.reactions.items():
@@ -30,6 +30,9 @@ class ReactionNetwork(object):
 
     @staticmethod
     def flux(t, y, x):
+        """
+        Flux vector.
+        """
 
         v = {}
 
