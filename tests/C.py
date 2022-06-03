@@ -4,22 +4,22 @@ INDENT = " " * 4
 PPMEK = """\
 
     @staticmethod
-    def _get_ppMEK_derivative(t, ligand):
+    def _get_ppMEK_slope(t, ligand):
         assert ligand in ['EGF', 'HRG']
         timepoints = [0, 300, 600, 900, 1800, 2700, 3600, 5400]
         ppMEK_data = {
-            "EGF": [0.000, 0.773, 0.439, 0.252, 0.130, 0.087, 0.080, 0.066],
-            "HRG": [0.000, 0.865, 1.000, 0.837, 0.884, 0.920, 0.875, 0.789],
+            'EGF': [0.000, 0.773, 0.439, 0.252, 0.130, 0.087, 0.080, 0.066],
+            'HRG': [0.000, 0.865, 1.000, 0.837, 0.884, 0.920, 0.875, 0.789],
         }
         assert len(timepoints) == len(ppMEK_data[ligand])
-        derivative = [
+        slope = [
             (ppMEK_data[ligand][i + 1] - activity) / (timepoints[i + 1] - timepoint)
             for i, (timepoint, activity) in enumerate(zip(timepoints, ppMEK_data[ligand]))
             if i + 1 < len(timepoints)
         ]
         for i, timepoint in enumerate(timepoints):
             if timepoint <= t <= timepoints[i + 1]:
-                return derivative[i]
+                return slope[i]
         assert False
 
 """
@@ -28,9 +28,9 @@ PPMEK = """\
 CONDITIONS = """\
 
         if x[C.Ligand] == 1:  # EGF=10nM
-            dydt[V.ppMEKc] = self._get_ppMEK_derivative(t, 'EGF')
+            dydt[V.ppMEKc] = self._get_ppMEK_slope(t, 'EGF')
         elif x[C.Ligand] == 2:  # HRG=10nM
-            dydt[V.ppMEKc] = self._get_ppMEK_derivative(t, 'HRG')
+            dydt[V.ppMEKc] = self._get_ppMEK_slope(t, 'HRG')
         else:  # Default: No ligand input
             dydt[V.ppMEKc] = 0.0
 
