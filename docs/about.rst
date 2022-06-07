@@ -30,6 +30,23 @@ If you use Pasmopy in a scientific publication, please cite the following paper:
 
 * Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. *iScience* **25**, 103944 (2022). https://doi.org/10.1016/j.isci.2022.103944
 
+*In BibTeX format:*
+
+.. code-block:: bibtex
+  
+    @article{imoto2022text,
+      title = {A text-based computational framework for patient-specific modeling for classification of cancers},
+      author = {Imoto, Hiroaki and Yamashiro, Sawa and Okada, Mariko},
+      journal = {Iscience},
+      volume = {25},
+      number = {3},
+      pages = {103944},
+      year = {2022},
+      doi = {https://doi.org/10.1016/j.isci.2022.103944},
+    }
+
+When presenting work that uses Pasmopy, feel free to use `Pasmopy logo <https://github.com/pasmopy/pasmopy/blob/master/docs/_static/img/pasmopy-project-logo.png>`_.
+
 Contact
 -------
 
