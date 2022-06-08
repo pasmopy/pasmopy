@@ -56,6 +56,14 @@ In the example above, you can assume that import and export rates were identical
    # [Ligand] will be held fixed to 10.0 during simulation
    Ligand binds Receptor <--> LR | kf = 1e-6, kr = 1e-1 | fixed Ligand = 10.0
 
+* To describe more complex rate equations, you can use ``@rxn`` prefix:
+
+.. code-block::
+    
+    @rxn Reactant --> Product: define rate equation here
+
+Please also refer to the following example: `cfos_model <https://biomass-core.readthedocs.io/en/latest/tutorial.html#prepare-a-text-file-describing-the-biochemical-reactions>`_
+
 The available rules can be found at :doc:`modules/reaction_rules`.
 
 You can also supply your own terminology in a reaction rule via:
