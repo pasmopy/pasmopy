@@ -755,7 +755,7 @@ class Text2Model(ReactionRules):
                 for restriction in self.restrictions:
                     print("{" + ", ".join(restriction) + "}")
 
-    def to_markdown(self, n_reaction: int) -> None:
+    def to_markdown(self, n_reaction: int, savedir: str = "markdown") -> None:
         """
         Create markdown table describing differential equations.
 
@@ -763,6 +763,8 @@ class Text2Model(ReactionRules):
         ----------
         n_reaction : int
             The number of rate equations in the model.
+        savedir : str (default: "markdown")
+            The directory name to save the output.
 
         Examples
         --------
@@ -770,7 +772,7 @@ class Text2Model(ReactionRules):
         >>> Text2Model("Kholodenko1999.txt").to_markdown(25)
 
         """
-        os.makedirs(os.path.join("markdown", f"{self.name.split(os.sep)[-1]}"), exist_ok=True)
+        os.makedirs(os.path.join(savedir, f"{self.name.split(os.sep)[-1]}"), exist_ok=True)
         self.create_ode()
         with open(self.input_txt, encoding="utf-8") as f:
             lines = f.readlines()
@@ -796,14 +798,19 @@ class Text2Model(ReactionRules):
                                 f"{num + 1:d}", f"<sub>{num + 1:d}</sub>"
                             ),
                         )
+                reaction = line.split("|")[0].rstrip()
+                if reaction.startswith("@rxn "):
+                    reaction = self._remove_prefix(
+                        reaction, "@rxn "
+                    ).split(":")[0].strip()
                 lines[num] = (
                     f"|{num + 1:d}|"
-                    + line.split("|")[0].rstrip()
+                    + reaction
                     + f"|{rate_equation_formatted.replace('*', '·').replace('y[V.', '[')}|"
                     + "\n"
                 )
         with open(
-            os.path.join("markdown", f"{self.name.split(os.sep)[-1]}", "rate_equation.md"),
+            os.path.join(savedir, f"{self.name.split(os.sep)[-1]}", "rate_equation.md"),
             encoding="utf-8",
             mode="w",
         ) as f:
@@ -833,7 +840,7 @@ class Text2Model(ReactionRules):
                     )
             differential_equations_formatted[i] = eq + "|\n"
         with open(
-            os.path.join("markdown", f"{self.name.split(os.sep)[-1]}", "differential_equation.md"),
+            os.path.join(savedir, f"{self.name.split(os.sep)[-1]}", "differential_equation.md"),
             encoding="utf-8",
             mode="w",
         ) as f:
