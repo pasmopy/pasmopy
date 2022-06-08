@@ -816,7 +816,7 @@ class Text2Model(ReactionRules):
         ) as f:
             f.writelines(
                 [
-                    "|No.|Reactions|Rate equations|\n|---|---------|--------------|\n",
+                    "|No.|Description|Rate|\n|---|-----------|----|\n",
                     *lines[:n_reaction],
                 ]
             )
