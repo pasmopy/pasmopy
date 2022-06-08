@@ -810,7 +810,7 @@ class Text2Model(ReactionRules):
                     + "\n"
                 )
         with open(
-            os.path.join(savedir, f"{self.name.split(os.sep)[-1]}", "rate_equation.md"),
+            os.path.join(savedir, f"{self.name.split(os.sep)[-1]}", "rate.md"),
             encoding="utf-8",
             mode="w",
         ) as f:
@@ -840,7 +840,7 @@ class Text2Model(ReactionRules):
                     )
             differential_equations_formatted[i] = eq + "|\n"
         with open(
-            os.path.join(savedir, f"{self.name.split(os.sep)[-1]}", "differential_equation.md"),
+            os.path.join(savedir, f"{self.name.split(os.sep)[-1]}", "diffeq.md"),
             encoding="utf-8",
             mode="w",
         ) as f:

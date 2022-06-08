@@ -132,8 +132,8 @@ def test_text2markdown():
                 )
             )
             mapk_cascade.to_markdown(n_reaction=25)
-        assert os.path.isfile(os.path.join("markdown", model, "rate_equation.md"))
-        assert os.path.isfile(os.path.join("markdown", model, "differential_equation.md"))
+        assert os.path.isfile(os.path.join("markdown", model, "rate.md"))
+        assert os.path.isfile(os.path.join("markdown", model, "diffeq.md"))
         shutil.rmtree("markdown")
 
 
