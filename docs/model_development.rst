@@ -33,14 +33,14 @@ To specify parameters or initial conditions, you can put those information after
 * If you don't specify parameters/initial_conditions, they are initialized to 1 and 0, respectively, and the parameter values will be estimated from experimental data.
 * If you want to set a parameter value to 1 and don't want to estimate, you can add ``const`` prefix:
 
-.. code-block:: python
+.. code-block::
 
    # The Hill coefficient is fixed to 1.
    TF transcribes mRNA | const n=1
 
 * You can impose parameter constraints by specifying line number in the **parameter** section.
 
-.. code-block:: python
+.. code-block::
    :linenos:
 
    # Nucleocytoplasmic Shuttling of DUSP
@@ -51,7 +51,7 @@ In the example above, you can assume that import and export rates were identical
 
 * If the amount of a model species should be held fixed (never consumed) during simulation, you can add ``fixed`` prefix:
 
-.. code-block:: python
+.. code-block::
 
    # [Ligand] will be held fixed to 10.0 during simulation
    Ligand binds Receptor <--> LR | kf = 1e-6, kr = 1e-1 | fixed Ligand = 10.0
@@ -87,7 +87,7 @@ In the observable layer, you need to specify ``biomass.observables``, which can 
 You can create an observable by using model parameters (``p``) and species (``u``).
 For example, if the total amount of SOS bound to EGFR should be the sum of RGS (EGFR-Grb2-SOS) and RShGS (EGFR-Shc-Grb2-SOS) complexes in your model, then you can write as follows:
 
-.. code-block:: python
+.. code-block::
 
    @obs Total_SOS_bound_to_EGFR: u[RGS] + u[RShGS]
 
@@ -100,7 +100,7 @@ In the simulation layer, you can set simulation conditions, e.g, the simulation 
 
 Example:
 
-.. code-block:: python
+.. code-block::
 
    @sim tspan: [0, 120]
    @sim unperturbed: init[EGF] = 0
@@ -134,7 +134,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
 
 #. Prepare a text file describing biochemical reactions (e.g., ``michaelis_menten.txt``)
    
-   .. code-block:: python
+   .. code-block::
       :linenos:
 
       E binds S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
@@ -186,7 +186,7 @@ Reference:
 
 #. Prepare a text describing EGF signaling in hepatocytes (``Kholodenko1999.txt``)
 
-   .. code-block:: python
+   .. code-block::
       :linenos:
       
       EGF binds EGFR <--> Ra | kf=0.003, kr=0.06 | EGFR=100
