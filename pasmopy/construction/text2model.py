@@ -800,9 +800,7 @@ class Text2Model(ReactionRules):
                         )
                 reaction = line.split("|")[0].rstrip()
                 if reaction.startswith("@rxn "):
-                    reaction = self._remove_prefix(
-                        reaction, "@rxn "
-                    ).split(":")[0].strip()
+                    reaction = self._remove_prefix(reaction, "@rxn ").split(":")[0].strip()
                 lines[num] = (
                     f"|{num + 1:d}|"
                     + reaction
