@@ -141,12 +141,12 @@ def test_julia_models():
     necessities = [
         os.path.join("name2idx", "parameters.jl"),
         os.path.join("name2idx", "species.jl"),
-        "set_model.jl",
+        "ode.jl",
         "observable.jl",
         "simulation.jl",
         "experimental_data.jl",
-        "set_search_param.jl",
-        "fitness.jl",
+        "search_param.jl",
+        "problem.jl",
     ]
     for model in ["michaelis_menten", "Kholodenko1999"]:
         for file in necessities:

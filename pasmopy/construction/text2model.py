@@ -246,7 +246,7 @@ class Text2Model(ReactionRules):
             ) as f:
                 f.writelines(lines)
         else:
-            lines = jl.SET_MODEL.splitlines()
+            lines = jl.ODE.splitlines()
             for line_num, line in enumerate(lines):
                 if line.startswith(self.indentation + "v = Dict{Int64,Float64}()"):
                     # Write flux vector: v
@@ -291,14 +291,14 @@ class Text2Model(ReactionRules):
             with open(
                 os.path.join(
                     f"{self.name}_jl",
-                    "set_model.jl",
+                    "ode.jl",
                 ),
                 encoding="utf-8",
                 mode="w",
             ) as f:
                 f.write("\n".join(lines))
 
-    def _update_set_search_param(self) -> None:
+    def _update_search_param(self) -> None:
         """
         Update search_param.py
         """
@@ -338,7 +338,7 @@ class Text2Model(ReactionRules):
             ) as f:
                 f.writelines(lines)
         else:
-            lines = jl.SET_SEARCH_PARAM.splitlines()
+            lines = jl.SEARCH_PARAM.splitlines()
             for line_num, line in enumerate(lines):
                 if "search_idx_params::Vector{Int} = []" in line:
                     # Write all parameters in idx_params (except for param_excluded)
@@ -364,7 +364,7 @@ class Text2Model(ReactionRules):
                         + "\n"
                     ).replace("x[C.", "p[C.")
             with open(
-                os.path.join(f"{self.name}_jl", "set_search_param.jl"),
+                os.path.join(f"{self.name}_jl", "search_param.jl"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -660,7 +660,7 @@ class Text2Model(ReactionRules):
                     lines[line_num + 4] += (
                         "{}".format(4 * self.indentation)
                         + "simulations"
-                        + f'[observables_index("{desc[0].strip()}"), j, i] = (\n'
+                        + f'[observables_index("{desc[0].strip()}"), i, j] = (\n'
                         + f"{5 * self.indentation}"
                         + desc[1].strip(" ").strip()
                     )
@@ -731,13 +731,13 @@ class Text2Model(ReactionRules):
         self._update_parameters()
         self._update_species()
         self._update_diffeq()
-        self._update_set_search_param()
+        self._update_search_param()
         self._update_observable()
         if self.lang == "julia":
             # Create fitness.jl
-            lines = jl.FITNESS.splitlines()
+            lines = jl.PROBLEM.splitlines()
             with open(
-                os.path.join(f"{self.name}_jl", "fitness.jl"),
+                os.path.join(f"{self.name}_jl", "problem.jl"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
