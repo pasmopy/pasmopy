@@ -382,3 +382,8 @@ Reference:
          plot_simulation_results(res)
 
    .. image:: _static/img/EGF_signaling_sim.png
+
+c-Fos expression dynamics
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Please refer to https://biomass-core.readthedocs.io/en/latest/tutorial.html.
