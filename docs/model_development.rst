@@ -236,6 +236,8 @@ Reference:
 
       $ python
 
+   To display `thermodynamic restrictions <https://pasmopy.readthedocs.io/en/latest/modules/thermodynamic_restrictions.html>`_, set ``show_restrictions`` to :obj:`True`.
+
    .. code-block:: python
 
       >>> from pasmopy import Text2Model
