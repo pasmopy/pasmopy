@@ -37,7 +37,7 @@ If you use Pasmopy in a scientific publication, please cite the following paper:
     @article{imoto2022text,
       title = {A text-based computational framework for patient-specific modeling for classification of cancers},
       author = {Imoto, Hiroaki and Yamashiro, Sawa and Okada, Mariko},
-      journal = {Iscience},
+      journal = {iScience},
       volume = {25},
       number = {3},
       pages = {103944},
