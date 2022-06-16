@@ -102,7 +102,7 @@ class ReactionRules(ThermodynamicRestrictions):
           - .. math:: kf, kr, (V_{pre}, V_{post})
         * - :func:`~pasmopy.construction.reaction_rules.user_defined`
           - @rxn Reactant --> Product: *define rate equation here*
-          - -
+          - *user-defined*
 
     From v0.2.2, you can specify directionality in binding-dissociation reaction via different arrows:
 

@@ -246,7 +246,7 @@ class Text2Model(ReactionRules):
             ) as f:
                 f.writelines(lines)
         else:
-            lines = jl.SET_MODEL.splitlines()
+            lines = jl.ODE.splitlines()
             for line_num, line in enumerate(lines):
                 if line.startswith(self.indentation + "v = Dict{Int64,Float64}()"):
                     # Write flux vector: v
@@ -291,14 +291,14 @@ class Text2Model(ReactionRules):
             with open(
                 os.path.join(
                     f"{self.name}_jl",
-                    "set_model.jl",
+                    "ode.jl",
                 ),
                 encoding="utf-8",
                 mode="w",
             ) as f:
                 f.write("\n".join(lines))
 
-    def _update_set_search_param(self) -> None:
+    def _update_search_param(self) -> None:
         """
         Update search_param.py
         """
@@ -338,7 +338,7 @@ class Text2Model(ReactionRules):
             ) as f:
                 f.writelines(lines)
         else:
-            lines = jl.SET_SEARCH_PARAM.splitlines()
+            lines = jl.SEARCH_PARAM.splitlines()
             for line_num, line in enumerate(lines):
                 if "search_idx_params::Vector{Int} = []" in line:
                     # Write all parameters in idx_params (except for param_excluded)
@@ -364,7 +364,7 @@ class Text2Model(ReactionRules):
                         + "\n"
                     ).replace("x[C.", "p[C.")
             with open(
-                os.path.join(f"{self.name}_jl", "set_search_param.jl"),
+                os.path.join(f"{self.name}_jl", "search_param.jl"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -660,7 +660,7 @@ class Text2Model(ReactionRules):
                     lines[line_num + 4] += (
                         "{}".format(4 * self.indentation)
                         + "simulations"
-                        + f'[observables_index("{desc[0].strip()}"), j, i] = (\n'
+                        + f'[observables_index("{desc[0].strip()}"), i, j] = (\n'
                         + f"{5 * self.indentation}"
                         + desc[1].strip(" ").strip()
                     )
@@ -731,13 +731,13 @@ class Text2Model(ReactionRules):
         self._update_parameters()
         self._update_species()
         self._update_diffeq()
-        self._update_set_search_param()
+        self._update_search_param()
         self._update_observable()
         if self.lang == "julia":
             # Create fitness.jl
-            lines = jl.FITNESS.splitlines()
+            lines = jl.PROBLEM.splitlines()
             with open(
-                os.path.join(f"{self.name}_jl", "fitness.jl"),
+                os.path.join(f"{self.name}_jl", "problem.jl"),
                 encoding="utf-8",
                 mode="w",
             ) as f:
@@ -755,7 +755,7 @@ class Text2Model(ReactionRules):
                 for restriction in self.restrictions:
                     print("{" + ", ".join(restriction) + "}")
 
-    def to_markdown(self, n_reaction: int) -> None:
+    def to_markdown(self, n_reaction: int, savedir: str = "markdown") -> None:
         """
         Create markdown table describing differential equations.
 
@@ -763,6 +763,8 @@ class Text2Model(ReactionRules):
         ----------
         n_reaction : int
             The number of rate equations in the model.
+        savedir : str (default: "markdown")
+            The directory name to save the output.
 
         Examples
         --------
@@ -770,7 +772,7 @@ class Text2Model(ReactionRules):
         >>> Text2Model("Kholodenko1999.txt").to_markdown(25)
 
         """
-        os.makedirs(os.path.join("markdown", f"{self.name.split(os.sep)[-1]}"), exist_ok=True)
+        os.makedirs(os.path.join(savedir, f"{self.name.split(os.sep)[-1]}"), exist_ok=True)
         self.create_ode()
         with open(self.input_txt, encoding="utf-8") as f:
             lines = f.readlines()
@@ -796,20 +798,23 @@ class Text2Model(ReactionRules):
                                 f"{num + 1:d}", f"<sub>{num + 1:d}</sub>"
                             ),
                         )
+                reaction = line.split("|")[0].rstrip()
+                if reaction.startswith("@rxn "):
+                    reaction = self._remove_prefix(reaction, "@rxn ").split(":")[0].strip()
                 lines[num] = (
                     f"|{num + 1:d}|"
-                    + line.split("|")[0].rstrip()
+                    + reaction
                     + f"|{rate_equation_formatted.replace('*', '·').replace('y[V.', '[')}|"
                     + "\n"
                 )
         with open(
-            os.path.join("markdown", f"{self.name.split(os.sep)[-1]}", "rate_equation.md"),
+            os.path.join(savedir, f"{self.name.split(os.sep)[-1]}", "rate.md"),
             encoding="utf-8",
             mode="w",
         ) as f:
             f.writelines(
                 [
-                    "|No.|Reactions|Rate equations|\n|---|---------|--------------|\n",
+                    "|No.|Description|Rate|\n|---|-----------|----|\n",
                     *lines[:n_reaction],
                 ]
             )
@@ -833,7 +838,7 @@ class Text2Model(ReactionRules):
                     )
             differential_equations_formatted[i] = eq + "|\n"
         with open(
-            os.path.join("markdown", f"{self.name.split(os.sep)[-1]}", "differential_equation.md"),
+            os.path.join(savedir, f"{self.name.split(os.sep)[-1]}", "diffeq.md"),
             encoding="utf-8",
             mode="w",
         ) as f:

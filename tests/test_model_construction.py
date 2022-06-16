@@ -132,8 +132,8 @@ def test_text2markdown():
                 )
             )
             mapk_cascade.to_markdown(n_reaction=25)
-        assert os.path.isfile(os.path.join("markdown", model, "rate_equation.md"))
-        assert os.path.isfile(os.path.join("markdown", model, "differential_equation.md"))
+        assert os.path.isfile(os.path.join("markdown", model, "rate.md"))
+        assert os.path.isfile(os.path.join("markdown", model, "diffeq.md"))
         shutil.rmtree("markdown")
 
 
@@ -141,12 +141,12 @@ def test_julia_models():
     necessities = [
         os.path.join("name2idx", "parameters.jl"),
         os.path.join("name2idx", "species.jl"),
-        "set_model.jl",
+        "ode.jl",
         "observable.jl",
         "simulation.jl",
         "experimental_data.jl",
-        "set_search_param.jl",
-        "fitness.jl",
+        "search_param.jl",
+        "problem.jl",
     ]
     for model in ["michaelis_menten", "Kholodenko1999"]:
         for file in necessities:
