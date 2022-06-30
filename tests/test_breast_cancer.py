@@ -153,13 +153,15 @@ def test_patient_model_simulations(
     # Create patient-specific models
     for patient in TNBC_ID:
         shutil.copytree(path_to_patient("TCGA_3C_AALK_01A"), path_to_patient(f"{patient}"))
+    # Execute patient-specific models
+    simulations = PatientModelSimulations(
+        tests.models.breast.__package__, TNBC_ID if exec_model else random.sample(TNBC_ID, 1)
+    )
+    start = time.time()
+    assert simulations.run() is None
+    elapsed = time.time() - start
+    print(f"Computation time for simulating {len(TNBC_ID)} patients: {elapsed/60:.1f} [min]")
     if exec_model:
-        # Execute patient-specific models
-        simulations = PatientModelSimulations(tests.models.breast.__package__, TNBC_ID)
-        start = time.time()
-        assert simulations.run() is None
-        elapsed = time.time() - start
-        print(f"Computation time for simulating {len(TNBC_ID)} patients: {elapsed/60:.1f} [min]")
         # Extract response characteristics and visualize patient classification
         if dynamical_features is None:
             dynamical_features = ["AUC"]
@@ -187,7 +189,7 @@ def test_patient_model_analyses(exec_model: bool = False):
     for patient in TNBC_ID:
         assert os.path.isdir(os.path.join(PATH_TO_MODELS, patient))
     if exec_model:
-        patients = random.sample(TNBC_ID, 1)
+        patients = TNBC_ID  # random.sample(TNBC_ID, 1)
         analyses = PatientModelAnalyses(
             tests.models.breast.__package__,
             patients,
