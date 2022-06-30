@@ -188,28 +188,27 @@ def test_patient_model_simulations(
 def test_patient_model_analyses(exec_model: bool = False):
     for patient in TNBC_ID:
         assert os.path.isdir(os.path.join(PATH_TO_MODELS, patient))
-    if exec_model:
-        patients = TNBC_ID  # random.sample(TNBC_ID, 1)
-        analyses = PatientModelAnalyses(
-            tests.models.breast.__package__,
-            patients,
-            biomass_kws={
-                "metric": "maximum",
-                "style": "heatmap",
-                "options": {"excluded_initials": ["PIP2"]},
-            },
-        )
-        assert analyses.run() is None
-        for patient in patients:
-            assert os.path.isfile(
-                os.path.join(
-                    PATH_TO_MODELS,
-                    patient,
-                    "sensitivity_coefficients",
-                    "initial_condition",
-                    "maximum.npy",
-                )
+    patients = TNBC_ID if exec_model else random.sample(TNBC_ID, 1)
+    analyses = PatientModelAnalyses(
+        tests.models.breast.__package__,
+        patients,
+        biomass_kws={
+            "metric": "maximum",
+            "style": "heatmap",
+            "options": {"excluded_initials": ["PIP2"]},
+        },
+    )
+    assert analyses.run() is None
+    for patient in patients:
+        assert os.path.isfile(
+            os.path.join(
+                PATH_TO_MODELS,
+                patient,
+                "sensitivity_coefficients",
+                "initial_condition",
+                "maximum.npy",
             )
+        )
 
 
 def test_cleanup_models():
