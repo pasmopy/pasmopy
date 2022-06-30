@@ -40,12 +40,12 @@ incorporating_gene_expression_levels = Individualization(
 
 INCORPORATION = """\
         x[C.V291] = incorporating_gene_expression_levels.as_reaction_rate(
-            __path__[0].split(os.sep)[-1].replace("_", "."), x, "V291", "DUSP"
+            __path__[0].split(os.sep)[-1], x, "V291", "DUSP"
         )
         x[C.V310] = incorporating_gene_expression_levels.as_reaction_rate(
-            __path__[0].split(os.sep)[-1].replace("_", "."), x, "V310", "cMyc"
+            __path__[0].split(os.sep)[-1], x, "V310", "cMyc"
         )
         y0 = incorporating_gene_expression_levels.as_initial_conditions(
-            __path__[0].split(os.sep)[-1].replace("_", "."), x, y0
+            __path__[0].split(os.sep)[-1], x, y0
         )
 """
