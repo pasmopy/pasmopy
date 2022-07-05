@@ -12,4 +12,7 @@ References
        iScience 25, 103944 (2022).
 """
 
-from biomass import Text2Model
+try:
+    from biomass import Text2Model
+except ImportError:
+    print("Use biomass version 0.8 or more.")
