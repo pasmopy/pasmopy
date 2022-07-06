@@ -43,6 +43,8 @@ $ pip install pasmopy
 
 Pasmopy requires Python 3.7+ to run.
 
+:ledger: **Note: You will need to manually install [Graphviz](https://www.graphviz.org) (version 2.42 or later).**
+
 ## Example
 
 ### Building mathematical models of biochemical systems from text
