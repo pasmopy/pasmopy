@@ -31,6 +31,7 @@ You can also build the documentation locally by running the following commands:
 $ cd docs
 $ make html
 ```
+
 The site will live in `_build/html/index.html`.
 
 ## Installation
@@ -41,7 +42,7 @@ The latest stable release (and required dependencies) can be installed from [PyP
 $ pip install pasmopy
 ```
 
-Pasmopy requires Python 3.7+ to run.
+Pasmopy requires Python 3.8+ to run.
 
 :ledger: **Note: You will need to manually install [Graphviz](https://www.graphviz.org) (version 2.42 or later).**
 
@@ -102,6 +103,7 @@ Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, 
 ## Reference
 
 - Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. _iScience_ **25**, 103944 (2022). https://doi.org/10.1016/j.isci.2022.103944
+
 ## Author
 
 [Hiroaki Imoto](https://github.com/himoto)
