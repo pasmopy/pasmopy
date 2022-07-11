@@ -12,8 +12,8 @@ References
     iScience 25, 103944 (2022).
 """
 from typing import Final
-from biomass import Text2Model, create_model, run_simulation
 
+from biomass import Text2Model, create_model, run_simulation
 
 MICHAELIS_MENTEN: Final = """\n
 E + S ⇄ ES | kf=0.003, kr=0.001 | E=100, S=50
