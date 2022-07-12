@@ -1,4 +1,9 @@
-# Pasmopy – Patient-Specific Modeling in Python
+<br>
+<p align="center">
+    <a href="https://pasmopy.readthedocs.io/en/latest">
+        <img src="https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/pasmopy-project-logo.png" width="400">
+    </a>
+</p>
 
 [![overview](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/overview.png)](https://pasmopy.readthedocs.io)
 
