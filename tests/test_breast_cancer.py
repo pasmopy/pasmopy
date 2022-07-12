@@ -1,5 +1,4 @@
 import os
-import random
 import shutil
 import time
 from typing import List, Optional
@@ -155,7 +154,7 @@ def test_patient_model_simulations(
         shutil.copytree(path_to_patient("TCGA_3C_AALK_01A"), path_to_patient(f"{patient}"))
     # Execute patient-specific models
     simulations = PatientModelSimulations(
-        tests.models.breast.__package__, TNBC_ID if exec_model else random.sample(TNBC_ID, 1)
+        tests.models.breast.__package__, TNBC_ID if exec_model else TNBC_ID[0]
     )
     start = time.time()
     assert simulations.run() is None
@@ -188,7 +187,7 @@ def test_patient_model_simulations(
 def test_patient_model_analyses(exec_model: bool = False):
     for patient in TNBC_ID:
         assert os.path.isdir(os.path.join(PATH_TO_MODELS, patient))
-    patients = TNBC_ID if exec_model else random.sample(TNBC_ID, 1)
+    patients = TNBC_ID if exec_model else TNBC_ID[0]
     analyses = PatientModelAnalyses(
         tests.models.breast.__package__,
         patients,
