@@ -154,7 +154,7 @@ def test_patient_model_simulations(
         shutil.copytree(path_to_patient("TCGA_3C_AALK_01A"), path_to_patient(f"{patient}"))
     # Execute patient-specific models
     simulations = PatientModelSimulations(
-        tests.models.breast.__package__, TNBC_ID if exec_model else [TNBC_ID[1]]
+        tests.models.breast.__package__, TNBC_ID if exec_model else [TNBC_ID[0]]
     )
     start = time.time()
     assert simulations.run() is None
@@ -187,27 +187,28 @@ def test_patient_model_simulations(
 def test_patient_model_analyses(exec_model: bool = False):
     for patient in TNBC_ID:
         assert os.path.isdir(os.path.join(PATH_TO_MODELS, patient))
-    patients = TNBC_ID if exec_model else [TNBC_ID[1]]
-    analyses = PatientModelAnalyses(
-        tests.models.breast.__package__,
-        patients,
-        biomass_kws={
-            "metric": "maximum",
-            "style": "heatmap",
-            "options": {"excluded_initials": ["PIP2"]},
-        },
-    )
-    assert analyses.run() is None
-    for patient in patients:
-        assert os.path.isfile(
-            os.path.join(
-                PATH_TO_MODELS,
-                patient,
-                "sensitivity_coefficients",
-                "initial_condition",
-                "maximum.npy",
-            )
+    if exec_model:
+        patients = TNBC_ID
+        analyses = PatientModelAnalyses(
+            tests.models.breast.__package__,
+            patients,
+            biomass_kws={
+                "metric": "maximum",
+                "style": "heatmap",
+                "options": {"excluded_initials": ["PIP2"]},
+            },
         )
+        assert analyses.run() is None
+        for patient in patients:
+            assert os.path.isfile(
+                os.path.join(
+                    PATH_TO_MODELS,
+                    patient,
+                    "sensitivity_coefficients",
+                    "initial_condition",
+                    "maximum.npy",
+                )
+            )
 
 
 def test_cleanup_models():
