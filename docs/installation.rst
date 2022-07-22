@@ -1,7 +1,7 @@
 Installation
 ============
 
-Pasmopy requires Python 3.7+ to run.
+Pasmopy requires Python 3.8+ to run.
 
 Installing Pasmopy
 ------------------

@@ -2,12 +2,7 @@ import csv
 import multiprocessing
 import os
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional, Union
-
-try:  # python 3.8+
-    from typing import Literal
-except ImportError:
-    from typing_extensions import Literal
+from typing import Callable, Dict, List, Literal, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -82,8 +77,7 @@ class InSilico(object):
         """
         Check whether the context is appropriate.
         """
-        contexts = ["spawn", "fork", "forkserver"]
-        if context not in contexts:
+        if context not in (contexts := ["spawn", "fork", "forkserver"]):
             raise ValueError("context must be one of '{}'.".format("', '".join(contexts)))
 
 

@@ -22,8 +22,8 @@ def get_version() -> str:
 
 def setup_package():
     # Python version check.
-    if sys.version_info[:2] < (3, 7):
-        raise RuntimeError("Pasmopy requires at least Python version 3.7")
+    if sys.version_info[:2] < (3, 8):
+        raise RuntimeError("Pasmopy requires at least Python version 3.8")
 
     setup(
         name="pasmopy",
@@ -62,7 +62,7 @@ def setup_package():
                 "sphinxcontrib-bibtex>=2.2",
             ],
         },
-        python_requires=">=3.7",
+        python_requires=">=3.8",
         keywords=[
             "systems",
             "biology",
@@ -82,7 +82,6 @@ def setup_package():
             "Natural Language :: English",
             "Operating System :: OS Independent",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
