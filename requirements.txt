@@ -1,4 +1,4 @@
-git+https://github.com/himoto/biomass.git@wo-graphviz
+biomass
 numpy>=1.17
 pandas>=0.24
 seaborn>=0.11.2
