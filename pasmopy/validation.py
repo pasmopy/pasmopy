@@ -203,6 +203,22 @@ class CancerCellLineEncyclopedia(object):
     ) -> None:
         """
         Save dose-response curves.
+
+        Examples
+        --------
+        >>> from pasmopy.validation import CancerCellLineEncyclopedia
+        >>> ErbB_expression_ratio = pd.read_csv(
+        ...     "https://raw.githubusercontent.com/pasmopy/breast_cancer/master/drug_response/data/ErbB_expression_ratio.csv",
+        ...     index_col=0,
+        ... )
+        >>> ccle = CancerCellLineEncyclopedia()
+        >>> for drug in ["Erlotinib", "Lapatinib"]:
+        ...     ccle.save_dose_response_curve(
+        ...         ErbB_expression_ratio,
+        ...         {"value": ["high", "low"]},
+        ...         drug,
+        ...         labels=["EGFR high", "EGFR low"],
+        ...     )
         """
         self._check_args(drug)
 
@@ -272,6 +288,22 @@ class CancerCellLineEncyclopedia(object):
     ) -> None:
         """
         Save ActArea.
+
+        Examples
+        --------
+        >>> from pasmopy.validation import CancerCellLineEncyclopedia
+        >>> ErbB_expression_ratio = pd.read_csv(
+        ...     "https://raw.githubusercontent.com/pasmopy/breast_cancer/master/drug_response/data/ErbB_expression_ratio.csv",
+        ...     index_col=0,
+        ... )
+        >>> ccle = CancerCellLineEncyclopedia()
+        >>> for drug in ["Erlotinib", "Lapatinib"]:
+        ...     ccle.save_activity_area(
+        ...         ErbB_expression_ratio,
+        ...         {"value": ["high", "low"]},
+        ...         drug,
+        ...         labels=["EGFR high", "EGFR low"],
+        ...     )
         """
         self._check_args(drug)
 
