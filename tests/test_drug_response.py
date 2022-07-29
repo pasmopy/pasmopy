@@ -11,14 +11,12 @@ ErbB_expression_ratio: Final[pd.DataFrame] = pd.read_csv(
     "https://raw.githubusercontent.com/pasmopy/breast_cancer/master/drug_response/data/ErbB_expression_ratio.csv",
     index_col=0,
 )
-try:
-    ccle = CancerCellLineEncyclopedia()
-except URLError:
-    ccle = None
 
-if ccle is not None:
+ccle: Final = CancerCellLineEncyclopedia()
 
-    def test_dose_response_curve():
+
+def test_dose_response_curve():
+    try:
         for drug in ["Erlotinib", "Lapatinib"]:
             assert ccle.save_dose_response_curve(
                 ErbB_expression_ratio,
@@ -31,9 +29,13 @@ if ccle is not None:
             assert os.path.isfile(
                 os.path.join("dose_response", "EGFR", f"{drug}.pdf")
             )
+    except URLError:
+        pass
 
 
-    def test_activity_area():
+
+def test_activity_area():
+    try:
         for drug in ["Erlotinib", "Lapatinib"]:
             assert ccle.save_activity_area(
                 ErbB_expression_ratio,
@@ -45,6 +47,8 @@ if ccle is not None:
             assert os.path.isfile(
                 os.path.join("activity_area", "EGFR", f"{drug}.pdf")
             )
+    except URLError:
+        pass
 
 
     def test_cleanup():
