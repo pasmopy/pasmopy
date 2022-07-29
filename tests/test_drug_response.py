@@ -1,10 +1,10 @@
 import os
 import shutil
 from urllib.error import URLError
+from typing import Final
 
 import pandas as pd
 from pasmopy.validation import CancerCellLineEncyclopedia
-from typing import Final
 
 
 ErbB_expression_ratio: Final[pd.DataFrame] = pd.read_csv(
@@ -12,7 +12,7 @@ ErbB_expression_ratio: Final[pd.DataFrame] = pd.read_csv(
     index_col=0,
 )
 try:
-    ccle: Final = CancerCellLineEncyclopedia()
+    ccle = CancerCellLineEncyclopedia()
 except URLError:
     ccle = None
 
