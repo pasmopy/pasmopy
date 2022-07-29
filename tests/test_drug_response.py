@@ -23,7 +23,7 @@ def test_dose_response_curve():
 
     for drug in ["Erlotinib", "Lapatinib"]:
         assert os.path.isfile(
-            os.path.join("drug_response", "EGFR", f"{drug}.pdf")
+            os.path.join("dose_response", "EGFR", f"{drug}.pdf")
         )
 
 
