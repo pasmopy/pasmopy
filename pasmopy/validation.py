@@ -335,31 +335,3 @@ class CancerCellLineEncyclopedia(object):
             ),
         )
         plt.close()
-    
-    def save_all(
-        self,
-        expression_ratio: pd.DataFrame,
-        classifier: Dict[str, List[str]],
-        drug: str,
-        *,
-        labels: List[str] = ["population1", "population2"],
-        config_dose_response_curve: Optional[dict] = None,
-        config_activity_area: Optional[dict] = None,
-    ) -> None:
-        """
-        Run both ``save_dose_response_curve`` and ``save_activity_area``.
-        """
-        self.save_dose_response_curve(
-            expression_ratio,
-            classifier,
-            drug,
-            labels=labels,
-            config=config_dose_response_curve,
-        )
-        self.save_activity_area(
-            expression_ratio,
-            classifier,
-            drug,
-            labels=labels,
-            config=config_activity_area,
-        )
