@@ -16,42 +16,36 @@ ccle: Final = CancerCellLineEncyclopedia()
 
 
 def test_dose_response_curve():
-    try:
-        for drug in ["Erlotinib", "Lapatinib"]:
-            assert ccle.save_dose_response_curve(
-                ErbB_expression_ratio,
-                {"value": ["high", "low"]},
-                drug,
-                labels=["EGFR high", "EGFR low"],
-            ) is None
+    for drug in ["Erlotinib", "Lapatinib"]:
+        assert ccle.save_dose_response_curve(
+            ErbB_expression_ratio,
+            {"value": ["high", "low"]},
+            drug,
+            labels=["EGFR high", "EGFR low"],
+        ) is None
 
-        for drug in ["Erlotinib", "Lapatinib"]:
-            assert os.path.isfile(
-                os.path.join("dose_response", "EGFR", f"{drug}.pdf")
-            )
-    except URLError:
-        pass
+    for drug in ["Erlotinib", "Lapatinib"]:
+        assert os.path.isfile(
+            os.path.join("dose_response", "EGFR", f"{drug}.pdf")
+        )
 
 
 
 def test_activity_area():
-    try:
-        for drug in ["Erlotinib", "Lapatinib"]:
-            assert ccle.save_activity_area(
-                ErbB_expression_ratio,
-                {"value": ["high", "low"]},
-                drug,
-                labels=["EGFR high", "EGFR low"],
-            ) is None
-        for drug in ["Erlotinib", "Lapatinib"]:
-            assert os.path.isfile(
-                os.path.join("activity_area", "EGFR", f"{drug}.pdf")
-            )
-    except URLError:
-        pass
+    for drug in ["Erlotinib", "Lapatinib"]:
+        assert ccle.save_activity_area(
+            ErbB_expression_ratio,
+            {"value": ["high", "low"]},
+            drug,
+            labels=["EGFR high", "EGFR low"],
+        ) is None
+    for drug in ["Erlotinib", "Lapatinib"]:
+        assert os.path.isfile(
+            os.path.join("activity_area", "EGFR", f"{drug}.pdf")
+        )
 
 
-    def test_cleanup():
-        for dirname in ["dose_response", "activity_area"]:
-            if os.path.isdir(dirname):
-                shutil.rmtree(dirname)
+def test_cleanup():
+    for dirname in ["dose_response", "activity_area"]:
+        if os.path.isdir(dirname):
+            shutil.rmtree(dirname)

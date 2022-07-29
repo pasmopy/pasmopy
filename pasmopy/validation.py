@@ -3,6 +3,8 @@ Validate model-based predictions using drug-response data from cancer cell lines
 """
 
 import os
+import ssl
+from urllib.request import urlopen
 from dataclasses import dataclass, field
 from typing import Dict, List, NamedTuple, NoReturn, Optional
 
@@ -46,13 +48,13 @@ class CancerCellLineEncyclopedia(object):
         default_factory=lambda: {"AZD6244": "Selumetinib", "ZD-6474": "Vandetanib"},
         init=False,
     )
-    _drug_response_data: pd.DataFrame = field(
-        default=pd.read_csv(
-            "https://data.broadinstitute.org/ccle_legacy_data/"
-            "pharmacological_profiling/CCLE_NP24.2009_Drug_data_2015.02.24.csv"
-        ),
-        init=False,
-    )
+
+    def __post_init__(self):
+        url = "https://data.broadinstitute.org/ccle_legacy_data/pharmacological_profiling/CCLE_NP24.2009_Drug_data_2015.02.24.csv"
+        context = ssl.create_default_context()
+        context.set_ciphers("DEFAULT")
+        result = urlopen(url, context=context)
+        self._drug_response_data: pd.DataFrame = pd.read_csv(result)
 
     @property
     def drug_response_data(self) -> pd.DataFrame:
@@ -63,7 +65,7 @@ class CancerCellLineEncyclopedia(object):
             return self.drug_alias[name]
         else:
             return name
-    
+
     def _drug2target(self, drug: str) -> str:
         target = list(
             self.drug_response_data[self.drug_response_data["Compound"] == drug]["Target"]
