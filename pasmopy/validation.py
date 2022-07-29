@@ -4,9 +4,9 @@ Validate model-based predictions using drug-response data from cancer cell lines
 
 import os
 import ssl
-from urllib.request import urlopen
 from dataclasses import dataclass, field
 from typing import Dict, List, NamedTuple, NoReturn, Optional
+from urllib.request import urlopen
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -44,6 +44,7 @@ class CancerCellLineEncyclopedia(object):
     _drug_response_data : ``pandas.DataFrame``
         Pharmacologic profiles for 24 anticancer drugs across 504 cell lines.
     """
+
     drug_alias: Dict[str, str] = field(
         default_factory=lambda: {"AZD6244": "Selumetinib", "ZD-6474": "Vandetanib"},
         init=False,
@@ -123,14 +124,14 @@ class CancerCellLineEncyclopedia(object):
                 )
             )
         return drug_response_info
-    
+
     def _check_args(self, drug: str) -> Optional[NoReturn]:
         if drug not in set(self.drug_response_data["Compound"]):
             raise ValueError(
                 f"{drug} doesn't exist in the CCLE drug response data.\n"
                 f"Should be one of {', '.join(list(set(self.drug_response_data['Compound'])))}"
             )
-    
+
     @staticmethod
     def _plot_dose_response_curve(
         x: List[float],
@@ -152,7 +153,7 @@ class CancerCellLineEncyclopedia(object):
                 (np.interp(x, population[i].doses, population[i].activity_data) + 100)
                 for i, _ in enumerate(population)
             ],
-            axis=0
+            axis=0,
         )
         y_err = np.std(
             [
@@ -160,7 +161,7 @@ class CancerCellLineEncyclopedia(object):
                 for i, _ in enumerate(population)
             ],
             axis=0,
-            ddof=1
+            ddof=1,
         )
         plt.plot(
             x,
@@ -177,8 +178,10 @@ class CancerCellLineEncyclopedia(object):
             color=color,
             alpha=0.1,
         )
-    
-    def _get_drug_responses(self, expression_ratio: pd.DataFrame, classifier: Dict[str, List[str]], drug: str) -> list:
+
+    def _get_drug_responses(
+        self, expression_ratio: pd.DataFrame, classifier: Dict[str, List[str]], drug: str
+    ) -> list:
         population = [[] for _ in range(2)]
         for column, values in classifier.items():
             for i, value in enumerate(values):
@@ -187,8 +190,10 @@ class CancerCellLineEncyclopedia(object):
                         population[i].append(expression_ratio.index[j])
         drug_responses = [[] for _ in range(2)]
         for i in range(2):
-            drug_responses[i] = self._extract_drug_response(population[i], [drug] * len(population[i]))
-        
+            drug_responses[i] = self._extract_drug_response(
+                population[i], [drug] * len(population[i])
+            )
+
         return drug_responses
 
     def save_dose_response_curve(
@@ -222,14 +227,11 @@ class CancerCellLineEncyclopedia(object):
         """
         self._check_args(drug)
 
-        os.makedirs(
-            os.path.join("dose_response", f"{self._drug2target(drug)}"),
-            exist_ok=True
-        )
+        os.makedirs(os.path.join("dose_response", f"{self._drug2target(drug)}"), exist_ok=True)
 
         drug_responses = self._get_drug_responses(expression_ratio, classifier, drug)
         assert len(drug_responses) == 2
-        
+
         if config is None:
             config = {}
         config.setdefault("figure.figsize", (7, 5))
@@ -249,11 +251,12 @@ class CancerCellLineEncyclopedia(object):
         plt.gca().spines["right"].set_visible(False)
         plt.gca().spines["top"].set_visible(False)
 
-        DOSE = [2.50e-03, 8.00e-03, 2.50e-02, 8.00e-02, 2.50e-01, 8.00e-01, 2.53e+00, 8.00e+00]
+        DOSE = [2.50e-03, 8.00e-03, 2.50e-02, 8.00e-02, 2.50e-01, 8.00e-01, 2.53e00, 8.00e00]
 
         for i in range(2):
             self._plot_dose_response_curve(
-                DOSE, drug_responses[i],
+                DOSE,
+                drug_responses[i],
                 color="darkmagenta" if i == 0 else "goldenrod",
                 label=labels[i],
                 show_individual=show_individual,
@@ -266,7 +269,7 @@ class CancerCellLineEncyclopedia(object):
         plt.yticks([0, 25, 50, 75, 100])
 
         plt.legend(loc="lower left", frameon=False, labelspacing=1)
-        #plt.show()
+        # plt.show()
         plt.savefig(
             os.path.join(
                 "dose_response",
@@ -276,7 +279,6 @@ class CancerCellLineEncyclopedia(object):
         )
         plt.close()
 
-    
     def save_activity_area(
         self,
         expression_ratio: pd.DataFrame,
@@ -312,12 +314,12 @@ class CancerCellLineEncyclopedia(object):
                 "activity_area",
                 f"{self._drug2target(drug)}",
             ),
-            exist_ok=True
+            exist_ok=True,
         )
-        
+
         drug_responses = self._get_drug_responses(expression_ratio, classifier, drug)
         assert len(drug_responses) == 2
-        
+
         activity_area = np.array(
             [
                 [drug_responses[0][i].act_area for i, _ in enumerate(drug_responses[0])],
@@ -349,18 +351,16 @@ class CancerCellLineEncyclopedia(object):
 
         sns.boxplot(
             data=(activity_area[0], activity_area[1]),
-            palette=sns.color_palette(['darkmagenta', 'goldenrod']),
+            palette=sns.color_palette(["darkmagenta", "goldenrod"]),
         )
-        sns.swarmplot(
-            data=(activity_area[0], activity_area[1]),color=".48"
-        )
+        sns.swarmplot(data=(activity_area[0], activity_area[1]), color=".48")
         plt.xticks([0, 1], [s.replace(" ", "\n") for s in labels])
         plt.ylabel("Activity area", fontsize=28)
         plt.suptitle(
             (r"$\it{p}$" + " = {:.2e}".format(p_value)) if p_value < 0.05 else "n.s.",
             fontsize=22,
         )
-        #plt.show()
+        # plt.show()
         plt.savefig(
             os.path.join(
                 "activity_area",
