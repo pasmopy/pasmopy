@@ -87,9 +87,9 @@ _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn r
 1. Run simulation
 
    ```python
-   >>> from pasmopy import Model, run_simulation
+   >>> from pasmopy import create_model, run_simulation
    >>> import michaelis_menten
-   >>> model = Model(michaelis_menten.__package__).create()
+   >>> model = create_model(michaelis_menten.__package__)
    >>> run_simulation(model)
    ```
 
