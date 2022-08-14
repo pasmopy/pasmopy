@@ -57,43 +57,44 @@ This example shows you how to build a simple Michaelis-Menten two-step enzyme ca
 
 _An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn releases a product, P, regenerating the original enzyme._
 
-1. Prepare a text file describing the biochemical reactions (e.g., `michaelis_menten.txt`)
+```python
+import os
+from pasmopy import Text2Model, create_model, run_simulation
 
-   ```
-   E + S ⇄ ES | kf=0.003, kr=0.001 | E=100, S=50
-   ES → E + P | kf=0.002
+# Prepare a text file describing the biochemical reactions (e.g., `michaelis_menten.txt`)
+reactions = """\
+E + S ⇄ ES | kf=0.003, kr=0.001 | E=100, S=50
+ES → E + P | kf=0.002
+"""
 
-   @obs Substrate: u[S]
-   @obs E_free: u[E]
-   @obs E_total: u[E] + u[ES]
-   @obs Product: u[P]
-   @obs Complex: u[ES]
+observables = """
+@obs Substrate: u[S]
+@obs E_free: u[E]
+@obs E_total: u[E] + u[ES]
+@obs Product: u[P]
+@obs Complex: u[ES]
+"""
 
-   @sim tspan: [0, 100]
-   ```
+simulation_condition = """
+@sim tspan: [0, 100]
+"""
 
-1. Convert the text into an executable model
+with open("michaelis_menten.txt", mode="w") as f:
+   f.writelines(reactions)
+   f.writelines(observables)
+   f.writelines(simulation_condition)
 
-   ```shell
-   $ python
-   ```
+# Convert the text into an executable model
+description = Text2Model("michaelis_menten.txt")
+description.convert()
+assert os.path.isdir("michaelis_menten")
 
-   ```python
-   >>> from pasmopy import Text2Model
-   >>> description = Text2Model("michaelis_menten.txt")
-   >>> description.convert()
-   ```
+# Run simulation
+model = create_model("michaelis_menten")
+run_simulation(model)
+```
 
-1. Run simulation
-
-   ```python
-   >>> from pasmopy import create_model, run_simulation
-   >>> import michaelis_menten
-   >>> model = create_model(michaelis_menten.__package__)
-   >>> run_simulation(model)
-   ```
-
-   [![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)](https://pasmopy.readthedocs.io/en/latest/model_development.html#michaelis-menten-enzyme-kinetics)
+[![michaelis_menten](https://raw.githubusercontent.com/pasmopy/pasmopy/master/docs/_static/img/michaelis_menten_sim.png)](https://pasmopy.readthedocs.io/en/latest/model_development.html#michaelis-menten-enzyme-kinetics)
 
 For more examples, please refer to the [Documentation](https://pasmopy.readthedocs.io/en/latest/).
 
@@ -104,7 +105,8 @@ Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, 
 ## References
 
 - Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. _iScience_ **25**, 103944 (2022). https://doi.org/10.1016/j.isci.2022.103944
--  Imoto, H., Yamashiro, S., Murakami, K. & Okada, M. Protocol for stratification of triple-negative breast cancer patients using *in silico* signaling dynamics. _STAR Protocols_ **3**, 101619 (2022). https://doi.org/10.1016/j.xpro.2022.101619
+
+- Imoto, H., Yamashiro, S., Murakami, K. & Okada, M. Protocol for stratification of triple-negative breast cancer patients using _in silico_ signaling dynamics. _STAR Protocols_ **3**, 101619 (2022). https://doi.org/10.1016/j.xpro.2022.101619
 
 ## Author
 
