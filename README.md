@@ -99,11 +99,12 @@ For more examples, please refer to the [Documentation](https://pasmopy.readthedo
 
 ### Personalized signaling models for cancer patient stratification
 
-Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on 377 breast cancer patients using The Cancer Genome Atlas (TCGA) transcriptome datasets. All code for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
+Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on breast cancer patients using The Cancer Genome Atlas (TCGA) transcriptome datasets. All code for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
 
-## Reference
+## References
 
 - Imoto, H., Yamashiro, S. & Okada, M. A text-based computational framework for patient -specific modeling for classification of cancers. _iScience_ **25**, 103944 (2022). https://doi.org/10.1016/j.isci.2022.103944
+-  Imoto, H., Yamashiro, S., Murakami, K. & Okada, M. Protocol for stratification of triple-negative breast cancer patients using *in silico* signaling dynamics. _STAR Protocols_ **3**, 101619 (2022). https://doi.org/10.1016/j.xpro.2022.101619
 
 ## Author
 
