@@ -169,9 +169,9 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
 
    .. code-block:: python
 
-      >>> from pasmopy import Model, run_simulation
+      >>> from pasmopy import create_model, run_simulation
       >>> import michaelis_menten
-      >>> model = Model(michaelis_menten.__package__).create()
+      >>> model = create_model(michaelis_menten.__package__)
       >>> run_simulation(model)
 
    .. image:: _static/img/michaelis_menten_sim.png
@@ -262,9 +262,9 @@ Reference:
    
    .. code-block:: python
 
-      >>> from pasmopy import Model, run_simulation
+      >>> from pasmopy import create_model, run_simulation
       >>> import Kholodenko_JBC_1999
-      >>> model = Model(Kholodenko_JBC_1999.__package__).create()
+      >>> model = create_model(Kholodenko_JBC_1999.__package__)
       >>> run_simulation(model)
 
 #. Plot simulation results
