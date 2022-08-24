@@ -170,8 +170,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
    .. code-block:: python
 
       >>> from pasmopy import create_model, run_simulation
-      >>> import michaelis_menten
-      >>> model = create_model(michaelis_menten.__package__)
+      >>> model = create_model("michaelis_menten")
       >>> run_simulation(model)
 
    .. image:: _static/img/michaelis_menten_sim.png
@@ -263,8 +262,7 @@ Reference:
    .. code-block:: python
 
       >>> from pasmopy import create_model, run_simulation
-      >>> import Kholodenko_JBC_1999
-      >>> model = create_model(Kholodenko_JBC_1999.__package__)
+      >>> model = create_model("Kholodenko_JBC_1999")
       >>> run_simulation(model)
 
 #. Plot simulation results
@@ -388,4 +386,4 @@ Reference:
 c-Fos expression dynamics
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Please refer to https://biomass-core.readthedocs.io/en/latest/tutorial.html.
+Please refer to https://biomass-core.readthedocs.io/en/latest/tutorial/cfos.html.
