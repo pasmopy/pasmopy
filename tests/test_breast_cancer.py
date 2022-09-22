@@ -3,7 +3,7 @@ import shutil
 import time
 from typing import List, Optional
 
-from pasmopy import Model, PatientModelAnalyses, PatientModelSimulations, Text2Model
+from pasmopy import create_model, PatientModelAnalyses, PatientModelSimulations, Text2Model
 from pasmopy.preprocessing import WeightingFactors
 
 from .C import INCORPORATION, INDIVIDUALIZATION, REQUIREMENTS
@@ -37,7 +37,7 @@ def test_model_construction():
         pass
     Text2Model(os.path.join("tests", "models", "erbb_network.txt")).convert()
 
-    model = Model("tests.models.erbb_network").create()
+    model = create_model("tests.models.erbb_network")
     # add weighting factors
     gene_expression = {
         "ErbB1": ["EGFR"],
@@ -120,7 +120,7 @@ def test_model_construction():
     try:
         from tests.models.breast import TCGA_3C_AALK_01A
     finally:
-        model = Model(TCGA_3C_AALK_01A.__package__).create()
+        model = create_model(TCGA_3C_AALK_01A.__package__)
         # 220 parameters to be estimated & initial amount of PIP2.
         assert len(model.problem.idx_params) + len(model.problem.idx_initials) == 221
 
