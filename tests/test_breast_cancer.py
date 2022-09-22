@@ -3,7 +3,7 @@ import shutil
 import time
 from typing import List, Optional
 
-from pasmopy import create_model, PatientModelAnalyses, PatientModelSimulations, Text2Model
+from pasmopy import PatientModelAnalyses, PatientModelSimulations, Text2Model, create_model
 from pasmopy.preprocessing import WeightingFactors
 
 from .C import INCORPORATION, INDIVIDUALIZATION, REQUIREMENTS
