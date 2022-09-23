@@ -7,8 +7,8 @@ from typing import Callable, Dict, List, Literal, Optional, Union
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from biomass import Model, run_analysis, run_simulation
-from biomass.exec_model import ModelObject
+from biomass import create_model, run_analysis, run_simulation
+from biomass.model_object import ModelObject
 from scipy.integrate import simpson
 from tqdm import tqdm
 
@@ -116,7 +116,7 @@ class PatientModelSimulations(InSilico):
         kwargs.setdefault("viz_type", "average")
         kwargs.setdefault("stdev", True)
 
-        model = Model(".".join([self.path_to_models, patient.strip()])).create()
+        model = create_model(".".join([self.path_to_models, patient.strip()]))
         run_simulation(model, **kwargs)
 
     def run(
@@ -173,7 +173,7 @@ class PatientModelSimulations(InSilico):
         ----------
         data : numpy.ndarray
             Raw simulation results.
-        patient_specific : biomass.exec_model.ModelObject
+        patient_specific : biomass.model_object.ModelObject
             Patient-specific model object.
         obs_name : str
             Observable name.
@@ -245,9 +245,9 @@ class PatientModelSimulations(InSilico):
                 writer.writerow(header)
 
                 for patient in tqdm(self.patients, disable=not progress):
-                    patient_specific = Model(
+                    patient_specific = create_model(
                         ".".join([self.path_to_models, patient.strip()])
-                    ).create()
+                    )
                     all_data = np.load(
                         os.path.join(
                             patient_specific.path,
@@ -388,7 +388,7 @@ class PatientModelAnalyses(InSilico):
         kwargs.setdefault("style", "heatmap")
         kwargs.setdefault("options", None)
 
-        model = Model(".".join([self.path_to_models, patient.strip()])).create()
+        model = create_model(".".join([self.path_to_models, patient.strip()]))
         run_analysis(model, **kwargs)
 
     def run(

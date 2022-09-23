@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass, field
 from typing import Dict, List
 
-from biomass.exec_model import ModelObject
+from biomass.model_object import ModelObject
 
 
 @dataclass
@@ -12,7 +12,7 @@ class WeightingFactors(object):
 
     Attributes
     ----------
-    model : :py:class:`biomass.exec_model.ModelObject`
+    model : :py:class:`biomass.model_object.ModelObject`
         BioMASS model object.
     gene_expression : dict
         Pairs of proteins and their related genes.
