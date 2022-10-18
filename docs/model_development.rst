@@ -62,9 +62,9 @@ In the example above, you can assume that import and export rates were identical
     
     @rxn Reactant --> Product: define rate equation here
 
-Please also refer to the following example: `cfos_model <https://biomass-core.readthedocs.io/en/latest/tutorial.html#prepare-a-text-file-describing-the-biochemical-reactions>`_
+Please also refer to the following example: `cfos_model <https://biomass-core.readthedocs.io/en/latest/tutorial/cfos.html#prepare-a-text-file-describing-the-biochemical-reactions>`_
 
-The available rules can be found at :doc:`modules/reaction_rules`.
+The available rules can be found at https://biomass-core.readthedocs.io/en/latest/api/reaction_rules.html.
 
 You can also supply your own terminology in a reaction rule via:
 
