@@ -139,8 +139,8 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
    .. code-block::
       :linenos:
 
-      E binds S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
-      ES dissociates to E and P | kf=0.002, kr=0
+      E + S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
+      ES --> E + P | kf=0.002, kr=0
 
       @obs Substrate: u[S]
       @obs E_free: u[E]
