@@ -187,6 +187,8 @@ Reference:
 
 #. Prepare a text describing EGF signaling in hepatocytes (``Kholodenko1999.txt``)
 
+    You can learn how to build the model via ``Text2Model`` by comparing the desccription below and the network scheme in `Figure 1 <https://www.sciencedirect.com/science/article/pii/S0021925819518804?via%3Dihub#fig1>`_ in the original paper. The description in the line *n* denotes the *n*-th reaction in the scheme.
+
    .. code-block::
       :linenos:
       
@@ -237,7 +239,7 @@ Reference:
 
       $ python
 
-   To display `thermodynamic restrictions <https://pasmopy.readthedocs.io/en/latest/modules/thermodynamic_restrictions.html>`_, set ``show_restrictions`` to :obj:`True`.
+   To display `thermodynamic restrictions <https://biomass-core.readthedocs.io/en/latest/api/thermodynamic_restrictions.html>`_, set ``show_restrictions`` to :obj:`True`.
 
    .. code-block:: python
 
