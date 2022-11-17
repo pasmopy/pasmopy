@@ -260,6 +260,8 @@ Reference:
       {17, 24, 12, 19}
       {23, 24, 20, 15}
       {23, 12, 22, 21}
+    
+   The output of *Thermodynamic restrictions* shows the cyclic pathways in the biochemical reaction network. These detailed balance relations require the product of the equilibrium constants along a cycle to be equal to 1, since at equilibrium the net flux through any cycle vanishes.
    
 #. Run simulation
    
