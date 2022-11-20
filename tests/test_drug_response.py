@@ -1,7 +1,6 @@
 import os
 import shutil
 from typing import Final
-from urllib.error import URLError
 
 import pandas as pd
 
