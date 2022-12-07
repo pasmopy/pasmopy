@@ -114,6 +114,7 @@ def test_model_construction():
     )
     if os.path.isdir(path_to_patient("TCGA_3C_AALK_01A")):
         from tests.models.breast import TCGA_3C_AALK_01A
+
         model = create_model(TCGA_3C_AALK_01A.__package__)
         # 220 parameters to be estimated & initial amount of PIP2.
         assert len(model.problem.idx_params) + len(model.problem.idx_initials) == 221
