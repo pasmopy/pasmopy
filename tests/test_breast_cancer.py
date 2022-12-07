@@ -31,7 +31,8 @@ with open(path_to_patient("selected_tnbc.txt"), mode="r") as f:
 
 def test_model_construction():
     # building a model
-    if os.path.isdir(modeldir := os.path.join("tests", "models", "erbb_network")):
+    modeldir = os.path.join("tests", "models", "erbb_network")
+    if os.path.isdir(modeldir):
         shutil.rmtree(modeldir)
     Text2Model(os.path.join("tests", "models", "erbb_network.txt")).convert()
 
@@ -106,12 +107,10 @@ def test_model_construction():
         encoding="utf-8",
     ) as f:
         f.writelines(lines)
-    if os.path.isdir(tcgamodeldir := os.path.join(PATH_TO_MODELS, "TCGA_3C_AALK_01A")):
-        shutil.rmtree(tcgamodeldir)
-    shutil.move(
-        os.path.join("tests", "models", "erbb_network"),
-        os.path.join(PATH_TO_MODELS, "TCGA_3C_AALK_01A"),
-    )
+    tcgamodel = os.path.join(PATH_TO_MODELS, "TCGA_3C_AALK_01A")
+    if os.path.isdir(tcgamodel):
+        shutil.rmtree(tcgamodel)
+    shutil.move(modeldir, tcgamodel)
     if os.path.isdir(path_to_patient("TCGA_3C_AALK_01A")):
         from tests.models.breast import TCGA_3C_AALK_01A
 
@@ -130,8 +129,8 @@ def test_patient_model_simulations(
     for patient in TCGA_ID:
         if patient in os.listdir(PATH_TO_MODELS) and patient != "TCGA_3C_AALK_01A":
             shutil.rmtree(path_to_patient(f"{patient}"))
-    if os.path.isdir(paramdir := os.path.join(path_to_patient("TCGA_3C_AALK_01A"), "out")):
-        shutil.rmtree(paramdir)
+    if os.path.isdir(os.path.join(path_to_patient("TCGA_3C_AALK_01A"), "out")):
+        shutil.rmtree(os.path.join(path_to_patient("TCGA_3C_AALK_01A"), "out"))
     # Set optimized parameter sets
     breast_cancer_models: List[str] = []
     for f in os.listdir(PATH_TO_MODELS):
