@@ -31,10 +31,9 @@ with open(path_to_patient("selected_tnbc.txt"), mode="r") as f:
 
 def test_model_construction():
     # building a model
-    try:
-        shutil.rmtree(os.path.join("tests", "models", "erbb_network"))
-    except FileNotFoundError:
-        pass
+    modeldir = os.path.join("tests", "models", "erbb_network")
+    if os.path.isdir(modeldir):
+        shutil.rmtree(modeldir)
     Text2Model(os.path.join("tests", "models", "erbb_network.txt")).convert()
 
     model = create_model("tests.models.erbb_network")
@@ -108,21 +107,18 @@ def test_model_construction():
         encoding="utf-8",
     ) as f:
         f.writelines(lines)
-    try:
-        shutil.rmtree(os.path.join(PATH_TO_MODELS, "TCGA_3C_AALK_01A"))
-    except FileNotFoundError:
-        pass
-    shutil.move(
-        os.path.join("tests", "models", "erbb_network"),
-        os.path.join(PATH_TO_MODELS, "TCGA_3C_AALK_01A"),
-    )
-    assert os.path.isdir(path_to_patient("TCGA_3C_AALK_01A"))
-    try:
+    tcgamodel = os.path.join(PATH_TO_MODELS, "TCGA_3C_AALK_01A")
+    if os.path.isdir(tcgamodel):
+        shutil.rmtree(tcgamodel)
+    shutil.move(modeldir, tcgamodel)
+    if os.path.isdir(path_to_patient("TCGA_3C_AALK_01A")):
         from tests.models.breast import TCGA_3C_AALK_01A
-    finally:
+
         model = create_model(TCGA_3C_AALK_01A.__package__)
         # 220 parameters to be estimated & initial amount of PIP2.
         assert len(model.problem.idx_params) + len(model.problem.idx_initials) == 221
+    else:
+        raise FileNotFoundError("TCGA_3C_AALK_01A/ does not exist in tests/models/breast/.")
 
 
 def test_patient_model_simulations(
@@ -133,10 +129,8 @@ def test_patient_model_simulations(
     for patient in TCGA_ID:
         if patient in os.listdir(PATH_TO_MODELS) and patient != "TCGA_3C_AALK_01A":
             shutil.rmtree(path_to_patient(f"{patient}"))
-    try:
+    if os.path.isdir(os.path.join(path_to_patient("TCGA_3C_AALK_01A"), "out")):
         shutil.rmtree(os.path.join(path_to_patient("TCGA_3C_AALK_01A"), "out"))
-    except FileNotFoundError:
-        pass
     # Set optimized parameter sets
     breast_cancer_models: List[str] = []
     for f in os.listdir(PATH_TO_MODELS):
