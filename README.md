@@ -11,7 +11,6 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg?logo=apache)](https://opensource.org/licenses/Apache-2.0)
 [![Downloads](https://pepy.tech/badge/pasmopy)](https://pepy.tech/project/pasmopy)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/pasmopy.svg?logo=Python&logoColor=white)](https://pypi.python.org/pypi/pasmopy)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/pasmopy/pasmopy.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/pasmopy/pasmopy/context:python)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/pasmopy/pasmopy/master.svg)](https://results.pre-commit.ci/latest/github/pasmopy/pasmopy/master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
@@ -100,7 +99,9 @@ For more examples, please refer to the [Documentation](https://pasmopy.readthedo
 
 ### Personalized signaling models for cancer patient stratification
 
-Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on breast cancer patients using The Cancer Genome Atlas (TCGA) transcriptome datasets. All code for model construction, patient-specific simulations, and model-based stratification can be found here: https://github.com/pasmopy/breast_cancer.
+Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on breast cancer patients using The Cancer Genome Atlas (TCGA) transcriptome datasets. The temporal activation dynamics of Akt, extracellular signal-regulated kinase (ERK), and c-Myc in each patient were able to accurately predict the difference in prognosis and sensitivity to kinase inhibitors in triple-negative breast cancer (TNBC).
+
+- **Code:** https://github.com/pasmopy/breast_cancer
 
 ## References
 

@@ -4,7 +4,7 @@ Pasmopy – Patient-Specific Modeling in Python
 
 .. image:: _static/img/overview-hi-res.png
 
-|PyPI version| |Actions Status| |Documentation Status| |License| |Downloads| |Python versions| |Code quality| |Pre commit| |Code style| |Imports| |iScience paper|
+|PyPI version| |Actions Status| |Documentation Status| |License| |Downloads| |Python versions| |Pre commit| |Code style| |Imports| |iScience paper|
 
 Pasmopy is an open-source Python package for the development of signaling pathway models that are individualized to patient-specific data.
 It includes modules for model construction, parameterization, *in silico* patient stratification, and more.
@@ -49,10 +49,6 @@ The open access publication describing Pasmopy is available here:
 .. |Python versions| image:: https://img.shields.io/pypi/pyversions/pasmopy.svg?logo=Python&logoColor=white
    :target: https://pypi.python.org/pypi/pasmopy/
    :alt: Python versions
-
-.. |Code quality| image:: https://img.shields.io/lgtm/grade/python/g/pasmopy/pasmopy.svg?logo=lgtm&logoWidth=18
-   :target: https://lgtm.com/projects/g/pasmopy/pasmopy/context:python
-   :alt: Code quality: Python
 
 .. |Pre commit| image:: https://results.pre-commit.ci/badge/github/pasmopy/pasmopy/master.svg
    :target: https://results.pre-commit.ci/latest/github/pasmopy/pasmopy/master
