@@ -60,6 +60,8 @@ If you use Pasmopy in a scientific publication, please cite the following papers
 
 When presenting work that uses Pasmopy, feel free to use `Pasmopy logo <https://github.com/pasmopy/pasmopy/blob/master/docs/_static/img/pasmopy-project-logo.png>`_.
 
+.. image:: _static/img/pasmopy-project-logo.png
+
 Contact
 -------
 
