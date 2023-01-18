@@ -165,7 +165,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
       -----------------
       2 reactions
       4 species
-      4 parameters
+      3 parameters
 
 #. Run simulation
 
