@@ -56,7 +56,7 @@ def setup_package():
                 "pytest",
             ],
             "docs": [
-                "sphinx>=5.1.1",
+                "sphinx>=5.1.1,<6",
                 "sphinx_rtd_theme",
                 "sphinx_autodoc_typehints>=1.10.3",
                 "sphinxcontrib-bibtex>=2.2.0",
