@@ -140,7 +140,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
       :linenos:
 
       E + S <--> ES | kf=0.003, kr=0.001 | E=100, S=50
-      ES --> E + P | kf=0.002, kr=0
+      ES --> E + P | kf=0.002
 
       @obs Substrate: u[S]
       @obs E_free: u[E]
@@ -165,7 +165,7 @@ An enzyme, E, binding to a substrate, S, to form a complex, ES, which in turn re
       -----------------
       2 reactions
       4 species
-      4 parameters
+      3 parameters
 
 #. Run simulation
 
