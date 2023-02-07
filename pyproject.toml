@@ -66,7 +66,7 @@ bugtracker = "https://github.com/pasmopy/pasmopy/issues"
 include = ["pasmopy*"]
 
 [tool.setuptools.dynamic]
-version = {attr = "biomass.version.__version__"}
+version = {attr = "pasmopy.version.__version__"}
 
 [tool.black]
 line-length = 99
