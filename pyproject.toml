@@ -8,7 +8,7 @@ description = "Patient-Specific Modeling in Python"
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
-    {name = "Hiroaki Imoto", email = "himoto@protein.osaka-u.ac.jp"},
+    {name = "Hiroaki Imoto"},
 ]
 maintainers = [
     {name = "Hiroaki Imoto", email = "himoto@protein.osaka-u.ac.jp"},
