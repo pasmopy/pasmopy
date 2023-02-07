@@ -63,7 +63,7 @@ documentation = "https://pasmopy.readthedocs.io/en/latest/"
 bugtracker = "https://github.com/pasmopy/pasmopy/issues"
 
 [tool.setuptools.packages.find]
-exclude = ["tests", "docs"]
+include = ["pasmopy*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "biomass.version.__version__"}
