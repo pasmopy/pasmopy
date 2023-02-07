@@ -1,3 +1,73 @@
+[build-system]
+requires = ["setuptools >= 61.1.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pasmopy"
+description = "Patient-Specific Modeling in Python"
+readme = {file = "README.md", content-type="text/markdown"}
+license = {file = "LICENSE"}
+authors = [
+    {name = "Hiroaki Imoto", email = "himoto@protein.osaka-u.ac.jp"},
+]
+maintainers = [
+    {name = "Hiroaki Imoto", email = "himoto@protein.osaka-u.ac.jp"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "biomass>=0.10",
+    "numpy>=1.17",
+    "pandas>=0.24",
+    "seaborn>=0.11.2",
+    "scipy>=1.6",
+    "tqdm>=4.50.2",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "black==22.12.0",
+    "flake8==6.0.0",
+    "isort==5.12.0",
+    "pre-commit",
+    "pytest",
+]
+docs = [
+    "sphinx>=5.1.1,<6",
+    "sphinx_rtd_theme",
+    "sphinx_autodoc_typehints>=1.10.3",
+    "sphinxcontrib-bibtex>=2.2.0",
+]
+
+[project.urls]
+repository = "https://github.com/pasmopy/pasmopy"
+documentation = "https://pasmopy.readthedocs.io/en/latest/"
+bugtracker = "https://github.com/pasmopy/pasmopy/issues"
+
+[tool.setuptools.packages.find]
+exclude = ["tests", "docs"]
+
+[tool.setuptools.dynamic]
+version = {attr = "biomass.version.__version__"}
+
 [tool.black]
 line-length = 99
 target-version = ['py39']
