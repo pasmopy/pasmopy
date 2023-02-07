@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pasmopy"
 description = "Patient-Specific Modeling in Python"
-readme = {file = "README.md", content-type="text/markdown"}
+readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
     {name = "Hiroaki Imoto", email = "himoto@protein.osaka-u.ac.jp"},
