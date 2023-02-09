@@ -101,7 +101,7 @@ For more examples, please refer to the [Documentation](https://pasmopy.readthedo
 
 Using Pasmopy, we built a mechanistic model of ErbB receptor signaling network, trained with protein quantification data obtained from cultured cell lines, and performed _in silico_ simulation of the pathway activities on breast cancer patients using The Cancer Genome Atlas (TCGA) transcriptome datasets. The temporal activation dynamics of Akt, extracellular signal-regulated kinase (ERK), and c-Myc in each patient were able to accurately predict the difference in prognosis and sensitivity to kinase inhibitors in triple-negative breast cancer (TNBC).
 
-- **Code:** https://github.com/pasmopy/breast_cancer
+For further details, please see https://pasmopy.readthedocs.io/en/latest/personalized_model.html.
 
 ## References
 
