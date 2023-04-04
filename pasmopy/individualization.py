@@ -137,7 +137,7 @@ class Individualization(object):
             Estimated protein levels after incorporating transcriptomic data.
         """
         weighted_sum = dict.fromkeys(self.gene_expression, 0.0)
-        for (protein, genes) in self.gene_expression.items():
+        for protein, genes in self.gene_expression.items():
             for gene in genes:
                 weighted_sum[protein] += (
                     x[self.parameters.index(self.prefix + gene)]
