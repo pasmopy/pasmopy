@@ -69,6 +69,6 @@ Contact
 
 If you discovered an error or need help, please contact me via `GitHub Issues <https://github.com/pasmopy/pasmopy/issues>`_.
 Please head over to `GitHub Discussions <https://github.com/pasmopy/pasmopy/discussions>`_ if you have any questions or would like to start a new discussion.
-In either case, you can also always send me an `email <mailto:himoto@protein.osaka-u.ac.jp>`_.
+In either case, you can also always send me an `email <mailto:hiroaki.imoto@ucd.ie>`_.
 
 Any contributions to Pasmopy are more than welcome!
