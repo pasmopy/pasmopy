@@ -42,7 +42,7 @@ The open access publication describing Pasmopy is available here:
    :target: https://opensource.org/licenses/Apache-2.0
    :alt: License
 
-.. |Downloads| image:: https://pepy.tech/badge/pasmopy
+.. |Downloads| image:: https://static.pepy.tech/badge/pasmopy
    :target: https://pepy.tech/project/pasmopy
    :alt: Downloads
 
