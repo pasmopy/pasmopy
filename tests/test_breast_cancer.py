@@ -147,7 +147,9 @@ def test_patient_model_simulations(
     for patient in TNBC_ID:
         shutil.copytree(path_to_patient("TCGA_3C_AALK_01A"), path_to_patient(f"{patient}"))
     # Execute patient-specific models
-    simulations = PatientModelSimulations(tests.models.breast.__package__, TNBC_ID if exec_model else [TNBC_ID[0]])
+    simulations = PatientModelSimulations(
+        tests.models.breast.__package__, TNBC_ID if exec_model else [TNBC_ID[0]]
+    )
     start = time.time()
     assert simulations.run() is None
     elapsed = time.time() - start
