@@ -153,7 +153,7 @@ def test_patient_model_simulations(
     start = time.time()
     assert simulations.run() is None
     elapsed = time.time() - start
-    print(f"Computation time for simulating {len(TNBC_ID)} patients: {elapsed/60:.1f} [min]")
+    print(f"Computation time for simulating {len(TNBC_ID)} patients: {elapsed / 60:.1f} [min]")
     if exec_model:
         # Extract response characteristics and visualize patient classification
         if dynamical_features is None:
